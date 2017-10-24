@@ -9,11 +9,12 @@ import android.support.v4.app.FragmentPagerAdapter;
  * For larger sets of pages, consider FragmentStatePagerAdapter.
  */
 
-public class CategoryAdapter extends FragmentPagerAdapter {
+class CategoryAdapter extends FragmentPagerAdapter {
 
-    public CategoryAdapter(FragmentManager fm) {
+    CategoryAdapter(FragmentManager fm) {
         super(fm);
     }
+
 
     //Pages' mapping
     @Override
@@ -22,11 +23,13 @@ public class CategoryAdapter extends FragmentPagerAdapter {
         else return new ToDoFragment();
     }
 
+
     //Number of pages
     @Override
     public int getCount() {
         return 2;
     }
+
 
     //Pages' titles
     @Override
