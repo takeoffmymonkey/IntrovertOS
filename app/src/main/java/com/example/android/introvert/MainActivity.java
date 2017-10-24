@@ -1,18 +1,11 @@
 package com.example.android.introvert;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,25 +19,15 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-
-
-        Button button = (Button) findViewById(R.id.settings);
-
-
         if (savedInstanceState != null) {
-            button.setText(savedInstanceState.getString("BUNDLED"));
+            //button.setText(savedInstanceState.getString("BUNDLED"));
         }
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-              Intent intent = new Intent();
-                intent.setAction("com.example.android.introvert.MYSETTINGS");
-                startActivity(intent);
-                /*Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
-                startActivityForResult(settingsIntent, 0);
-            */}
-        });
+        CategoryAdapter categoryAdapter = new CategoryAdapter(getSupportFragmentManager());
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager.setAdapter(categoryAdapter);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
 
     }
 
