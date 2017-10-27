@@ -1,5 +1,6 @@
 package com.example.android.introvert;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -10,6 +11,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     String TAG = "INTROWERT_MAIN:";
+    IntrovertDbHelper dbHelper;
+    SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
 
 
+        //Get db access
+        dbHelper = new IntrovertDbHelper(this, IntrovertDbHelper.DATABASE_NAME,
+                null, IntrovertDbHelper.DATABASE_VERSION);
+
+        db = dbHelper.getReadableDatabase();
 
     }
 
@@ -111,5 +119,7 @@ public class MainActivity extends AppCompatActivity {
         //calling to free up unfree resources
     }
 
+
+    void myTestMethod(){}
 
 }
