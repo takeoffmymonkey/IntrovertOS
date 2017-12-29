@@ -17,6 +17,8 @@ public abstract class Note {
     String type;
     String typeSettings;
     String commentType;
+    String content;
     String itemSettings;
+
 
 }
