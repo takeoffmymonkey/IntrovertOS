@@ -1,10 +1,9 @@
-package com.example.android.introvert;
+package com.example.android.introvert.Fragments;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,6 +19,10 @@ import android.widget.Button;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.android.introvert.IntrovertDbHelper;
+import com.example.android.introvert.MainActivity;
+import com.example.android.introvert.R;
 
 /**
  * Created by takeoff on 024 24 Oct 17.
@@ -64,7 +67,7 @@ public class TimelineFragment extends Fragment implements LoaderManager.LoaderCa
         db = main.db;
 
 
-        View timelineView = inflater.inflate(R.layout.tab_timeline, container, false);
+        View timelineView = inflater.inflate(R.layout.fragment_timeline, container, false);
 
         Button b1 = (Button) timelineView.findViewById(R.id.button);
         Button b2 = (Button) timelineView.findViewById(R.id.button2);
@@ -106,7 +109,7 @@ public class TimelineFragment extends Fragment implements LoaderManager.LoaderCa
             }
         });
 
-        simpleCursorAdapter = new SimpleCursorAdapter(getContext(), R.layout.tab_timeline, null,
+        simpleCursorAdapter = new SimpleCursorAdapter(getContext(), R.layout.fragment_timeline, null,
                 new String[]{IntrovertDbHelper.SETTINGS_1_COLUMN, IntrovertDbHelper.SETTINGS_2_COLUMN},
                 new int[]{R.id.textView1, R.id.textView2,}, 0);
 
