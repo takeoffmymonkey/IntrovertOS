@@ -33,7 +33,7 @@ public class IntrovertDbHelper extends SQLiteOpenHelper {
             + SETTINGS_TABLE_NAME + ";";
 
 
-    IntrovertDbHelper(Context context, String name,
+    public IntrovertDbHelper(Context context, String name,
                       SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }

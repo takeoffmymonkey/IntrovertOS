@@ -2,6 +2,7 @@ package com.example.android.introvert.Fragments;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -20,15 +21,20 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.introvert.Activities.MainActivity;
+import com.example.android.introvert.Activities.NoteActivity;
 import com.example.android.introvert.IntrovertDbHelper;
-import com.example.android.introvert.MainActivity;
 import com.example.android.introvert.R;
 
 /**
  * Created by takeoff on 024 24 Oct 17.
  */
 
-public class TimelineFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class TimelineFragment extends Fragment implements
+        LoaderManager.LoaderCallbacks<Cursor> {
+
+    String TAG = "INTROWERT_TIMELINE:";
+
 
     //The "Content authority" is a name for the entire content provider
     static final String CONTENT_AUTHORITY = "com.example.android.introvert";
@@ -36,9 +42,6 @@ public class TimelineFragment extends Fragment implements LoaderManager.LoaderCa
     //base of all URI's which apps will use to contact the content provider.
     private static Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
-
-
-    String TAG = "INTROWERT_TIMELINE:";
 
     private MainActivity main;
     private SQLiteDatabase db;
@@ -61,16 +64,20 @@ public class TimelineFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         Log.i(TAG, "IN ONCREATEVIEW");
         main = (MainActivity) getActivity();
         db = main.db;
 
 
-        View timelineView = inflater.inflate(R.layout.fragment_timeline, container, false);
+        View timelineView = inflater.inflate(R.layout.fragment_timeline, container,
+                false);
 
         Button b1 = (Button) timelineView.findViewById(R.id.button);
         Button b2 = (Button) timelineView.findViewById(R.id.button2);
+        Button b3 = (Button) timelineView.findViewById(R.id.button3);
+
 
         final TextView t1 = (TextView) timelineView.findViewById(R.id.textView1);
         final TextView t2 = (TextView) timelineView.findViewById(R.id.textView2);
@@ -85,8 +92,10 @@ public class TimelineFragment extends Fragment implements LoaderManager.LoaderCa
                 putInDb();
                 int[] values = checkDb();
 
-                Toast.makeText(main, Integer.toString(values[0]), Toast.LENGTH_SHORT).show();
-                Toast.makeText(main, Integer.toString(values[1]), Toast.LENGTH_SHORT).show();
+                Toast.makeText(main, Integer.toString(values[0]),
+                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(main, Integer.toString(values[1]),
+                        Toast.LENGTH_SHORT).show();
                 /*t1.setText(values[0]);
                 t2.setText(values[1]);
 */
@@ -100,8 +109,10 @@ public class TimelineFragment extends Fragment implements LoaderManager.LoaderCa
                 int[] values = checkDb();
 
 
-                Toast.makeText(main, Integer.toString(values[0]), Toast.LENGTH_SHORT).show();
-                Toast.makeText(main, Integer.toString(values[1]), Toast.LENGTH_SHORT).show();
+                Toast.makeText(main, Integer.toString(values[0]),
+                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(main, Integer.toString(values[1]),
+                        Toast.LENGTH_SHORT).show();
 
                 /*t1.setText(values[0]);
                 t2.setText(values[1]);
@@ -109,8 +120,19 @@ public class TimelineFragment extends Fragment implements LoaderManager.LoaderCa
             }
         });
 
-        simpleCursorAdapter = new SimpleCursorAdapter(getContext(), R.layout.fragment_timeline, null,
-                new String[]{IntrovertDbHelper.SETTINGS_1_COLUMN, IntrovertDbHelper.SETTINGS_2_COLUMN},
+        b3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), NoteActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
+        simpleCursorAdapter = new SimpleCursorAdapter(getContext(),
+                R.layout.fragment_timeline, null,
+                new String[]{IntrovertDbHelper.SETTINGS_1_COLUMN,
+                        IntrovertDbHelper.SETTINGS_2_COLUMN},
                 new int[]{R.id.textView1, R.id.textView2,}, 0);
 
 
@@ -182,7 +204,8 @@ public class TimelineFragment extends Fragment implements LoaderManager.LoaderCa
         contentValues.put(IntrovertDbHelper.SETTINGS_1_COLUMN, 2);
         contentValues.put(IntrovertDbHelper.SETTINGS_2_COLUMN, 4);
 
-        if (db.insert(IntrovertDbHelper.SETTINGS_TABLE_NAME, null, contentValues) == -1) {
+        if (db.insert(IntrovertDbHelper.SETTINGS_TABLE_NAME, null,
+                contentValues) == -1) {
             Log.e(TAG, "ERROR INSERTING");
         }
 
@@ -194,7 +217,8 @@ public class TimelineFragment extends Fragment implements LoaderManager.LoaderCa
         contentValues.put(IntrovertDbHelper.SETTINGS_2_COLUMN, 0);
 
         if (db.update(IntrovertDbHelper.SETTINGS_TABLE_NAME, contentValues,
-                IntrovertDbHelper.ID_COLUMN + "=?", new String[]{"1"}) == -1) {
+                IntrovertDbHelper.ID_COLUMN + "=?",
+                new String[]{"1"}) == -1) {
             Log.e(TAG, "ERROR DELETIGN");
         }
     }
@@ -207,8 +231,10 @@ public class TimelineFragment extends Fragment implements LoaderManager.LoaderCa
 
         if (cursor.getCount() > 0) {
             cursor.moveToFirst();
-            values[0] = cursor.getInt(cursor.getColumnIndex(IntrovertDbHelper.SETTINGS_1_COLUMN));
-            values[1] = cursor.getInt(cursor.getColumnIndex(IntrovertDbHelper.SETTINGS_2_COLUMN));
+            values[0] = cursor.getInt(cursor.getColumnIndex(
+                    IntrovertDbHelper.SETTINGS_1_COLUMN));
+            values[1] = cursor.getInt(cursor.getColumnIndex(
+                    IntrovertDbHelper.SETTINGS_2_COLUMN));
         } else {
             Log.e(TAG, "ERROR QUERING");
         }
@@ -220,10 +246,9 @@ public class TimelineFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getContext(),
-                Uri.withAppendedPath(BASE_CONTENT_URI, IntrovertDbHelper.SETTINGS_TABLE_NAME)
-                , null, null, null,
-                null);
+        return new CursorLoader(getContext(), Uri.withAppendedPath(BASE_CONTENT_URI,
+                IntrovertDbHelper.SETTINGS_TABLE_NAME),
+                null, null, null, null);
     }
 
     @Override

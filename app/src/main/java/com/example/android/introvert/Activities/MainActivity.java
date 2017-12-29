@@ -1,4 +1,4 @@
-package com.example.android.introvert;
+package com.example.android.introvert.Activities;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -6,6 +6,10 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
+import com.example.android.introvert.CategoryAdapter;
+import com.example.android.introvert.IntrovertDbHelper;
+import com.example.android.introvert.R;
 
 public class MainActivity extends AppCompatActivity {
 

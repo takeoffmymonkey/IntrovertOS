@@ -14,9 +14,9 @@ import com.example.android.introvert.Fragments.ToDoFragment;
  * For larger sets of pages, consider FragmentStatePagerAdapter.
  */
 
-class CategoryAdapter extends FragmentPagerAdapter {
+public class CategoryAdapter extends FragmentPagerAdapter {
 
-    CategoryAdapter(FragmentManager fm) {
+    public CategoryAdapter(FragmentManager fm) {
         super(fm);
     }
 
