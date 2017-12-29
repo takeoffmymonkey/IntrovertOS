@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * Created by takeoff on 026 26 Oct 17.
@@ -82,11 +82,15 @@ public class IntrovertDbHelper extends SQLiteOpenHelper {
 
 
     public void dumpTable(SQLiteDatabase db, String tableName) {
+
+        //Table Heading
         Log.i(TAG, "Starting " + tableName + " dump...");
         Log.d(TAG, "|=======================================================|");
-        Log.d(TAG, "Table Name: " + tableName);
-        Log.d(TAG, "|-------------------------------------------------------|");
+        Log.d(TAG, "|TABLE NAME: " + tableName);
+        Log.d(TAG, "|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
 
+
+        //Columns info
         String pragmaCommand = "PRAGMA table_info(" + tableName + ")";
         Cursor cursorColumns = db.rawQuery(pragmaCommand, null);
         int nameIdx = cursorColumns.getColumnIndexOrThrow("name");
@@ -94,25 +98,26 @@ public class IntrovertDbHelper extends SQLiteOpenHelper {
         int notNullIdx = cursorColumns.getColumnIndexOrThrow("notnull");
         int dfltValueIdx = cursorColumns.getColumnIndexOrThrow("dflt_value");
 
-
         int columnsNumber = cursorColumns.getCount();
-        Log.d(TAG, "Column Number: " + columnsNumber);
+        Log.d(TAG, "|NUMBER OF COLUMNS: " + columnsNumber);
 
-        HashMap<String, String> columnsAndTypes = new HashMap<>();
+        ArrayList<String> columnNames = new ArrayList<>();
+        ArrayList<String> columnTypes = new ArrayList<>();
         int i = 1;
 
         while (cursorColumns.moveToNext()) {
-
+            Log.i(TAG, "| -------------------------------------------------------|");
             String name = cursorColumns.getString(nameIdx);
             String type = cursorColumns.getString(typeIdx);
             String notNull = cursorColumns.getString(notNullIdx);
             String dfltValue = cursorColumns.getString(dfltValueIdx);
-            columnsAndTypes.put(name, type);
+            columnNames.add(name);
+            columnTypes.add(type);
 
-            Log.i(TAG, "Column " + i + ": " + name + ";"
-                    + " Type: " + type + ";"
-                    + " Not Null: " + notNull + ";"
-                    + " Default: " + dfltValue + ";");
+            Log.i(TAG, "|Column " + i + ": " + name + " | "
+                    + "Type: " + type + " | "
+                    + "Not Null: " + notNull + " | "
+                    + "Default: " + dfltValue + " | ");
 
             i++;
         }
@@ -120,54 +125,48 @@ public class IntrovertDbHelper extends SQLiteOpenHelper {
         cursorColumns.close();
 
 
-        /*Cursor cursorRows = db.query(tableName, null, null,
+        //Rows info
+        Cursor cursorRows = db.query(tableName, null, null,
                 null, null, null, null);
 
         int rowsNumber = cursorRows.getCount();
-
-        Log.d(TAG, "Number of rows: " + rowsNumber);
-
+        Log.d(TAG, "|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
+        Log.d(TAG, "|NUMBER OF ROWS: " + rowsNumber);
 
         if (rowsNumber > 0) {
 
-            cursorRows.moveToFirst();
+            //Going through each row
+            while (cursorRows.moveToNext()) {
+                Log.d(TAG, "|-------------------------------------------------------|");
 
-            do {
-                Log.d(TAG, "|------------------------------------|");
-                Log.d(TAG, "|"
-                        + "|");
+                StringBuilder rowData = new StringBuilder();
 
-            } while (cursorRows.moveToNext());
+                //Going through each column
+                for (int b = 0; b < columnsNumber; b++) {
+                    String columnName = columnNames.get(b);
+                    String columnValue = null;
+                    if (columnTypes.get(b).equals("INTEGER")) {
+                        columnValue = Integer.toString(cursorRows.getInt(
+                                cursorRows.getColumnIndex(columnName)));
+                    } else if (columnTypes.get(b).equals("TEXT")) {
+                        columnValue = cursorRows.getString(
+                                cursorRows.getColumnIndex(columnName));
+                    } else {
+                        Log.e(TAG, "UNKNOWN TYPE OF ROW ENTRY!");
+                    }
 
+                    rowData.append("[" + columnName + "]" + ": "
+                            + columnValue + " | ");
+                }
+
+                Log.i(TAG, "|" + rowData);
+            }
+
+            cursorRows.close();
+
+            Log.d(TAG, "|=======================================================|");
 
         }
-
-
-        Log.d(TAG, "|------------------------------------|");
-
-        int id = cursorRows.getInt(cursorRows.getColumnIndex(
-                IntrovertDbHelper.ID_COLUMN));
-        int setting1 = cursorRows.getInt(cursorRows.getColumnIndex(
-                IntrovertDbHelper.SETTINGS_1_COLUMN));
-        int setting2 = cursorRows.getInt(cursorRows.getColumnIndex(
-                IntrovertDbHelper.SETTINGS_2_COLUMN));
-
-        Log.d(TAG, "|------------------------------------|");
-        Log.d(TAG, "" + cursorRows.getColumnName(0) + id);
-        Log.d(TAG, "SETTING 1: " + setting1);
-        Log.d(TAG, "SETTING 2: " + setting2);
-
-        cursorRows.close();
-*/
-
-        Log.d(TAG, "|=======================================================|");
-
-    }
-
-
-    public void viewNotesTable(SQLiteDatabase db) {
-        Log.i(TAG, "Starting Notes dump...");
-
     }
 
 
