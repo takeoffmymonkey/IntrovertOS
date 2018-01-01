@@ -3,6 +3,7 @@ package com.example.android.introvert.Fragments;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,8 @@ import com.example.android.introvert.Activities.NoteActivity;
 import com.example.android.introvert.IntrovertDbHelper;
 import com.example.android.introvert.R;
 import com.example.android.introvert.Utils;
+
+import static com.example.android.introvert.IntrovertDbHelper.SETTINGS_TABLE_NAME;
 
 /**
  * Created by takeoff on 024 24 Oct 17.
@@ -50,7 +53,7 @@ public class TimelineFragment extends Fragment {
                 Intent intent = new Intent(getContext(), NoteActivity.class);
                 startActivity(intent);
                 putInDb();
-                Utils.dumpTable(db, IntrovertDbHelper.SETTINGS_TABLE_NAME);
+                new DumpTable(db, SETTINGS_TABLE_NAME).execute();
 
             }
         });
@@ -66,7 +69,7 @@ public class TimelineFragment extends Fragment {
         contentValues.put(IntrovertDbHelper.SETTINGS_1_COLUMN, 2);
         contentValues.put(IntrovertDbHelper.SETTINGS_2_COLUMN, 4);
 
-        if (db.insert(IntrovertDbHelper.SETTINGS_TABLE_NAME, null,
+        if (db.insert(SETTINGS_TABLE_NAME, null,
                 contentValues) == -1) {
             Log.e(TAG, "ERROR INSERTING");
         }
@@ -78,11 +81,31 @@ public class TimelineFragment extends Fragment {
         contentValues.put(IntrovertDbHelper.SETTINGS_1_COLUMN, 0);
         contentValues.put(IntrovertDbHelper.SETTINGS_2_COLUMN, 0);
 
-        if (db.update(IntrovertDbHelper.SETTINGS_TABLE_NAME, contentValues,
+        if (db.update(SETTINGS_TABLE_NAME, contentValues,
                 IntrovertDbHelper.ID_COLUMN + "=?",
                 new String[]{"1"}) == -1) {
             Log.e(TAG, "ERROR DELETING");
         }
     }
+
+
+    public static class DumpTable extends AsyncTask<String, Void, Boolean> {
+        SQLiteDatabase db;
+        String tableName;
+
+        DumpTable(SQLiteDatabase db, String tableName) {
+            this.db = db;
+            this.tableName = tableName;
+        }
+
+        protected Boolean doInBackground(String... params) {
+            Utils.dumpTable(db, tableName);
+            return true;
+        }
+
+        protected void onPostExecute() {
+        }
+    }
+
 
 }
