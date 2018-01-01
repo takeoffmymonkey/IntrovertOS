@@ -53,7 +53,7 @@ public class TimelineFragment extends Fragment {
                 Intent intent = new Intent(getContext(), NoteActivity.class);
                 startActivity(intent);
                 putInDb();
-                new DumpTable(db, SETTINGS_TABLE_NAME).execute();
+                Utils.dumpTableExternal(db, SETTINGS_TABLE_NAME);
 
             }
         });
@@ -87,25 +87,5 @@ public class TimelineFragment extends Fragment {
             Log.e(TAG, "ERROR DELETING");
         }
     }
-
-
-    public static class DumpTable extends AsyncTask<String, Void, Boolean> {
-        SQLiteDatabase db;
-        String tableName;
-
-        DumpTable(SQLiteDatabase db, String tableName) {
-            this.db = db;
-            this.tableName = tableName;
-        }
-
-        protected Boolean doInBackground(String... params) {
-            Utils.dumpTable(db, tableName);
-            return true;
-        }
-
-        protected void onPostExecute() {
-        }
-    }
-
 
 }

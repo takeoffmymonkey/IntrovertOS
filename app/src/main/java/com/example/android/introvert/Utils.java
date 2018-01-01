@@ -7,15 +7,21 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import static com.example.android.introvert.IntrovertDbHelper.SETTINGS_TABLE_NAME;
+
 /**
  * Created by takeoff on 001 01 Jan 18.
  */
 
 public class Utils {
+
     static private String TAG = "INTROWERT_UTILS:";
 
+    public static void dumpTableExternal(SQLiteDatabase db, String tableName) {
+        new DumpTable(db, SETTINGS_TABLE_NAME).execute();
+    }
 
-    public static void dumpTable(SQLiteDatabase db, String tableName) {
+    private static void dumpTableInternal(SQLiteDatabase db, String tableName) {
 
         //Table Heading
         Log.i(TAG, "Starting " + tableName + " dump...");
@@ -99,6 +105,23 @@ public class Utils {
     }
 
 
+    public static class DumpTable extends AsyncTask<String, Void, Boolean> {
+        SQLiteDatabase db;
+        String tableName;
+
+        DumpTable(SQLiteDatabase db, String tableName) {
+            this.db = db;
+            this.tableName = tableName;
+        }
+
+        protected Boolean doInBackground(String... params) {
+            dumpTableInternal(db, tableName);
+            return true;
+        }
+
+        protected void onPostExecute() {
+        }
+    }
 
 
 }
