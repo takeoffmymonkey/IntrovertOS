@@ -18,7 +18,7 @@ public class Utils {
     static private String TAG = "INTROWERT_UTILS:";
 
     public static void dumpTableExternal(SQLiteDatabase db, String tableName) {
-        new DumpTable(db, SETTINGS_TABLE_NAME).execute();
+        new DumpTable(db, tableName).execute();
     }
 
     private static void dumpTableInternal(SQLiteDatabase db, String tableName) {
