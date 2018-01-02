@@ -14,8 +14,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     String TAG = "INTROWERT_MAIN:";
-    public IntrovertDbHelper dbHelper;
-    public SQLiteDatabase db;
+    public static IntrovertDbHelper dbHelper;
+    public static SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

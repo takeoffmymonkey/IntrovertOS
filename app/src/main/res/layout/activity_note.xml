@@ -22,7 +22,6 @@
             android:id="@+id/a_note_note_name_et"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType=""
             android:text="Note 1" />
 
     </LinearLayout>
