@@ -60,6 +60,15 @@
             android:text="Save" />
 
 
+        <Button
+            android:id="@+id/a_note_delete_b"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="16dp"
+            android:layout_toLeftOf="@+id/a_note_save_b"
+            android:text="Delete" />
+
     </RelativeLayout>
 
 

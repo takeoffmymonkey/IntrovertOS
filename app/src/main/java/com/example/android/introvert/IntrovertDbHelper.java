@@ -57,7 +57,7 @@ public class IntrovertDbHelper extends SQLiteOpenHelper {
             NOTES_DATE_COLUMN + " INTEGER DEFAULT " + System.currentTimeMillis() + ", " +
             NOTES_LOCATION_COLUMN + " TEXT, " +
             NOTES_CREATOR_COLUMN + " TEXT, " +
-            NOTES_PRIORITY_COLUMN + " TEXT, " +
+            NOTES_PRIORITY_COLUMN + " INTEGER DEFAULT 3, " +
             NOTES_TAGS_COLUMN + " TEXT, " +
             NOTES_COMMENT_COLUMN + " TEXT, " +
             NOTES_TYPE_COLUMN + " TEXT, " +
