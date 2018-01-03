@@ -22,7 +22,7 @@ import com.example.android.introvert.Utils;
 
 import static com.example.android.introvert.IntrovertDbHelper.NOTES_TABLE_NAME;
 import static com.example.android.introvert.IntrovertDbHelper.SETTINGS_TABLE_NAME;
-import static com.example.android.introvert.IntrovertDbHelper.TYPE_SETTINGS_TABLE_NAME;
+import static com.example.android.introvert.IntrovertDbHelper.NOTE_TYPES_TABLE_NAME;
 
 /**
  * Created by takeoff on 024 24 Oct 17.
@@ -77,8 +77,8 @@ public class TimelineFragment extends Fragment {
                 Utils.dumpTableExternal(db, SETTINGS_TABLE_NAME);
                 return true;
 
-            case R.id.menu_timeline_dump_type_settings:
-                Utils.dumpTableExternal(db, TYPE_SETTINGS_TABLE_NAME);
+            case R.id.menu_timeline_dump_note_types:
+                Utils.dumpTableExternal(db, NOTE_TYPES_TABLE_NAME);
                 return true;
 
             case R.id.menu_timeline_add_note:

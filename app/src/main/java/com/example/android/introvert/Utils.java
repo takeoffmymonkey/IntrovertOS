@@ -7,6 +7,8 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import static com.example.android.introvert.IntrovertDbHelper.NOTES_TABLE_NAME;
+
 /**
  * Created by takeoff on 001 01 Jan 18.
  */
@@ -52,11 +54,11 @@ public class Utils {
             columnNames.add(name);
             columnTypes.add(type);
 
-            Log.i(TAG, "|Column: " + i);
-            Log.i(TAG, "|Name: " + name);
-            Log.i(TAG, "|Type: " + type);
-            Log.i(TAG, "|Not Null: " + notNull);
-            Log.i(TAG, "|Default: " + dfltValue);
+            Log.d(TAG, "|Column: " + i);
+            Log.d(TAG, "|Name: " + name);
+            Log.d(TAG, "|Type: " + type);
+            Log.d(TAG, "|Not Null: " + notNull);
+            Log.d(TAG, "|Default: " + dfltValue);
 
             i++;
         }
@@ -96,10 +98,10 @@ public class Utils {
 
                 }
             }
-            Log.d(TAG, "|=======================================================|");
-
-            cursorRows.close();
         }
+        Log.d(TAG, "|=======================================================|");
+
+        cursorRows.close();
     }
 
 
@@ -127,7 +129,10 @@ public class Utils {
         //check if there are notes
         // if yes - give last
         // if no - give 0
+        // make async
 
+        Cursor cursorRows = db.query(NOTES_TABLE_NAME, null, null,
+                null, null, null, null);
         return lastNote;
     }
 
