@@ -65,6 +65,7 @@ public class IntrovertDbHelper extends SQLiteOpenHelper {
 
     /*NOTE_TYPES table*/
     public static final String NOTE_TYPES_TABLE_NAME = "NOTE_TYPES";
+    public static final String NOTE_TYPES_TYPE_COLUMN = "type";
     public static final String NOTE_TYPES_NAME_COLUMN = "name";
     public static final String NOTE_TYPES_ORIGIN_COLUMN = "origin";
     public static final String NOTE_TYPES_VALUABLE_COLUMN = "valuable";
@@ -74,11 +75,12 @@ public class IntrovertDbHelper extends SQLiteOpenHelper {
     public static final String NOTE_TYPES_EDITABLE_COLUMN = "editable";
     public static final String NOTE_TYPES_COMMENTABLE_COLUMN = "commentable";
     public static final String NOTE_TYPES_AUTO_NAMING_COLUMN = "auto_naming";
-    public static final String NOTE_TYPES_NUMBER_OF_NOTES = "number_of_notes";
+    public static final String NOTE_TYPES_LAST_ID_COLUMN = "last_id";
     //table create command
     public static final String NOTE_TYPES_TABLE_CREATE_COMMAND = "CREATE TABLE "
             + NOTE_TYPES_TABLE_NAME
             + " (" + ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            NOTE_TYPES_TYPE_COLUMN + " TEXT, " +
             NOTE_TYPES_NAME_COLUMN + " TEXT, " +
             NOTE_TYPES_ORIGIN_COLUMN + " TEXT, " +
             NOTE_TYPES_VALUABLE_COLUMN + " INTEGER, " +
@@ -88,35 +90,25 @@ public class IntrovertDbHelper extends SQLiteOpenHelper {
             NOTE_TYPES_EDITABLE_COLUMN + " INTEGER, " +
             NOTE_TYPES_COMMENTABLE_COLUMN + " INTEGER, " +
             NOTE_TYPES_AUTO_NAMING_COLUMN + " INTEGER, " +
-            NOTE_TYPES_NUMBER_OF_NOTES + " INTEGER DEFAULT 0);";
+            NOTE_TYPES_LAST_ID_COLUMN + " INTEGER DEFAULT 0);";
     //DROP TABLE command
     private static final String NOTE_TYPES_TABLE_DROP_COMMAND = "DROP TABLE "
             + NOTE_TYPES_TABLE_NAME + ";";
 
 
-    //Type values
-    String[] origin = {"default", "system", "user", "extensions"};
-    byte[] valueble = {0, 1, 2}; // 0 - no, 1 - yes, 2 - money value
-    byte[] prioritazable = {0, 1};
-    byte[] priorities = {1, 2, 3, 4, 5};
-    byte[] taggable = {0, 1};
-    byte[] editable = {0, 1, 2}; // 0 - no, 1 - full, 2 - limited
-    byte[] commentable = {0, 1};
-    byte[] autoNaming = {0, 1};
-
-
     private void createDefaultTypes(SQLiteDatabase db) {
         // Text note
         ContentValues textNoteContentValues = new ContentValues();
+        textNoteContentValues.put(NOTE_TYPES_TYPE_COLUMN, "TextNote");
         textNoteContentValues.put(NOTE_TYPES_NAME_COLUMN, "Text Note");
-        textNoteContentValues.put(NOTE_TYPES_ORIGIN_COLUMN, origin[0]);
-        textNoteContentValues.put(NOTE_TYPES_VALUABLE_COLUMN, valueble[0]);
-        textNoteContentValues.put(NOTE_TYPES_PRIORITIZABLE_COLUMN, prioritazable[1]);
-        textNoteContentValues.put(NOTE_TYPES_PRIORITY_COLUMN, priorities[2]);
-        textNoteContentValues.put(NOTE_TYPES_TAGGABLE_COLUMN, taggable[1]);
-        textNoteContentValues.put(NOTE_TYPES_EDITABLE_COLUMN, editable[1]);
-        textNoteContentValues.put(NOTE_TYPES_COMMENTABLE_COLUMN, commentable[1]);
-        textNoteContentValues.put(NOTE_TYPES_AUTO_NAMING_COLUMN, autoNaming[1]);
+        textNoteContentValues.put(NOTE_TYPES_ORIGIN_COLUMN, TypeValues.origin[0]);
+        textNoteContentValues.put(NOTE_TYPES_VALUABLE_COLUMN, TypeValues.valueble[0]);
+        textNoteContentValues.put(NOTE_TYPES_PRIORITIZABLE_COLUMN, TypeValues.prioritazable[1]);
+        textNoteContentValues.put(NOTE_TYPES_PRIORITY_COLUMN, TypeValues.priorities[2]);
+        textNoteContentValues.put(NOTE_TYPES_TAGGABLE_COLUMN, TypeValues.taggable[1]);
+        textNoteContentValues.put(NOTE_TYPES_EDITABLE_COLUMN, TypeValues.editable[1]);
+        textNoteContentValues.put(NOTE_TYPES_COMMENTABLE_COLUMN, TypeValues.commentable[1]);
+        textNoteContentValues.put(NOTE_TYPES_AUTO_NAMING_COLUMN, TypeValues.autoNaming[1]);
         if (db.insert(NOTE_TYPES_TABLE_NAME, null,
                 textNoteContentValues) == -1) {
             Log.e(TAG, "Error adding default type: text note");

@@ -10,9 +10,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.example.android.introvert.IntrovertDbHelper;
 import com.example.android.introvert.R;
+import com.example.android.introvert.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,22 +28,25 @@ import static com.example.android.introvert.IntrovertDbHelper.NOTES_TABLE_NAME;
 public class NoteActivity extends AppCompatActivity {
 
     String TAG = "INTROWERT_NOTE:";
-    int mode = -1; // 1 - add mode; 2 - edit mode
-    boolean isChanged = false; // changes to any fields
+
+    int activityMode = -1; // 1 - add activityMode; 2 - edit activityMode
+    boolean isDirty = false; // changes to any field
+    String noteType = null; // type of the note to open activity for
+    int noteID = -1; // exact note to open if in edit mode
+    HashMap<View, String> initValues = new HashMap<>(); // list of initial values
+    ArrayList<View> dirtyViews = new ArrayList<>(); // list of changed views
 
     Button saveButton;
     Button deleteButton;
     Button cancelButton;
-
-    ArrayList<View> changedViews = new ArrayList<>();
-    HashMap<View, String> initValues;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note);
 
-        mode = 1;
+        activityMode = 1;
+        noteType = "TextNote";
 
         saveButton = (Button) findViewById(R.id.a_note_save_b);
         deleteButton = (Button) findViewById(R.id.a_note_delete_b);
@@ -50,11 +55,15 @@ public class NoteActivity extends AppCompatActivity {
         showDeleteButton();
 
         // TODO: 002 02 Jan 18 Prevent multiple rows
-        final EditText noteNameEditText = (EditText) findViewById(R.id.a_note_note_name_et);
-        final EditText noteTextEditText = (EditText) findViewById(R.id.a_note_note_text_et);
+        final EditText noteNameEditText =
+                (EditText) findViewById(R.id.a_note_note_name_et);
+        final EditText noteContentEditText =
+                (EditText) findViewById(R.id.a_note_note_text_et);
+
 
         // Set and save init values
-        setInitValues(noteNameEditText, noteTextEditText);
+        nameInitValue(noteNameEditText);
+        contentInitValue(noteContentEditText);
 
 
         // Set listeners
@@ -70,11 +79,11 @@ public class NoteActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) { // Text changed
                 Log.i(TAG, "noteNameEditText changed");
-                setChanged(noteNameEditText);
+                setDirty(noteNameEditText);
             }
         });
 
-        noteTextEditText.addTextChangedListener(new TextWatcher() {
+        noteContentEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -87,7 +96,7 @@ public class NoteActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 Log.i(TAG, "noteTextEditText changed");
-                setChanged(noteTextEditText);
+                setDirty(noteContentEditText);
             }
         });
 
@@ -117,16 +126,118 @@ public class NoteActivity extends AppCompatActivity {
 
     }
 
+    //
+    private void nameInitValue(EditText nameEditText) {
+        String nameInitValue = null;
 
-    private String getEditTextContent(EditText editText) {
-        return editText.getText().toString();
+        if (activityMode == 1) { // we are in add new note mode
+            // read default from db
+            nameInitValue = Utils.getNameForNewNote(MainActivity.db, noteType);
+
+        } else if (activityMode == 2) { // we are in edit mode
+            // read for current id from db
+
+        } else { // wrong activityMode value
+            nameInitValue = "wrong activityMode value";
+            Log.e(TAG, "Wrong activityMode value");
+        }
+
+        nameEditText.setText(nameInitValue);
+        initValues.put(nameEditText, nameInitValue);
+    }
+
+
+    private void contentInitValue(EditText contentEditText) {
+        String contentInitValue = null;
+
+        if (activityMode == 1) { // we are in add new note mode
+            // read default from db
+            contentInitValue = "";
+
+        } else if (activityMode == 2) { // we are in edit mode
+            // read for current id from db
+
+        } else { // wrong activityMode value
+            contentInitValue = "wrong activityMode value";
+            Log.e(TAG, "Wrong activityMode value");
+        }
+
+        contentEditText.setText(contentInitValue);
+        initValues.put(contentEditText, contentInitValue);
+
+    }
+
+
+    private void showDeleteButton() {
+        // must be in edit activityMode
+        if (activityMode == 1) deleteButton.setVisibility(View.GONE);// add activityMode
+        else if (activityMode == 2) deleteButton.setVisibility(View.VISIBLE); // edit activityMode
+        else { // error: probably activityMode var was not initialized properly
+            Log.e(TAG, "Error: wrong activityMode value! " +
+                    "Probably activityMode variable was not initialized properly");
+        }
+    }
+
+
+    private void showSaveButton() {
+        // must be changed state
+        if (isDirty) saveButton.setVisibility(View.VISIBLE);
+        else saveButton.setVisibility(View.GONE);
+    }
+
+
+    private String getCurrentValue(View view) {
+        String currentValue = "wrong value";
+
+        // check the type of View
+        if (view instanceof EditText) { // it is EditText
+            EditText currentView = (EditText) view;
+            return currentView.getText().toString();
+        } else if (view instanceof Spinner) { // it is Spinner
+            Spinner currentView = (Spinner) view;
+            return currentView.toString();
+        } else { // type not defined
+            Log.e(TAG, "Wrong type for getting value from!");
+            return currentValue;
+        }
+
+    }
+
+
+    private boolean sameAsInitValue(View view) {
+        // compare current value with init value
+        return getCurrentValue(view).equals(initValues.get(view));
+    }
+
+
+    private boolean setDirty(View changedView) {
+        // check if not empty
+        // and changed
+        // TODO: 003 03 Jan 18 make only name and content obligatory
+        if (!getCurrentValue(changedView).equals("") &&
+                !sameAsInitValue(changedView)) { // not empty and differs from init
+            isDirty = true;
+            if (!dirtyViews.contains(changedView)) dirtyViews.add(changedView);
+            showSaveButton();
+            return true;
+
+        } else { // either empty or same from init
+            // remove from dirtyViews
+            dirtyViews.remove(changedView);
+            // set is changed to false if dirtyViews is empty
+            if (dirtyViews.size() == 0) {
+                isDirty = false;
+            }
+            showSaveButton();
+            return false;
+        }
     }
 
 
     private Boolean addOrUpdateNote(@Nullable Integer id) {
         ContentValues contentValues = new ContentValues();
 
-        if (mode == 1 && id == null) { // we are in add mode
+        if (activityMode == 1 && id == null) { // we are in add activityMode
             contentValues.put(IntrovertDbHelper.SETTINGS_1_COLUMN, 2);
 
             if (MainActivity.db.insert(NOTES_TABLE_NAME, null,
@@ -134,7 +245,7 @@ public class NoteActivity extends AppCompatActivity {
                 Log.e(TAG, "ERROR INSERTING");
             }
 
-        } else if (mode == 2 && id != null) { // we are in edit mode
+        } else if (activityMode == 2 && id != null) { // we are in edit activityMode
 
             contentValues.put(IntrovertDbHelper.SETTINGS_1_COLUMN, 0);
             contentValues.put(IntrovertDbHelper.SETTINGS_2_COLUMN, 0);
@@ -145,66 +256,13 @@ public class NoteActivity extends AppCompatActivity {
                 Log.e(TAG, "ERROR UPDATING");
             }
 
-        } else { // error: probably mode var was not initialized properly
-            Log.e(TAG, "Error: wrong mode value! " +
-                    "Probably mode variable was not initialized properly");
+        } else { // error: probably activityMode var was not initialized properly
+            Log.e(TAG, "Error: wrong activityMode value! " +
+                    "Probably activityMode variable was not initialized properly");
         }
 
         return true;
     }
 
 
-    private void showSaveButton() {
-        // must be changed state
-        if (isChanged) saveButton.setVisibility(View.VISIBLE);
-        else saveButton.setVisibility(View.GONE);
-    }
-
-
-    private void showDeleteButton() {
-        // must be in edit mode
-        if (mode == 1) deleteButton.setVisibility(View.GONE);// add mode
-        else if (mode == 2) deleteButton.setVisibility(View.VISIBLE); // edit mode
-        else { // error: probably mode var was not initialized properly
-            Log.e(TAG, "Error: wrong mode value! " +
-                    "Probably mode variable was not initialized properly");
-        }
-    }
-
-
-    private void setChanged(View changedView) {
-        // at least 1 field should differ from its initial value
-        // name and content field should not be empty
-
-        isChanged = true;
-        showSaveButton();
-        if (!changedViews.contains(changedView)) changedViews.add(changedView);
-    }
-
-
-    private void setInitValues(View... views) {
-        // check current mode
-        // for add mode set default type values
-        // for edit mode read values from db
-        // save init values to initValues hashmap
-
-        // check current mode
-        if (mode == 1) {// add mode - set default type values
-
-        } else if (mode == 2) {// edit mode - read values from db
-
-        } else { // error: probably mode var was not initialized properly
-            Log.e(TAG, "Error: wrong mode value! " +
-                    "Probably mode variable was not initialized properly");
-        }
-
-        // Save values to initValues hashmap
-
-    }
-
-    private boolean sameAsInitValue(View view) {
-        // compare current value with init value
-
-        return false;
-    }
 }

@@ -7,7 +7,10 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-import static com.example.android.introvert.IntrovertDbHelper.NOTES_TABLE_NAME;
+import static com.example.android.introvert.IntrovertDbHelper.NOTE_TYPES_LAST_ID_COLUMN;
+import static com.example.android.introvert.IntrovertDbHelper.NOTE_TYPES_NAME_COLUMN;
+import static com.example.android.introvert.IntrovertDbHelper.NOTE_TYPES_TABLE_NAME;
+import static com.example.android.introvert.IntrovertDbHelper.NOTE_TYPES_TYPE_COLUMN;
 
 /**
  * Created by takeoff on 001 01 Jan 18.
@@ -124,16 +127,60 @@ public class Utils {
     }
 
 
-    public static int getLastNoteId(SQLiteDatabase db) {
-        int lastNote = 0;
-        //check if there are notes
-        // if yes - give last
-        // if no - give 0
-        // make async
+ /*   private static int getLastNoteId(SQLiteDatabase db, String noteType) {
+        int lastNote = -1;
+        // read from NOTE_TYPES table number of notes column
 
-        Cursor cursorRows = db.query(NOTES_TABLE_NAME, null, null,
-                null, null, null, null);
+        Cursor cursorLastNoteId = db.query(NOTE_TYPES_TABLE_NAME,
+                new String[]{NOTE_TYPES_LAST_ID_COLUMN},
+                NOTE_TYPES_TYPE_COLUMN + "=?", new String[]{noteType},
+                null, null, null);
+
+        if (cursorLastNoteId.getCount() == 1) {
+            cursorLastNoteId.moveToFirst();
+            lastNote = cursorLastNoteId.getInt(cursorLastNoteId
+                    .getColumnIndex(NOTE_TYPES_LAST_ID_COLUMN));
+        } else {
+            Log.e(TAG, "Wrong number of rows received when querying number of notes: "
+                    + cursorLastNoteId.getCount() + "; Should be: 1");
+        }
+        cursorLastNoteId.close();
+
+        // TODO: 003 03 Jan 18 prevent querying name column duplicates
+
+        // TODO: 003 03 Jan 18 make querying async
+
         return lastNote;
-    }
+    }*/
 
+
+    public static String getNameForNewNote(SQLiteDatabase db, String noteType) {
+
+        String noteTypeName = null;
+        int lastNote = -1;
+        // read from NOTE_TYPES table number of notes column
+
+        Cursor cursor = db.query(NOTE_TYPES_TABLE_NAME,
+                new String[]{NOTE_TYPES_NAME_COLUMN, NOTE_TYPES_LAST_ID_COLUMN},
+                NOTE_TYPES_TYPE_COLUMN + "=?", new String[]{noteType},
+                null, null, null);
+
+        if (cursor.getCount() == 1) {
+            cursor.moveToFirst();
+            noteTypeName = cursor.getString(cursor
+                    .getColumnIndex(NOTE_TYPES_NAME_COLUMN));
+            lastNote = cursor.getInt(cursor
+                    .getColumnIndex(NOTE_TYPES_LAST_ID_COLUMN));
+        } else {
+            Log.e(TAG, "Wrong number of rows received when querying name of note: "
+                    + cursor.getCount() + "; Should be: 1");
+        }
+        cursor.close();
+
+        // TODO: 003 03 Jan 18 prevent querying name column duplicates
+
+        // TODO: 003 03 Jan 18 make querying async
+
+        return noteTypeName + " " + (lastNote + 1);
+    }
 }
