@@ -7,8 +7,6 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-import static com.example.android.introvert.IntrovertDbHelper.SETTINGS_TABLE_NAME;
-
 /**
  * Created by takeoff on 001 01 Jan 18.
  */
@@ -123,5 +121,14 @@ public class Utils {
         }
     }
 
+
+    public static int getLastNoteId(SQLiteDatabase db) {
+        int lastNote = 0;
+        //check if there are notes
+        // if yes - give last
+        // if no - give 0
+
+        return lastNote;
+    }
 
 }

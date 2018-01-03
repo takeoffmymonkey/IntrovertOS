@@ -183,15 +183,15 @@ public class NoteActivity extends AppCompatActivity {
 
 
     private void setInitValues(View... views) {
-        // check mode
+        // check current mode
         // for add mode set default type values
         // for edit mode read values from db
         // save init values to initValues hashmap
 
-        // check which mode is on
-        if (mode == 1) {// add mode, set default type values
+        // check current mode
+        if (mode == 1) {// add mode - set default type values
 
-        } else if (mode == 2) {// edit mode, read values from db
+        } else if (mode == 2) {// edit mode - read values from db
 
         } else { // error: probably mode var was not initialized properly
             Log.e(TAG, "Error: wrong mode value! " +
