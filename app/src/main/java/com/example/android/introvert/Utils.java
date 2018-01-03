@@ -127,34 +127,7 @@ public class Utils {
     }
 
 
- /*   private static int getLastNoteId(SQLiteDatabase db, String noteType) {
-        int lastNote = -1;
-        // read from NOTE_TYPES table number of notes column
-
-        Cursor cursorLastNoteId = db.query(NOTE_TYPES_TABLE_NAME,
-                new String[]{NOTE_TYPES_LAST_ID_COLUMN},
-                NOTE_TYPES_TYPE_COLUMN + "=?", new String[]{noteType},
-                null, null, null);
-
-        if (cursorLastNoteId.getCount() == 1) {
-            cursorLastNoteId.moveToFirst();
-            lastNote = cursorLastNoteId.getInt(cursorLastNoteId
-                    .getColumnIndex(NOTE_TYPES_LAST_ID_COLUMN));
-        } else {
-            Log.e(TAG, "Wrong number of rows received when querying number of notes: "
-                    + cursorLastNoteId.getCount() + "; Should be: 1");
-        }
-        cursorLastNoteId.close();
-
-        // TODO: 003 03 Jan 18 prevent querying name column duplicates
-
-        // TODO: 003 03 Jan 18 make querying async
-
-        return lastNote;
-    }*/
-
-
-    public static String getNameForNewNote(SQLiteDatabase db, String noteType) {
+     public static String getNameForNewNote(SQLiteDatabase db, String noteType) {
 
         String noteTypeName = null;
         int lastNote = -1;

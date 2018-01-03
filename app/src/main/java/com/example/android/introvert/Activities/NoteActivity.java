@@ -53,6 +53,7 @@ public class NoteActivity extends AppCompatActivity {
         cancelButton = (Button) findViewById(R.id.a_note_cancel_b);
 
         showDeleteButton();
+        showSaveButton();
 
         // TODO: 002 02 Jan 18 Prevent multiple rows
         final EditText noteNameEditText =
@@ -210,26 +211,21 @@ public class NoteActivity extends AppCompatActivity {
     }
 
 
-    private boolean setDirty(View changedView) {
-        // check if not empty
-        // and changed
+    private void setDirty(View changedView) {
         // TODO: 003 03 Jan 18 make only name and content obligatory
         if (!getCurrentValue(changedView).equals("") &&
                 !sameAsInitValue(changedView)) { // not empty and differs from init
             isDirty = true;
             if (!dirtyViews.contains(changedView)) dirtyViews.add(changedView);
             showSaveButton();
-            return true;
 
         } else { // either empty or same from init
-            // remove from dirtyViews
             dirtyViews.remove(changedView);
             // set is changed to false if dirtyViews is empty
             if (dirtyViews.size() == 0) {
                 isDirty = false;
             }
             showSaveButton();
-            return false;
         }
     }
 
