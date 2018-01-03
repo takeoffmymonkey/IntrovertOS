@@ -104,7 +104,10 @@ public class NoteActivity extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // TODO: 002 02 Jan 18 remove current activity from stack
                 Log.i(TAG, "save pressed");
+                addOrUpdateNote(noteID);
+                startActivity(getSupportParentActivityIntent());
             }
         });
 
@@ -230,7 +233,7 @@ public class NoteActivity extends AppCompatActivity {
     }
 
 
-    private Boolean addOrUpdateNote(@Nullable Integer id) {
+    private void addOrUpdateNote(@Nullable Integer id) {
         ContentValues contentValues = new ContentValues();
 
         if (activityMode == 1 && id == null) { // we are in add activityMode
@@ -256,8 +259,6 @@ public class NoteActivity extends AppCompatActivity {
             Log.e(TAG, "Error: wrong activityMode value! " +
                     "Probably activityMode variable was not initialized properly");
         }
-
-        return true;
     }
 
 
