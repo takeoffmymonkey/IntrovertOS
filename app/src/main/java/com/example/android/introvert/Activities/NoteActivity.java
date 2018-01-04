@@ -19,7 +19,10 @@ import com.example.android.introvert.Utils;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.example.android.introvert.IntrovertDbHelper.NOTES_CONTENT_COLUMN;
+import static com.example.android.introvert.IntrovertDbHelper.NOTES_NAME_COLUMN;
 import static com.example.android.introvert.IntrovertDbHelper.NOTES_TABLE_NAME;
+import static com.example.android.introvert.IntrovertDbHelper.NOTES_TYPE_COLUMN;
 
 /**
  * Created by takeoff on 029 29 Dec 17.
@@ -106,7 +109,7 @@ public class NoteActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // TODO: 002 02 Jan 18 remove current activity from stack
                 Log.i(TAG, "save pressed");
-                addOrUpdateNote(noteID);
+                addOrUpdateNote(noteID, noteNameEditText, noteContentEditText);
                 startActivity(getSupportParentActivityIntent());
             }
         });
@@ -233,18 +236,20 @@ public class NoteActivity extends AppCompatActivity {
     }
 
 
-    private void addOrUpdateNote(@Nullable Integer id) {
+    private void addOrUpdateNote(@Nullable Integer id, View... views) {
         ContentValues contentValues = new ContentValues();
 
-        if (activityMode == 1 && id == null) { // we are in add activityMode
-            contentValues.put(IntrovertDbHelper.SETTINGS_1_COLUMN, 2);
+        if (activityMode == 1 && id == -1) { // we are in add activityMode
+            contentValues.put(NOTES_TYPE_COLUMN, noteType);
+            contentValues.put(NOTES_NAME_COLUMN, getCurrentValue(views[0]));
+            contentValues.put(NOTES_CONTENT_COLUMN, getCurrentValue(views[1]));
 
             if (MainActivity.db.insert(NOTES_TABLE_NAME, null,
                     contentValues) == -1) {
                 Log.e(TAG, "ERROR INSERTING");
             }
 
-        } else if (activityMode == 2 && id != null) { // we are in edit activityMode
+        } else if (activityMode == 2 && id != -1) { // we are in edit activityMode
 
             contentValues.put(IntrovertDbHelper.SETTINGS_1_COLUMN, 0);
             contentValues.put(IntrovertDbHelper.SETTINGS_2_COLUMN, 0);

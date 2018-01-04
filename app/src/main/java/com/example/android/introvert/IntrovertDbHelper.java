@@ -50,6 +50,7 @@ public class IntrovertDbHelper extends SQLiteOpenHelper {
             + NOTES_TABLE_NAME
             + " (" + ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             NOTES_NAME_COLUMN + " TEXT, " +
+            // TODO: 004 04 Jan 18 got this date in db: -1065602605 
             NOTES_DATE_COLUMN + " INTEGER DEFAULT " + System.currentTimeMillis() + ", " +
             NOTES_LOCATION_COLUMN + " TEXT, " +
             NOTES_CREATOR_COLUMN + " TEXT, " +
