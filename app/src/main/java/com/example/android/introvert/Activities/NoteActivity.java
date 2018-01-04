@@ -219,6 +219,7 @@ public class NoteActivity extends AppCompatActivity {
 
     private void setDirty(View changedView) {
         // TODO: 003 03 Jan 18 make only name and content obligatory
+        // TODO: 004 04 Jan 18 prevent inserting note with empty name/content 
         if (!getCurrentValue(changedView).equals("") &&
                 !sameAsInitValue(changedView)) { // not empty and differs from init
             isDirty = true;
