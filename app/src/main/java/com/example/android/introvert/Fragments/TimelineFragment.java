@@ -1,29 +1,24 @@
 package com.example.android.introvert.Fragments;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import com.example.android.introvert.Activities.MainActivity;
 import com.example.android.introvert.Activities.NoteActivity;
-import com.example.android.introvert.IntrovertDbHelper;
-import com.example.android.introvert.NotesAdapter;
-import com.example.android.introvert.Person;
+import com.example.android.introvert.NotesCursorAdapter;
 import com.example.android.introvert.R;
 import com.example.android.introvert.Utils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.example.android.introvert.IntrovertDbHelper.NOTES_TABLE_NAME;
 import static com.example.android.introvert.IntrovertDbHelper.NOTE_TYPES_TABLE_NAME;
@@ -37,17 +32,8 @@ public class TimelineFragment extends Fragment {
 
     String TAG = "INTROWERT_TIMELINE:";
 
-    MainActivity main;
-    private SQLiteDatabase db;
-    private IntrovertDbHelper dbHelper;
+    private SQLiteDatabase db = MainActivity.db;
 
-
-    private RecyclerView notesRecyclerView;
-    private RecyclerView.LayoutManager notesLayoutManager;
-    private RecyclerView.Adapter notesAdapter;
-
-
-    private List<Person> persons;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,46 +49,21 @@ public class TimelineFragment extends Fragment {
         View timelineView = inflater.inflate(R.layout.fragment_timeline, container, false);
 
 
-        notesRecyclerView = (RecyclerView) timelineView.findViewById(R.id.fragment_timeline_rv);
+        // Find the ListView which will be populated with the notes data
+        ListView listListView = (ListView) timelineView.findViewById(R.id.fragment_timeline_list);
 
-        notesLayoutManager = new LinearLayoutManager(this.getContext());
-        notesRecyclerView.setLayoutManager(notesLayoutManager);
-        notesRecyclerView.setHasFixedSize(true);
 
-        initializeData();
+        Cursor cursor = db.query(NOTES_TABLE_NAME, null,
+                null, null, null, null, null);
 
-        notesAdapter = new NotesAdapter(persons);
-        notesRecyclerView.setAdapter(notesAdapter);
+
+        NotesCursorAdapter listCursorAdapter = new NotesCursorAdapter(getContext(), cursor, 0);
+
+        listListView.setAdapter(listCursorAdapter);
 
 
         //Return inflated layout for this fragment
         return timelineView;
-
-    }
-
-
-    private void initializeData() {
-        persons = new ArrayList<>();
-
-        persons.add(new Person("Emma Wilson", "23 years old", R.drawable.emma));
-        persons.add(new Person("Lavery Maiss", "25 years old", R.drawable.emma));
-        persons.add(new Person("Lillie Watts", "35 years old", R.drawable.emma));
-        persons.add(new Person("Emma Wilson", "23 years old", R.drawable.emma));
-        persons.add(new Person("Lavery Maiss", "25 years old", R.drawable.emma));
-        persons.add(new Person("Lillie Watts", "35 years old", R.drawable.emma));
-        persons.add(new Person("Emma Wilson", "23 years old", R.drawable.emma));
-        persons.add(new Person("Lavery Maiss", "25 years old", R.drawable.emma));
-        persons.add(new Person("Lillie Watts", "35 years old", R.drawable.emma));
-        persons.add(new Person("Emma Wilson", "23 years old", R.drawable.emma));
-        persons.add(new Person("Lavery Maiss", "25 years old", R.drawable.emma));
-        persons.add(new Person("Lillie Watts", "35 years old", R.drawable.emma));
-        persons.add(new Person("Emma Wilson", "23 years old", R.drawable.emma));
-        persons.add(new Person("Lavery Maiss", "25 years old", R.drawable.emma));
-        persons.add(new Person("Lillie Watts", "35 years old", R.drawable.emma));
-        persons.add(new Person("Emma Wilson", "23 years old", R.drawable.emma));
-        persons.add(new Person("Lavery Maiss", "25 years old", R.drawable.emma));
-        persons.add(new Person("Lillie Watts", "35 years old", R.drawable.emma));
-
 
     }
 
