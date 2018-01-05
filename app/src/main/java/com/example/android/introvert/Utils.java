@@ -1,14 +1,16 @@
 package com.example.android.introvert;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.ArrayList;
 
+import static com.example.android.introvert.IntrovertDbHelper.NOTE_TYPES_DEFAULT_NAME_COLUMN;
 import static com.example.android.introvert.IntrovertDbHelper.NOTE_TYPES_LAST_ID_COLUMN;
-import static com.example.android.introvert.IntrovertDbHelper.NOTE_TYPES_NAME_COLUMN;
 import static com.example.android.introvert.IntrovertDbHelper.NOTE_TYPES_TABLE_NAME;
 import static com.example.android.introvert.IntrovertDbHelper.NOTE_TYPES_TYPE_COLUMN;
 
@@ -127,21 +129,21 @@ public class Utils {
     }
 
 
-     public static String getNameForNewNote(SQLiteDatabase db, String noteType) {
+    public static String getNameForNewNote(SQLiteDatabase db, String noteType) {
 
         String noteTypeName = null;
         int lastNote = -1;
         // read from NOTE_TYPES table number of notes column
 
         Cursor cursor = db.query(NOTE_TYPES_TABLE_NAME,
-                new String[]{NOTE_TYPES_NAME_COLUMN, NOTE_TYPES_LAST_ID_COLUMN},
+                new String[]{NOTE_TYPES_DEFAULT_NAME_COLUMN, NOTE_TYPES_LAST_ID_COLUMN},
                 NOTE_TYPES_TYPE_COLUMN + "=?", new String[]{noteType},
                 null, null, null);
 
         if (cursor.getCount() == 1) {
             cursor.moveToFirst();
             noteTypeName = cursor.getString(cursor
-                    .getColumnIndex(NOTE_TYPES_NAME_COLUMN));
+                    .getColumnIndex(NOTE_TYPES_DEFAULT_NAME_COLUMN));
             lastNote = cursor.getInt(cursor
                     .getColumnIndex(NOTE_TYPES_LAST_ID_COLUMN));
         } else {
@@ -156,4 +158,34 @@ public class Utils {
 
         return noteTypeName + " " + (lastNote + 1);
     }
+
+    // pass null or 0 for default setting
+    public static void createNewNoteType(SQLiteDatabase db, @Nullable String noteName,
+                                         int category, int contentInputType, int tagsInputType,
+                                         int commentInputType) {
+
+        // Text note
+        ContentValues textNoteContentValues = new ContentValues();
+        // TODO: 005 05 Jan 18 name note types dynamically
+        textNoteContentValues.put(NOTE_TYPES_TYPE_COLUMN, "IdeaTextNote");
+
+        if (db.insert(NOTE_TYPES_TABLE_NAME, null,
+                textNoteContentValues) == -1) {
+            Log.e(TAG, "Error adding default type: text note");
+        } else {
+            Log.i(TAG, "Text note type added successfully");
+        }
+
+        // TODO: 003 03 Jan 18 add default notes via async
+
+
+        if (db.insert(NOTE_TYPES_TABLE_NAME, null,
+                textNoteContentValues) == -1) {
+            Log.e(TAG, "Error adding default type: text note");
+        } else {
+            Log.i(TAG, "Text note type added successfully");
+        }
+
+    }
+
 }
