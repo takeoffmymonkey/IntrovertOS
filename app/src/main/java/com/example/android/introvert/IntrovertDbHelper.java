@@ -34,8 +34,44 @@ public class IntrovertDbHelper extends SQLiteOpenHelper {
             + SETTINGS_TABLE_NAME + ";";
 
 
+    /*INPUTS table*/
+    public static final String INPUTS_TABLE_NAME = "INPUTS";
+    public static final String INPUT_TYPE_COLUMN = "input_type";
+    //table create command
+    public static final String INPUTS_TABLE_CREATE_COMMAND = "CREATE TABLE "
+            + INPUTS_TABLE_NAME
+            + " (" + ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            INPUT_TYPE_COLUMN + " TEXT);";
+    //DROP TABLE command
+    private static final String INPUTS_TABLE_DROP_COMMAND = "DROP TABLE "
+            + INPUTS_TABLE_NAME + ";";
+
+
+    private void createInputTypes(SQLiteDatabase db) {
+        // Input types
+        String[] inputs = {"text",
+                "audio",
+                "video",
+                "photo",
+                "picture"};
+
+        // Add input types to INPUTS_TABLE_NAME
+        for (String input : inputs) {
+            ContentValues inputsContentValues = new ContentValues();
+            inputsContentValues.put(INPUT_TYPE_COLUMN, input);
+            if (db.insert(INPUTS_TABLE_NAME, null,
+                    inputsContentValues) == -1) {
+                Log.e(TAG, "Error adding input type: " + input);
+            } else {
+                Log.i(TAG, "Input type added successfully: " + input);
+            }
+        }
+    }
+
+
     /*NOTES table*/
     public static final String NOTES_TABLE_NAME = "NOTES";
+    public static final String NOTES_TYPE_COLUMN = "type";
     public static final String NOTES_NAME_COLUMN = "name";
     public static final String NOTES_DATE_COLUMN = "date";
     public static final String NOTES_LOCATION_COLUMN = "location";
@@ -43,21 +79,25 @@ public class IntrovertDbHelper extends SQLiteOpenHelper {
     public static final String NOTES_PRIORITY_COLUMN = "priority";
     public static final String NOTES_TAGS_COLUMN = "tags";
     public static final String NOTES_COMMENT_COLUMN = "comment";
-    public static final String NOTES_TYPE_COLUMN = "type";
     public static final String NOTES_CONTENT_COLUMN = "content";
+    public static final String NOTES_COMMENT_INPUT_TYPE_COLUMN = "comment_input_type";
+    public static final String NOTES_CONTENT_INPUT_TYPE_COLUMN = "content_input_type";
+
     //table create command
     public static final String NOTES_TABLE_CREATE_COMMAND = "CREATE TABLE "
             + NOTES_TABLE_NAME
             + " (" + ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            NOTES_TYPE_COLUMN + " TEXT, " +
             NOTES_NAME_COLUMN + " TEXT, " +
-            // TODO: 004 04 Jan 18 got this date in db: -1065602605 
+            // TODO: 004 04 Jan 18 got this date in db: -1065602605
             NOTES_DATE_COLUMN + " INTEGER DEFAULT " + System.currentTimeMillis() + ", " +
             NOTES_LOCATION_COLUMN + " TEXT, " +
             NOTES_CREATOR_COLUMN + " TEXT, " +
             NOTES_PRIORITY_COLUMN + " INTEGER DEFAULT 3, " +
             NOTES_TAGS_COLUMN + " TEXT, " +
             NOTES_COMMENT_COLUMN + " TEXT, " +
-            NOTES_TYPE_COLUMN + " TEXT, " +
+            NOTES_COMMENT_INPUT_TYPE_COLUMN + " TEXT, " +
+            NOTES_CONTENT_INPUT_TYPE_COLUMN + " TEXT, " +
             NOTES_CONTENT_COLUMN + " TEXT);";
     //DROP TABLE command
     private static final String NOTES_TABLE_DROP_COMMAND = "DROP TABLE "
@@ -138,6 +178,9 @@ public class IntrovertDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SETTINGS_TABLE_CREATE_COMMAND);
         Log.i(TAG, "SETTINGS table created successfully");
+        db.execSQL(INPUTS_TABLE_CREATE_COMMAND);
+        Log.i(TAG, "INPUTS table created successfully");
+        createInputTypes(db);
         db.execSQL(NOTES_TABLE_CREATE_COMMAND);
         Log.i(TAG, "NOTES table created successfully");
         db.execSQL(NOTE_TYPES_TABLE_CREATE_COMMAND);

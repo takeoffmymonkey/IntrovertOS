@@ -16,11 +16,14 @@
             <item
                 android:id="@+id/menu_timeline_dump_note_types"
                 android:title="Note types" />
+            <item
+                android:id="@+id/menu_timeline_dump_inputs"
+                android:title="Inputs" />
         </menu>
     </item>
 
     <item
         android:id="@+id/menu_timeline_add_note"
-        app:showAsAction="always"
-        android:title="Add Note" />
+        android:title="Add Note"
+        app:showAsAction="always" />
 </menu>
