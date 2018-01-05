@@ -34,36 +34,76 @@ public class IntrovertDbHelper extends SQLiteOpenHelper {
             + SETTINGS_TABLE_NAME + ";";
 
 
-    /*INPUTS table*/
-    public static final String INPUTS_TABLE_NAME = "INPUTS";
-    public static final String INPUT_TYPE_COLUMN = "input_type";
+    /*INPUT_TYPES table*/
+    public static final String INPUT_TYPES_TABLE_NAME = "INPUT_TYPES";
+    public static final String INPUT_TYPES_TYPE_COLUMN = "input_type";
     //table create command
-    public static final String INPUTS_TABLE_CREATE_COMMAND = "CREATE TABLE "
-            + INPUTS_TABLE_NAME
+    public static final String INPUT_TYPES_TABLE_CREATE_COMMAND = "CREATE TABLE "
+            + INPUT_TYPES_TABLE_NAME
             + " (" + ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            INPUT_TYPE_COLUMN + " TEXT);";
+            INPUT_TYPES_TYPE_COLUMN + " TEXT);";
     //DROP TABLE command
-    private static final String INPUTS_TABLE_DROP_COMMAND = "DROP TABLE "
-            + INPUTS_TABLE_NAME + ";";
+    private static final String INPUT_TYPES_TABLE_DROP_COMMAND = "DROP TABLE "
+            + INPUT_TYPES_TABLE_NAME + ";";
 
 
     private void createInputTypes(SQLiteDatabase db) {
         // Input types
-        String[] inputs = {"text",
+        String[] inputTypes = {
+                "text",
                 "audio",
                 "video",
                 "photo",
-                "picture"};
+                "picture"
+        };
 
-        // Add input types to INPUTS_TABLE_NAME
-        for (String input : inputs) {
+        // Add input types to INPUT_TYPES_TABLE_NAME
+        for (String inputType : inputTypes) {
             ContentValues inputsContentValues = new ContentValues();
-            inputsContentValues.put(INPUT_TYPE_COLUMN, input);
-            if (db.insert(INPUTS_TABLE_NAME, null,
+            inputsContentValues.put(INPUT_TYPES_TYPE_COLUMN, inputType);
+            if (db.insert(INPUT_TYPES_TABLE_NAME, null,
                     inputsContentValues) == -1) {
-                Log.e(TAG, "Error adding input type: " + input);
+                Log.e(TAG, "Error adding input type: " + inputType);
             } else {
-                Log.i(TAG, "Input type added successfully: " + input);
+                Log.i(TAG, "Input type added successfully: " + inputType);
+            }
+        }
+    }
+
+
+    /*CATEGORIES table*/
+    public static final String CATEGORIES_TABLE_NAME = "CATEGORIES";
+    public static final String CATEGORIES_CATEGORY_COLUMN = "category";
+    //table create command
+    public static final String CATEGORIES_TABLE_CREATE_COMMAND = "CREATE TABLE "
+            + CATEGORIES_TABLE_NAME
+            + " (" + ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            CATEGORIES_CATEGORY_COLUMN + " TEXT);";
+    //DROP TABLE command
+    private static final String CATEGORIES_TABLE_DROP_COMMAND = "DROP TABLE "
+            + CATEGORIES_TABLE_NAME + ";";
+
+
+    private void createDefaultCategories(SQLiteDatabase db) {
+        // Input types
+        String[] defaultCategories = {
+                "Ideas",
+                "Jokes",
+                "Tracks",
+                "Videos",
+                "Photos",
+                "Spendings"
+        };
+
+        // Add input types to INPUT_TYPES_TABLE_NAME
+        for (String defaultCategory : defaultCategories) {
+            ContentValues categoriesContentValues = new ContentValues();
+            categoriesContentValues.put(CATEGORIES_CATEGORY_COLUMN, defaultCategory);
+            if (db.insert(CATEGORIES_TABLE_NAME, null,
+                    categoriesContentValues) == -1) {
+                Log.e(TAG, "Error adding category: " + defaultCategory);
+            } else {
+                Log.i(TAG, "Category added successfully: " + defaultCategory);
             }
         }
     }
@@ -137,7 +177,7 @@ public class IntrovertDbHelper extends SQLiteOpenHelper {
             + NOTE_TYPES_TABLE_NAME + ";";
 
 
-    private void createDefaultTypes(SQLiteDatabase db) {
+    private void createDefaultNoteTypes(SQLiteDatabase db) {
         // Text note
         ContentValues textNoteContentValues = new ContentValues();
         textNoteContentValues.put(NOTE_TYPES_TYPE_COLUMN, "TextNote");
@@ -176,16 +216,24 @@ public class IntrovertDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        // Create SETTINGS table
         db.execSQL(SETTINGS_TABLE_CREATE_COMMAND);
         Log.i(TAG, "SETTINGS table created successfully");
-        db.execSQL(INPUTS_TABLE_CREATE_COMMAND);
-        Log.i(TAG, "INPUTS table created successfully");
+        // Create INPUT_TYPES table
+        db.execSQL(INPUT_TYPES_TABLE_CREATE_COMMAND);
+        Log.i(TAG, "INPUT_TYPES table created successfully");
         createInputTypes(db);
+        // Create CATEGORIES table
+        db.execSQL(CATEGORIES_TABLE_CREATE_COMMAND);
+        Log.i(TAG, "CATEGORIES table created successfully");
+        createDefaultCategories(db);
+        // Create NOTES table
         db.execSQL(NOTES_TABLE_CREATE_COMMAND);
         Log.i(TAG, "NOTES table created successfully");
+        // Create NOTE_TYPES table
         db.execSQL(NOTE_TYPES_TABLE_CREATE_COMMAND);
         Log.i(TAG, "NOTE_TYPES table created successfully");
-        createDefaultTypes(db);
+        createDefaultNoteTypes(db);
     }
 
 

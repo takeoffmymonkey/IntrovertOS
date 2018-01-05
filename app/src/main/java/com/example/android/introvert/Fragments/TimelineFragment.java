@@ -20,7 +20,8 @@ import com.example.android.introvert.NotesCursorAdapter;
 import com.example.android.introvert.R;
 import com.example.android.introvert.Utils;
 
-import static com.example.android.introvert.IntrovertDbHelper.INPUTS_TABLE_NAME;
+import static com.example.android.introvert.IntrovertDbHelper.CATEGORIES_TABLE_NAME;
+import static com.example.android.introvert.IntrovertDbHelper.INPUT_TYPES_TABLE_NAME;
 import static com.example.android.introvert.IntrovertDbHelper.NOTES_TABLE_NAME;
 import static com.example.android.introvert.IntrovertDbHelper.NOTE_TYPES_TABLE_NAME;
 import static com.example.android.introvert.IntrovertDbHelper.SETTINGS_TABLE_NAME;
@@ -91,10 +92,13 @@ public class TimelineFragment extends Fragment {
                 Utils.dumpTableExternal(db, NOTE_TYPES_TABLE_NAME);
                 return true;
 
-            case R.id.menu_timeline_dump_inputs:
-                Utils.dumpTableExternal(db, INPUTS_TABLE_NAME);
+            case R.id.menu_timeline_dump_input_types:
+                Utils.dumpTableExternal(db, INPUT_TYPES_TABLE_NAME);
                 return true;
 
+            case R.id.menu_timeline_dump_categories:
+                Utils.dumpTableExternal(db, CATEGORIES_TABLE_NAME);
+                return true;
 
             case R.id.menu_timeline_add_note:
                 Intent intent = new Intent(getContext(), NoteActivity.class);

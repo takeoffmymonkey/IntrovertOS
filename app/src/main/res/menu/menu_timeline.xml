@@ -17,8 +17,11 @@
                 android:id="@+id/menu_timeline_dump_note_types"
                 android:title="Note types" />
             <item
-                android:id="@+id/menu_timeline_dump_inputs"
-                android:title="Inputs" />
+                android:id="@+id/menu_timeline_dump_input_types"
+                android:title="Input types" />
+            <item
+                android:id="@+id/menu_timeline_dump_categories"
+                android:title="Categories" />
         </menu>
     </item>
 
