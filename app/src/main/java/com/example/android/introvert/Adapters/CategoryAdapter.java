@@ -1,4 +1,4 @@
-package com.example.android.introvert;
+package com.example.android.introvert.Adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

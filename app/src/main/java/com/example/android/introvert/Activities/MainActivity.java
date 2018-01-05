@@ -6,15 +6,15 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
-import com.example.android.introvert.CategoryAdapter;
-import com.example.android.introvert.IntrovertDbHelper;
+import com.example.android.introvert.Adapters.CategoryAdapter;
+import com.example.android.introvert.Database.DbHelper;
 import com.example.android.introvert.R;
 
 public class MainActivity extends AppCompatActivity {
 
 
     String TAG = "INTROWERT_MAIN:";
-    public static IntrovertDbHelper dbHelper;
+    public static DbHelper dbHelper;
     public static SQLiteDatabase db;
 
     @Override
@@ -40,8 +40,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Get db access
-        dbHelper = new IntrovertDbHelper(this, IntrovertDbHelper.DATABASE_NAME,
-                null, IntrovertDbHelper.DATABASE_VERSION);
+        dbHelper = new DbHelper(this, DbHelper.DATABASE_NAME,
+                null, DbHelper.DATABASE_VERSION);
 
         db = dbHelper.getReadableDatabase();
 

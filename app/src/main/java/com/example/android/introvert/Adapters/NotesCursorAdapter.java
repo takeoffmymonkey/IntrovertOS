@@ -1,4 +1,4 @@
-package com.example.android.introvert;
+package com.example.android.introvert.Adapters;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -10,9 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import static com.example.android.introvert.IntrovertDbHelper.ID_COLUMN;
-import static com.example.android.introvert.IntrovertDbHelper.NOTES_CONTENT_COLUMN;
-import static com.example.android.introvert.IntrovertDbHelper.NOTES_NAME_COLUMN;
+import com.example.android.introvert.R;
+
+import static com.example.android.introvert.Database.DbHelper.ID_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTES_CONTENT_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTES_NAME_COLUMN;
 
 /**
  * Created by takeoff on 005 05 Jan 18.

@@ -1,4 +1,4 @@
-package com.example.android.introvert;
+package com.example.android.introvert.Database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -10,7 +10,7 @@ import android.util.Log;
  * Created by takeoff on 026 26 Oct 17.
  */
 
-public class IntrovertDbHelper extends SQLiteOpenHelper {
+public class DbHelper extends SQLiteOpenHelper {
 
     private String TAG = "INTROWERT_DBHELPER:";
 
@@ -34,7 +34,7 @@ public class IntrovertDbHelper extends SQLiteOpenHelper {
 
     private void createDefaultCategories(SQLiteDatabase db) {
         // Add default categories to CATEGORIES_TABLE_NAME
-        for (String defaultCategory : TypeValues.defaultCategories) {
+        for (String defaultCategory : DBTypeValues.defaultCategories) {
             ContentValues defaultCategoriesContentValues = new ContentValues();
             defaultCategoriesContentValues.put(CATEGORIES_CATEGORY_COLUMN, defaultCategory);
             if (db.insert(CATEGORIES_TABLE_NAME, null,
@@ -62,7 +62,7 @@ public class IntrovertDbHelper extends SQLiteOpenHelper {
 
     private void createInputTypes(SQLiteDatabase db) {
         // Add input types to INPUT_TYPES_TABLE_NAME
-        for (String inputType : TypeValues.inputTypes) {
+        for (String inputType : DBTypeValues.inputTypes) {
             ContentValues inputsContentValues = new ContentValues();
             inputsContentValues.put(INPUT_TYPES_TYPE_COLUMN, inputType);
             if (db.insert(INPUT_TYPES_TABLE_NAME, null,
@@ -91,7 +91,7 @@ public class IntrovertDbHelper extends SQLiteOpenHelper {
             NOTE_TYPES_TYPE_COLUMN + " TEXT NOT NULL, " +
             NOTE_TYPES_DEFAULT_NAME_COLUMN + " TEXT DEFAULT Note, " +
             NOTE_TYPES_CATEGORY_COLUMN + " INTEGER DEFAULT 1, " + // from CATEGORIES
-            NOTE_TYPES_DEFAULT_PRIORITY_COLUMN + " INTEGER DEFAULT 3, " + // from [] TypeValues.priorities
+            NOTE_TYPES_DEFAULT_PRIORITY_COLUMN + " INTEGER DEFAULT 3, " + // from [] DBTypeValues.priorities
             NOTE_TYPES_DEFAULT_CONTENT_INPUT_TYPE_COLUMN + " INTEGER DEFAULT 1, " + // from INPUT_TYPES
             NOTE_TYPES_DEFAULT_COMMENT_INPUT_TYPE_COLUMN + " INTEGER DEFAULT 1, " + // from INPUT_TYPES
             NOTE_TYPES_LAST_ID_COLUMN + " INTEGER DEFAULT 0);";
@@ -102,7 +102,7 @@ public class IntrovertDbHelper extends SQLiteOpenHelper {
 
     private void createDefaultNoteTypes(SQLiteDatabase db) {
 
-        Utils.createNewNoteType(db, null, 0, 0, 0,
+        DbUtils.createNoteType(db, null, 0, 0, 0,
                 0);
 
     }
@@ -138,8 +138,8 @@ public class IntrovertDbHelper extends SQLiteOpenHelper {
             + NOTES_TABLE_NAME + ";";
 
 
-    public IntrovertDbHelper(Context context, String name,
-                             SQLiteDatabase.CursorFactory factory, int version) {
+    public DbHelper(Context context, String name,
+                    SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
 

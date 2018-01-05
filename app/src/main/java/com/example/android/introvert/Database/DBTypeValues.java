@@ -1,10 +1,12 @@
-package com.example.android.introvert;
+package com.example.android.introvert.Database;
 
 /**
  * Created by takeoff on 003 03 Jan 18.
  */
 
-public class TypeValues {
+class DBTypeValues {
+
+    static private String TAG = "INTROWERT_DBTYPEVALUES:";
 
     static final byte[] priorities = {1, 2, 3, 4, 5};
 

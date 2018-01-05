@@ -16,15 +16,14 @@ import android.widget.ListView;
 
 import com.example.android.introvert.Activities.MainActivity;
 import com.example.android.introvert.Activities.NoteActivity;
-import com.example.android.introvert.NotesCursorAdapter;
+import com.example.android.introvert.Database.DbUtils;
+import com.example.android.introvert.Adapters.NotesCursorAdapter;
 import com.example.android.introvert.R;
-import com.example.android.introvert.Utils;
 
-import static com.example.android.introvert.IntrovertDbHelper.CATEGORIES_TABLE_NAME;
-import static com.example.android.introvert.IntrovertDbHelper.INPUT_TYPES_TABLE_NAME;
-import static com.example.android.introvert.IntrovertDbHelper.NOTES_TABLE_NAME;
-import static com.example.android.introvert.IntrovertDbHelper.NOTE_TYPES_TABLE_NAME;
-import static com.example.android.introvert.IntrovertDbHelper.SETTINGS_TABLE_NAME;
+import static com.example.android.introvert.Database.DbHelper.CATEGORIES_TABLE_NAME;
+import static com.example.android.introvert.Database.DbHelper.INPUT_TYPES_TABLE_NAME;
+import static com.example.android.introvert.Database.DbHelper.NOTES_TABLE_NAME;
+import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_TABLE_NAME;
 
 /**
  * Created by takeoff on 024 24 Oct 17.
@@ -81,23 +80,19 @@ public class TimelineFragment extends Fragment {
         switch (item.getItemId()) {
 
             case R.id.menu_timeline_dump_notes:
-                Utils.dumpTableExternal(db, NOTES_TABLE_NAME);
-                return true;
-
-            case R.id.menu_timeline_dump_settings:
-                Utils.dumpTableExternal(db, SETTINGS_TABLE_NAME);
+                DbUtils.dumpTableExternal(db, NOTES_TABLE_NAME);
                 return true;
 
             case R.id.menu_timeline_dump_note_types:
-                Utils.dumpTableExternal(db, NOTE_TYPES_TABLE_NAME);
+                DbUtils.dumpTableExternal(db, NOTE_TYPES_TABLE_NAME);
                 return true;
 
             case R.id.menu_timeline_dump_input_types:
-                Utils.dumpTableExternal(db, INPUT_TYPES_TABLE_NAME);
+                DbUtils.dumpTableExternal(db, INPUT_TYPES_TABLE_NAME);
                 return true;
 
             case R.id.menu_timeline_dump_categories:
-                Utils.dumpTableExternal(db, CATEGORIES_TABLE_NAME);
+                DbUtils.dumpTableExternal(db, CATEGORIES_TABLE_NAME);
                 return true;
 
             case R.id.menu_timeline_add_note:

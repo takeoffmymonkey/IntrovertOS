@@ -12,17 +12,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.example.android.introvert.IntrovertDbHelper;
+import com.example.android.introvert.Database.DbHelper;
 import com.example.android.introvert.R;
-import com.example.android.introvert.Utils;
+import com.example.android.introvert.Database.DbUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static com.example.android.introvert.IntrovertDbHelper.NOTES_CONTENT_COLUMN;
-import static com.example.android.introvert.IntrovertDbHelper.NOTES_NAME_COLUMN;
-import static com.example.android.introvert.IntrovertDbHelper.NOTES_TABLE_NAME;
-import static com.example.android.introvert.IntrovertDbHelper.NOTES_TYPE_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTES_CONTENT_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTES_NAME_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTES_TABLE_NAME;
+import static com.example.android.introvert.Database.DbHelper.NOTES_TYPE_COLUMN;
 
 /**
  * Created by takeoff on 029 29 Dec 17.
@@ -139,7 +139,7 @@ public class NoteActivity extends AppCompatActivity {
 
         if (activityMode == 1) { // we are in add new note mode
             // read default from db
-            nameInitValue = Utils.getNameForNewNote(MainActivity.db, noteType);
+            nameInitValue = DbUtils.getNameForNewNote(MainActivity.db, noteType);
 
         } else if (activityMode == 2) { // we are in edit mode
             // read for current id from db
@@ -252,11 +252,11 @@ public class NoteActivity extends AppCompatActivity {
 
         } else if (activityMode == 2 && id != -1) { // we are in edit activityMode
 
-            contentValues.put(IntrovertDbHelper.SETTINGS_1_COLUMN, 0);
-            contentValues.put(IntrovertDbHelper.SETTINGS_2_COLUMN, 0);
+            contentValues.put(DbHelper.SETTINGS_1_COLUMN, 0);
+            contentValues.put(DbHelper.SETTINGS_2_COLUMN, 0);
 
             if (MainActivity.db.update(NOTES_TABLE_NAME, contentValues,
-                    IntrovertDbHelper.ID_COLUMN + "=?",
+                    DbHelper.ID_COLUMN + "=?",
                     new String[]{"1"}) == -1) {
                 Log.e(TAG, "ERROR UPDATING");
             }

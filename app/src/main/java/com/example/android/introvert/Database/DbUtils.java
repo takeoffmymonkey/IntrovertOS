@@ -1,4 +1,4 @@
-package com.example.android.introvert;
+package com.example.android.introvert.Database;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -9,18 +9,18 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-import static com.example.android.introvert.IntrovertDbHelper.NOTE_TYPES_DEFAULT_NAME_COLUMN;
-import static com.example.android.introvert.IntrovertDbHelper.NOTE_TYPES_LAST_ID_COLUMN;
-import static com.example.android.introvert.IntrovertDbHelper.NOTE_TYPES_TABLE_NAME;
-import static com.example.android.introvert.IntrovertDbHelper.NOTE_TYPES_TYPE_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_DEFAULT_NAME_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_LAST_ID_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_TABLE_NAME;
+import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_TYPE_COLUMN;
 
 /**
  * Created by takeoff on 001 01 Jan 18.
  */
 
-public class Utils {
+public class DbUtils {
 
-    static private String TAG = "INTROWERT_UTILS:";
+    static private String TAG = "INTROWERT_DBUTILS:";
 
     public static void dumpTableExternal(SQLiteDatabase db, String tableName) {
         new DumpTable(db, tableName).execute();
@@ -160,9 +160,9 @@ public class Utils {
     }
 
     // pass null or 0 for default setting
-    public static void createNewNoteType(SQLiteDatabase db, @Nullable String noteName,
-                                         int category, int contentInputType, int tagsInputType,
-                                         int commentInputType) {
+    static void createNoteType(SQLiteDatabase db, @Nullable String noteName,
+                                      int category, int contentInputType, int tagsInputType,
+                                      int commentInputType) {
 
         // Text note
         ContentValues textNoteContentValues = new ContentValues();
