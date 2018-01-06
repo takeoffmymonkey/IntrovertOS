@@ -252,9 +252,9 @@ public class NoteActivity extends AppCompatActivity {
 
         } else if (activityMode == 2 && id != -1) { // we are in edit activityMode
 
-            contentValues.put(DbHelper.SETTINGS_1_COLUMN, 0);
+            /*contentValues.put(DbHelper.SETTINGS_1_COLUMN, 0);
             contentValues.put(DbHelper.SETTINGS_2_COLUMN, 0);
-
+*/
             if (MainActivity.db.update(NOTES_TABLE_NAME, contentValues,
                     DbHelper.ID_COLUMN + "=?",
                     new String[]{"1"}) == -1) {

@@ -9,10 +9,20 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import static com.example.android.introvert.Database.DbHelper.CATEGORIES_CATEGORY_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.CATEGORIES_TABLE_NAME;
+import static com.example.android.introvert.Database.DbHelper.ID_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.INPUT_TYPES_TABLE_NAME;
+import static com.example.android.introvert.Database.DbHelper.INPUT_TYPES_TYPE_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_CATEGORY_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_DEFAULT_COMMENT_INPUT_TYPE_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_DEFAULT_CONTENT_INPUT_TYPE_COLUMN;
 import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_DEFAULT_NAME_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_DEFAULT_PRIORITY_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_DEFAULT_TAGS_INPUT_TYPE_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_INTERNAL_TYPE_COLUMN;
 import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_LAST_ID_COLUMN;
 import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_TABLE_NAME;
-import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_TYPE_COLUMN;
 
 /**
  * Created by takeoff on 001 01 Jan 18.
@@ -22,9 +32,173 @@ public class DbUtils {
 
     static private String TAG = "INTROWERT_DBUTILS:";
 
+
+    static boolean addCategory(SQLiteDatabase db, String category) {
+        // Check if category is empty
+        if (category != null && !category.equals("")) { // category is not empty
+
+            // Check if category already exists
+            Cursor cursorCategory = db.query(CATEGORIES_TABLE_NAME,
+                    new String[]{ID_COLUMN},
+                    CATEGORIES_CATEGORY_COLUMN + "=?", new String[]{category},
+                    null, null, null);
+
+            if (cursorCategory.getCount() == 0) { // Category doesn't exist, add it
+                cursorCategory.close();
+
+                ContentValues categoryContentValues = new ContentValues();
+                categoryContentValues.put(CATEGORIES_CATEGORY_COLUMN, category);
+
+                if (db.insert(CATEGORIES_TABLE_NAME, null, categoryContentValues) == -1) {
+                    // insert was unsuccessfull
+                    Log.e(TAG, "Error adding category: " + category);
+                    return false;
+                } else { // insert was successfull
+                    Log.i(TAG, "Category added successfully: " + category);
+                    return true;
+                }
+            } else { // Category already exist
+                cursorCategory.close();
+                Log.e(TAG, "Category already exist: " + category);
+                return false;
+            }
+        } else { // category is empty
+            Log.e(TAG, "Category name should not be empty or null: " + category);
+            return false;
+        }
+
+    }
+
+
+    static void createDefaultCategories(SQLiteDatabase db) {
+        for (String defaultCategory : DBTypeValues.defaultCategories) {
+            addCategory(db, defaultCategory);
+        }
+    }
+
+
+    static void createInputTypes(SQLiteDatabase db) {
+        // Add input types to INPUT_TYPES_TABLE_NAME
+        for (String inputType : DBTypeValues.inputTypes) {
+            ContentValues inputsContentValues = new ContentValues();
+            inputsContentValues.put(INPUT_TYPES_TYPE_COLUMN, inputType);
+            if (db.insert(INPUT_TYPES_TABLE_NAME, null,
+                    inputsContentValues) == -1) {
+                Log.e(TAG, "Error adding input type: " + inputType);
+            } else {
+                Log.i(TAG, "Input type added successfully: " + inputType);
+            }
+        }
+    }
+
+
+    // Create default names for note types - user and system
+    static String generateInternalTypeName(boolean user, SQLiteDatabase db) {
+        // User: id_ + user
+        // System: id_ + system
+        String origin;
+        if (user) origin = "user";
+        else origin = "system";
+        // Get next available id
+        Cursor cursorNoteTypes = db.query(NOTE_TYPES_TABLE_NAME, new String[]{ID_COLUMN}, null,
+                null, null, null, null);
+        int id = cursorNoteTypes.getCount() + 1;
+        cursorNoteTypes.close();
+        return "" + id + "_" + origin;
+    }
+
+
+    // Create default name for note visible to user (will be incremented)
+    // Use this when custom name is not provided
+    static String generateDefaultName(String category) {
+        // Category + " "
+        return category + " ";
+    }
+
+    // pass null or 0 for default setting
+    static void addNoteType(boolean user,
+                            SQLiteDatabase db,
+                            @Nullable String defaultName,
+                            int category,
+                            int defaultPriority,
+                            int contentInputType,
+                            int tagsInputType,
+                            int commentInputType) {
+
+        // Generate type name
+        String internalTypeName = generateInternalTypeName(user, db);
+
+        // Get default values if custom not provided
+        // Check if category is not provided
+        if (category == 0) { // Category not provided
+            category = 1; // Ideas
+        }
+        // Check if default priority is not provided
+        if (defaultPriority == 0) { // Default priority is not provided
+            defaultPriority = 3;
+        }
+        // Check if content input type is not provided
+        if (contentInputType == 0) { // content input type is not provided
+            contentInputType = 1; // text
+        }
+        // Check if tags input type is not provided
+        if (tagsInputType == 0) { // tags input type is not provided
+            tagsInputType = 1; // text
+        }
+        // Check if tags input type is not provided
+        if (commentInputType == 0) { // comment input type is not provided
+            commentInputType = 1; // text
+        }
+        // Check if default name is provided, if not - generate
+        if (defaultName == null || defaultName.equals("")) { // name is not provided
+            defaultName = "Temporary default name";
+            String categoryName;
+            Cursor cursorCategory = db.query(CATEGORIES_TABLE_NAME,
+                    new String[]{CATEGORIES_CATEGORY_COLUMN},
+                    ID_COLUMN + "=?", new String[]{Integer.toString(category)},
+                    null, null, null);
+            if (cursorCategory.getCount() == 1) { // Category is found
+                cursorCategory.moveToFirst();
+                categoryName = cursorCategory.getString(cursorCategory
+                        .getColumnIndexOrThrow(CATEGORIES_CATEGORY_COLUMN));
+                defaultName = generateDefaultName(categoryName);
+            } else { // Category is not found or wrong number of categories is found
+                Log.e(TAG, "Category not found or wrong number of categories found. ID: "
+                        + category);
+            }
+            cursorCategory.close();
+        }
+
+        // Insert to NOTE_TYPES table
+        ContentValues noteTypeContentValues = new ContentValues();
+        noteTypeContentValues.put(NOTE_TYPES_INTERNAL_TYPE_COLUMN, internalTypeName);
+        noteTypeContentValues.put(NOTE_TYPES_DEFAULT_NAME_COLUMN, defaultName);
+        noteTypeContentValues.put(NOTE_TYPES_CATEGORY_COLUMN, category);
+        noteTypeContentValues.put(NOTE_TYPES_DEFAULT_PRIORITY_COLUMN, defaultPriority);
+        noteTypeContentValues.put(NOTE_TYPES_DEFAULT_CONTENT_INPUT_TYPE_COLUMN, contentInputType);
+        noteTypeContentValues.put(NOTE_TYPES_DEFAULT_TAGS_INPUT_TYPE_COLUMN, tagsInputType);
+        noteTypeContentValues.put(NOTE_TYPES_DEFAULT_COMMENT_INPUT_TYPE_COLUMN, commentInputType);
+        if (db.insert(NOTE_TYPES_TABLE_NAME, null,
+                noteTypeContentValues) == -1) { // Error adding
+            Log.e(TAG, "Error adding type");
+        } else {
+            Log.i(TAG, "Type added successfully");
+        }
+
+    }
+
+
+    static void createDefaultNoteTypes(SQLiteDatabase db) {
+        // Default text note for Ideas category
+        addNoteType(false, db, null, 0, 0, 0,
+                0, 0);
+    }
+
+
     public static void dumpTableExternal(SQLiteDatabase db, String tableName) {
         new DumpTable(db, tableName).execute();
     }
+
 
     private static void dumpTableInternal(SQLiteDatabase db, String tableName) {
 
@@ -137,7 +311,7 @@ public class DbUtils {
 
         Cursor cursor = db.query(NOTE_TYPES_TABLE_NAME,
                 new String[]{NOTE_TYPES_DEFAULT_NAME_COLUMN, NOTE_TYPES_LAST_ID_COLUMN},
-                NOTE_TYPES_TYPE_COLUMN + "=?", new String[]{noteType},
+                NOTE_TYPES_INTERNAL_TYPE_COLUMN + "=?", new String[]{noteType},
                 null, null, null);
 
         if (cursor.getCount() == 1) {
@@ -159,33 +333,5 @@ public class DbUtils {
         return noteTypeName + " " + (lastNote + 1);
     }
 
-    // pass null or 0 for default setting
-    static void createNoteType(SQLiteDatabase db, @Nullable String noteName,
-                                      int category, int contentInputType, int tagsInputType,
-                                      int commentInputType) {
-
-        // Text note
-        ContentValues textNoteContentValues = new ContentValues();
-        // TODO: 005 05 Jan 18 name note types dynamically
-        textNoteContentValues.put(NOTE_TYPES_TYPE_COLUMN, "IdeaTextNote");
-
-        if (db.insert(NOTE_TYPES_TABLE_NAME, null,
-                textNoteContentValues) == -1) {
-            Log.e(TAG, "Error adding default type: text note");
-        } else {
-            Log.i(TAG, "Text note type added successfully");
-        }
-
-        // TODO: 003 03 Jan 18 add default notes via async
-
-
-        if (db.insert(NOTE_TYPES_TABLE_NAME, null,
-                textNoteContentValues) == -1) {
-            Log.e(TAG, "Error adding default type: text note");
-        } else {
-            Log.i(TAG, "Text note type added successfully");
-        }
-
-    }
 
 }

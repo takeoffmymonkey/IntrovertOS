@@ -8,9 +8,6 @@
         <!-- "file" submenu -->
         <menu>
             <item
-                android:id="@+id/menu_timeline_dump_settings"
-                android:title="Settings" />
-            <item
                 android:id="@+id/menu_timeline_dump_notes"
                 android:title="Notes" />
             <item
