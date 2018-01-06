@@ -16,8 +16,8 @@ import android.widget.ListView;
 
 import com.example.android.introvert.Activities.MainActivity;
 import com.example.android.introvert.Activities.NoteActivity;
-import com.example.android.introvert.Database.DbUtils;
 import com.example.android.introvert.Adapters.NotesCursorAdapter;
+import com.example.android.introvert.Database.DbUtils;
 import com.example.android.introvert.R;
 
 import static com.example.android.introvert.Database.DbHelper.CATEGORIES_TABLE_NAME;
@@ -31,7 +31,9 @@ import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_TABLE_N
 
 public class TimelineFragment extends Fragment {
 
-    String TAG = "INTROWERT_TIMELINE:";
+    String TAG = "INTROWERT_TIMELINE_FRAGMENT:";
+    public static final String ID = "id";
+    public static final String EDITMODE = "editMode";
 
     private SQLiteDatabase db = MainActivity.db;
 
@@ -97,6 +99,8 @@ public class TimelineFragment extends Fragment {
 
             case R.id.menu_timeline_add_note:
                 Intent intent = new Intent(getContext(), NoteActivity.class);
+                intent.putExtra(ID, 1);
+                intent.putExtra(EDITMODE, false);
                 startActivity(intent);
                 return true;
 

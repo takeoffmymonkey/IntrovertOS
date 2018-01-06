@@ -13,8 +13,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.example.android.introvert.Database.DbHelper;
-import com.example.android.introvert.R;
 import com.example.android.introvert.Database.DbUtils;
+import com.example.android.introvert.Fragments.TimelineFragment;
+import com.example.android.introvert.Notes.Note;
+import com.example.android.introvert.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,39 +32,53 @@ import static com.example.android.introvert.Database.DbHelper.NOTES_TYPE_COLUMN;
 
 public class NoteActivity extends AppCompatActivity {
 
-    String TAG = "INTROWERT_NOTE:";
-
-    int activityMode = -1; // 1 - add activityMode; 2 - edit activityMode
-    boolean isDirty = false; // changes to any field
-    String noteType = null; // type of the note to open activity for
-    int noteID = -1; // exact note to open if in edit mode
-    HashMap<View, String> initValues = new HashMap<>(); // list of initial values
-    ArrayList<View> dirtyViews = new ArrayList<>(); // list of changed views
+    String TAG = "INTROWERT_NOTE_ACTIVITY:";
 
     Button saveButton;
     Button deleteButton;
     Button cancelButton;
+
+    boolean exists = false;
+    int id = 0; // if exists - this is id of the note; for don't exists - this is id for type
+    Note note;
+    boolean isDirty = false; // there are legitimate changes to save
+
+    ArrayList<View> dirtyViews = new ArrayList<>(); // list of changed views
+    HashMap<View, String> initValues = new HashMap<>(); // list of initial values
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note);
 
-        activityMode = 1;
-        noteType = "TextNote";
+        // Get passed id and mode from extras
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            id = extras.getInt(TimelineFragment.ID, 0);
+            exists = extras.getBoolean(TimelineFragment.EDITMODE, false);
+        }
+
+        // Set input types
+        if (exists) { // edit mode - get input types from NOTES table
+
+        } else { // add mode - get input types from NOTE_TYPES table
+
+        }
+
+
 
         saveButton = (Button) findViewById(R.id.a_note_save_b);
         deleteButton = (Button) findViewById(R.id.a_note_delete_b);
         cancelButton = (Button) findViewById(R.id.a_note_cancel_b);
 
-        showDeleteButton();
-        showSaveButton();
+        maybeShowDeleteButton();
+
+        final EditText noteNameEditText = (EditText) findViewById(R.id.a_note_note_name_et);
+        final EditText noteContentEditText = (EditText) findViewById(R.id.a_note_note_text_et);
+
 
         // TODO: 002 02 Jan 18 Prevent multiple rows
-        final EditText noteNameEditText =
-                (EditText) findViewById(R.id.a_note_note_name_et);
-        final EditText noteContentEditText =
-                (EditText) findViewById(R.id.a_note_note_text_et);
 
 
         // Set and save init values
@@ -130,8 +146,21 @@ public class NoteActivity extends AppCompatActivity {
             }
         });
 
-
     }
+
+    private void maybeShowDeleteButton() {
+        // must be in edit mode
+        if (!exists) deleteButton.setVisibility(View.GONE); // add mode
+        else deleteButton.setVisibility(View.VISIBLE); // edit mode
+    }
+
+
+    private void maybeShowSaveButton() {
+        // must be changed state
+        if (isDirty) saveButton.setVisibility(View.VISIBLE);
+        else saveButton.setVisibility(View.GONE);
+    }
+
 
     //
     private void nameInitValue(EditText nameEditText) {
@@ -175,24 +204,6 @@ public class NoteActivity extends AppCompatActivity {
     }
 
 
-    private void showDeleteButton() {
-        // must be in edit activityMode
-        if (activityMode == 1) deleteButton.setVisibility(View.GONE);// add activityMode
-        else if (activityMode == 2) deleteButton.setVisibility(View.VISIBLE); // edit activityMode
-        else { // error: probably activityMode var was not initialized properly
-            Log.e(TAG, "Error: wrong activityMode value! " +
-                    "Probably activityMode variable was not initialized properly");
-        }
-    }
-
-
-    private void showSaveButton() {
-        // must be changed state
-        if (isDirty) saveButton.setVisibility(View.VISIBLE);
-        else saveButton.setVisibility(View.GONE);
-    }
-
-
     private String getCurrentValue(View view) {
         String currentValue = "wrong value";
 
@@ -224,7 +235,7 @@ public class NoteActivity extends AppCompatActivity {
                 !sameAsInitValue(changedView)) { // not empty and differs from init
             isDirty = true;
             if (!dirtyViews.contains(changedView)) dirtyViews.add(changedView);
-            showSaveButton();
+            maybeShowSaveButton();
 
         } else { // either empty or same from init
             dirtyViews.remove(changedView);
@@ -232,7 +243,7 @@ public class NoteActivity extends AppCompatActivity {
             if (dirtyViews.size() == 0) {
                 isDirty = false;
             }
-            showSaveButton();
+            maybeShowSaveButton();
         }
     }
 

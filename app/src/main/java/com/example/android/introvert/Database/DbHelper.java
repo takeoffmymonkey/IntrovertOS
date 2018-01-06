@@ -50,14 +50,14 @@ public class DbHelper extends SQLiteOpenHelper {
 
     /*NOTE_TYPES table - settings & data for types*/
     public static final String NOTE_TYPES_TABLE_NAME = "NOTE_TYPES";
-    static final String NOTE_TYPES_INTERNAL_TYPE_COLUMN = "internal_type";
-    static final String NOTE_TYPES_DEFAULT_NAME_COLUMN = "default_name"; // name for notes
-    static final String NOTE_TYPES_CATEGORY_COLUMN = "category";
-    static final String NOTE_TYPES_DEFAULT_PRIORITY_COLUMN = "default_priority";
-    static final String NOTE_TYPES_DEFAULT_CONTENT_INPUT_TYPE_COLUMN = "default_content_input_type";
-    static final String NOTE_TYPES_DEFAULT_TAGS_INPUT_TYPE_COLUMN = "default_tags_input_type";
-    static final String NOTE_TYPES_DEFAULT_COMMENT_INPUT_TYPE_COLUMN = "default_comment_input_type";
-    static final String NOTE_TYPES_LAST_ID_COLUMN = "last_id";
+    public static final String NOTE_TYPES_INTERNAL_TYPE_COLUMN = "internal_type";
+    public static final String NOTE_TYPES_DEFAULT_NAME_COLUMN = "default_name"; // name for notes
+    public static final String NOTE_TYPES_CATEGORY_COLUMN = "category";
+    public static final String NOTE_TYPES_DEFAULT_PRIORITY_COLUMN = "default_priority";
+    public static final String NOTE_TYPES_DEFAULT_CONTENT_INPUT_TYPE_COLUMN = "default_content_input_type";
+    public static final String NOTE_TYPES_DEFAULT_TAGS_INPUT_TYPE_COLUMN = "default_tags_input_type";
+    public static final String NOTE_TYPES_DEFAULT_COMMENT_INPUT_TYPE_COLUMN = "default_comment_input_type";
+    public static final String NOTE_TYPES_LAST_ID_COLUMN = "last_id";
     //table create command
     static final String NOTE_TYPES_TABLE_CREATE_COMMAND = "CREATE TABLE "
             + NOTE_TYPES_TABLE_NAME
@@ -79,13 +79,13 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String NOTES_TABLE_NAME = "NOTES";
     public static final String NOTES_TYPE_COLUMN = "type";
     public static final String NOTES_NAME_COLUMN = "name";
-    static final String NOTES_PRIORITY_COLUMN = "priority";
-    static final String NOTES_TAGS_COLUMN = "tags";
-    static final String NOTES_TAGS_INPUT_TYPE_COLUMN = "tags_input_type";
-    static final String NOTES_COMMENT_COLUMN = "comment";
-    static final String NOTES_COMMENT_INPUT_TYPE_COLUMN = "comment_input_type";
+    public static final String NOTES_PRIORITY_COLUMN = "priority";
+    public static final String NOTES_TAGS_COLUMN = "tags";
+    public static final String NOTES_TAGS_INPUT_TYPE_COLUMN = "tags_input_type";
+    public static final String NOTES_COMMENT_COLUMN = "comment";
+    public static final String NOTES_COMMENT_INPUT_TYPE_COLUMN = "comment_input_type";
     public static final String NOTES_CONTENT_COLUMN = "content";
-    static final String NOTES_CONTENT_INPUT_TYPE_COLUMN = "content_input_type";
+    public static final String NOTES_CONTENT_INPUT_TYPE_COLUMN = "content_input_type";
     //table create command
     static final String NOTES_TABLE_CREATE_COMMAND = "CREATE TABLE "
             + NOTES_TABLE_NAME
