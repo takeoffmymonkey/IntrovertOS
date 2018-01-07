@@ -33,7 +33,7 @@ public class TimelineFragment extends Fragment {
 
     String TAG = "INTROWERT_TIMELINE_FRAGMENT:";
     public static final String ID = "id";
-    public static final String EDITMODE = "editMode";
+    public static final String EXISTS = "exists";
 
     private SQLiteDatabase db = MainActivity.db;
 
@@ -99,8 +99,8 @@ public class TimelineFragment extends Fragment {
 
             case R.id.menu_timeline_add_note:
                 Intent intent = new Intent(getContext(), NoteActivity.class);
+                intent.putExtra(EXISTS, false);
                 intent.putExtra(ID, 1);
-                intent.putExtra(EDITMODE, false);
                 startActivity(intent);
                 return true;
 

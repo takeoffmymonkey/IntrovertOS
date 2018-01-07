@@ -1,6 +1,6 @@
 package com.example.android.introvert.Activities;
 
-import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -10,21 +10,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 
-import com.example.android.introvert.Database.DbHelper;
-import com.example.android.introvert.Database.DbUtils;
 import com.example.android.introvert.Fragments.TimelineFragment;
 import com.example.android.introvert.Notes.Note;
 import com.example.android.introvert.R;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import static com.example.android.introvert.Database.DbHelper.NOTES_CONTENT_COLUMN;
-import static com.example.android.introvert.Database.DbHelper.NOTES_NAME_COLUMN;
-import static com.example.android.introvert.Database.DbHelper.NOTES_TABLE_NAME;
-import static com.example.android.introvert.Database.DbHelper.NOTES_TYPE_COLUMN;
 
 /**
  * Created by takeoff on 029 29 Dec 17.
@@ -38,13 +27,11 @@ public class NoteActivity extends AppCompatActivity {
     Button deleteButton;
     Button cancelButton;
 
+    SQLiteDatabase db = MainActivity.db;
     boolean exists = false;
-    int id = 0; // if exists - this is id of the note; for don't exists - this is id for type
+    int noteId = 0; // if exists - this is Id of the note; for don't exists - this is Id for type
     Note note;
     boolean isDirty = false; // there are legitimate changes to save
-
-    ArrayList<View> dirtyViews = new ArrayList<>(); // list of changed views
-    HashMap<View, String> initValues = new HashMap<>(); // list of initial values
 
 
     @Override
@@ -52,41 +39,55 @@ public class NoteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note);
 
-        // Get passed id and mode from extras
+        // Get passed noteId and mode from extras
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            id = extras.getInt(TimelineFragment.ID, 0);
-            exists = extras.getBoolean(TimelineFragment.EDITMODE, false);
+            noteId = extras.getInt(TimelineFragment.ID, 0);
+            exists = extras.getBoolean(TimelineFragment.EXISTS, false);
         }
 
-        // Set input types
-        if (exists) { // edit mode - get input types from NOTES table
+        // Create Note object
+        note = new Note(db, exists, noteId);
 
-        } else { // add mode - get input types from NOTE_TYPES table
-
-        }
-
-
-
+        // Create buttons
         saveButton = (Button) findViewById(R.id.a_note_save_b);
-        deleteButton = (Button) findViewById(R.id.a_note_delete_b);
         cancelButton = (Button) findViewById(R.id.a_note_cancel_b);
+        deleteButton = (Button) findViewById(R.id.a_note_delete_b);
 
-        maybeShowDeleteButton();
+        // Add click listeners to buttons
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: 002 02 Jan 18 remove current activity from stack
+                Log.i(TAG, "save pressed");
+                // addOrUpdateNote();
+                startActivity(getSupportParentActivityIntent());
+            }
+        });
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "delete pressed");
+            }
+        });
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: 002 02 Jan 18 remove current activity from stack
+                Log.i(TAG, "cancel pressed");
+                startActivity(getSupportParentActivityIntent());
+            }
+        });
 
+        // Hide save button at the opening
+        saveButton.setVisibility(View.GONE);
+
+        // Hide delete button if note doesn't exist
+        if (!exists) deleteButton.setVisibility(View.GONE);
+
+        // Create name field, set content and change listener
         final EditText noteNameEditText = (EditText) findViewById(R.id.a_note_note_name_et);
-        final EditText noteContentEditText = (EditText) findViewById(R.id.a_note_note_text_et);
-
-
-        // TODO: 002 02 Jan 18 Prevent multiple rows
-
-
-        // Set and save init values
-        nameInitValue(noteNameEditText);
-        contentInitValue(noteContentEditText);
-
-
-        // Set listeners
+        noteNameEditText.setText(note.getName());
         noteNameEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -99,9 +100,16 @@ public class NoteActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) { // Text changed
                 Log.i(TAG, "noteNameEditText changed");
-                setDirty(noteNameEditText);
+                //setDirty(noteNameEditText);
             }
         });
+
+
+
+
+/*
+        final EditText noteContentEditText = (EditText) findViewById(R.id.a_note_note_text_et);
+
 
         noteContentEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -119,42 +127,12 @@ public class NoteActivity extends AppCompatActivity {
                 setDirty(noteContentEditText);
             }
         });
+*/
 
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO: 002 02 Jan 18 remove current activity from stack
-                Log.i(TAG, "save pressed");
-                addOrUpdateNote(noteID, noteNameEditText, noteContentEditText);
-                startActivity(getSupportParentActivityIntent());
-            }
-        });
-
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "delete pressed");
-            }
-        });
-
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO: 002 02 Jan 18 remove current activity from stack
-                Log.i(TAG, "cancel pressed");
-                startActivity(getSupportParentActivityIntent());
-            }
-        });
 
     }
 
-    private void maybeShowDeleteButton() {
-        // must be in edit mode
-        if (!exists) deleteButton.setVisibility(View.GONE); // add mode
-        else deleteButton.setVisibility(View.VISIBLE); // edit mode
-    }
-
-
+    /*
     private void maybeShowSaveButton() {
         // must be changed state
         if (isDirty) saveButton.setVisibility(View.VISIBLE);
@@ -171,7 +149,7 @@ public class NoteActivity extends AppCompatActivity {
             nameInitValue = DbUtils.getNameForNewNote(MainActivity.db, noteType);
 
         } else if (activityMode == 2) { // we are in edit mode
-            // read for current id from db
+            // read for current noteId from db
 
         } else { // wrong activityMode value
             nameInitValue = "wrong activityMode value";
@@ -191,7 +169,7 @@ public class NoteActivity extends AppCompatActivity {
             contentInitValue = "";
 
         } else if (activityMode == 2) { // we are in edit mode
-            // read for current id from db
+            // read for current noteId from db
 
         } else { // wrong activityMode value
             contentInitValue = "wrong activityMode value";
@@ -263,9 +241,9 @@ public class NoteActivity extends AppCompatActivity {
 
         } else if (activityMode == 2 && id != -1) { // we are in edit activityMode
 
-            /*contentValues.put(DbHelper.SETTINGS_1_COLUMN, 0);
+            *//*contentValues.put(DbHelper.SETTINGS_1_COLUMN, 0);
             contentValues.put(DbHelper.SETTINGS_2_COLUMN, 0);
-*/
+*//*
             if (MainActivity.db.update(NOTES_TABLE_NAME, contentValues,
                     DbHelper.ID_COLUMN + "=?",
                     new String[]{"1"}) == -1) {
@@ -278,5 +256,5 @@ public class NoteActivity extends AppCompatActivity {
         }
     }
 
-
+*/
 }
