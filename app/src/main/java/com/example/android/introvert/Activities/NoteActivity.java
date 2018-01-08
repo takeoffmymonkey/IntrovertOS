@@ -10,7 +10,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
+import com.example.android.introvert.Editors.TextEditor;
 import com.example.android.introvert.Fragments.TimelineFragment;
 import com.example.android.introvert.Notes.Note;
 import com.example.android.introvert.R;
@@ -33,6 +35,7 @@ public class NoteActivity extends AppCompatActivity {
     Note note;
     boolean isDirty = false; // there are legitimate changes to save
 
+    private LinearLayout contentEditorContainer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -105,7 +108,11 @@ public class NoteActivity extends AppCompatActivity {
         });
 
 
-
+        // Add content editor
+        contentEditorContainer = (LinearLayout) findViewById(R.id.a_note_content_editor_container);
+        TextEditor contentEditor = new TextEditor(getApplicationContext());
+        contentEditor.setEditText("test");
+        contentEditorContainer.addView(contentEditor);
 
 /*
         final EditText noteContentEditText = (EditText) findViewById(R.id.a_note_note_text_et);

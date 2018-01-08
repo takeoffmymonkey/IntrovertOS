@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/program_frame"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dip">
+
+    <EditText
+        android:id="@+id/editor_text_content_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter your text here"
+        android:inputType="textMultiLine"
+        android:lines="3"
+        android:scrollbars="vertical" />
+
+</RelativeLayout>

@@ -22,19 +22,18 @@
             android:id="@+id/a_note_note_name_et"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxLines="1"
             android:text="Note 1" />
 
     </LinearLayout>
 
 
-    <EditText
-        android:id="@+id/a_note_note_text_et"
+    <LinearLayout
+        android:id="@+id/a_note_content_editor_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter your text here"
-        android:inputType="textMultiLine"
-        android:scrollbars="vertical"
-        android:lines="9" />
+        android:orientation="vertical">
+    </LinearLayout>
 
 
     <RelativeLayout
