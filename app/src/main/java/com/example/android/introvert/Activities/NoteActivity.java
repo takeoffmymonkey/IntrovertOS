@@ -90,6 +90,9 @@ public class NoteActivity extends AppCompatActivity {
             if (note.exists()) { // We have an existing note, need to set it's content
                 contentEditor.setEditTextText(note.getContent());
             }
+            // Add listener
+            TextWatcher contentTextWatcher = makeTextWatcher("Content");
+            contentEditor.addListener(contentTextWatcher);
         }
 
 
@@ -103,6 +106,9 @@ public class NoteActivity extends AppCompatActivity {
             if (note.exists()) { // We have an existing note, need to set it's tags
                 tagsEditor.setEditTextText(note.getTags());
             }
+            // Add listener
+            TextWatcher tagsTextWatcher = makeTextWatcher("Tags");
+            tagsEditor.addListener(tagsTextWatcher);
         }
 
 
@@ -116,6 +122,9 @@ public class NoteActivity extends AppCompatActivity {
             if (note.exists()) { // We have an existing note, need to set it's tags
                 commentEditor.setEditTextText(note.getComment());
             }
+            // Add listener
+            TextWatcher commentTextWatcher = makeTextWatcher("Comment");
+            commentEditor.addListener(commentTextWatcher);
         }
 
 
@@ -198,6 +207,29 @@ public class NoteActivity extends AppCompatActivity {
 
 
     }
+
+
+    private TextWatcher makeTextWatcher(final String section) {
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Log.i(TAG, "Text changed in section: " + section);
+            }
+        };
+    }
+
+
+
 
     /*
     private void maybeShowSaveButton() {

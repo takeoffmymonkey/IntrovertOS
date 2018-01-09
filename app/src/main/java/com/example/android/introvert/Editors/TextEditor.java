@@ -3,9 +3,7 @@ package com.example.android.introvert.Editors;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -37,23 +35,11 @@ public class TextEditor extends RelativeLayout {
         inflater.inflate(R.layout.editor_text, this);
         editText = (EditText) findViewById(R.id.editor_text_content_et);
         editText.setTextColor(Color.BLACK);
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    }
 
-            }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                Log.i(TAG, "Text changed in section: " + typeAsString());
-            }
-        });
-
+    public void addListener(TextWatcher textWatcher) {
+        editText.addTextChangedListener(textWatcher);
     }
 
     public void setEditTextHint(String hint) {
