@@ -61,69 +61,59 @@ public class NoteActivity extends AppCompatActivity {
 
         // Create name field, set content and change listener
         TextView noteNameTextView = (TextView) findViewById(R.id.a_note_note_name_tv);
-        final EditText noteNameEditText = (EditText) findViewById(R.id.a_note_note_name_et);
-        noteNameEditText.setText(note.getName());
-        noteNameEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) { // Text changed
-                Log.i(TAG, "noteNameEditText changed");
-                //setDirty(noteNameEditText);
-            }
-        });
+        EditText noteNameEditText = (EditText) findViewById(R.id.a_note_note_name_et);
+        noteNameEditText.setText(note.getInitName());
+        TextWatcher nameTextWatcher = makeTextWatcher("Name", noteNameEditText, null);
+        noteNameEditText.addTextChangedListener(nameTextWatcher);
 
 
         // Add content text view and appropriate editor
         TextView noteContentTextView = (TextView) findViewById(R.id.a_note_note_content_tv);
-        if (note.getContentInputType() == 1) { // We have a text content input
+        if (note.getInitContentInputType() == 1) { // We have a text content input
             contentEditorContainer = (LinearLayout) findViewById(R.id.a_note_content_editor_container);
             TextEditor contentEditor = new TextEditor(getApplicationContext(), 1);
             contentEditor.setEditTextHint("Enter you note here");
             contentEditorContainer.addView(contentEditor);
             if (note.exists()) { // We have an existing note, need to set it's content
-                contentEditor.setEditTextText(note.getContent());
+                contentEditor.setEditTextText(note.getInitContent());
             }
             // Add listener
-            TextWatcher contentTextWatcher = makeTextWatcher("Content");
+            TextWatcher contentTextWatcher
+                    = makeTextWatcher("Content", null, contentEditor);
             contentEditor.addListener(contentTextWatcher);
         }
 
 
         // Add tags text view and appropriate editor
         TextView noteTagsTextView = (TextView) findViewById(R.id.a_note_note_tags_tv);
-        if (note.getTagsInputType() == 1) { // We have a text tags input
+        if (note.getInitTagsInputType() == 1) { // We have a text tags input
             tagsEditorContainer = (LinearLayout) findViewById(R.id.a_note_tags_editor_container);
             TextEditor tagsEditor = new TextEditor(getApplicationContext(), 2);
             tagsEditor.setEditTextHint("Enter you tags here");
             tagsEditorContainer.addView(tagsEditor);
             if (note.exists()) { // We have an existing note, need to set it's tags
-                tagsEditor.setEditTextText(note.getTags());
+                tagsEditor.setEditTextText(note.getInitTags());
             }
             // Add listener
-            TextWatcher tagsTextWatcher = makeTextWatcher("Tags");
+            TextWatcher tagsTextWatcher
+                    = makeTextWatcher("Tags", null, tagsEditor);
             tagsEditor.addListener(tagsTextWatcher);
         }
 
 
         // Add comment text view and appropriate editor
         TextView noteCommentTextView = (TextView) findViewById(R.id.a_note_note_comment_tv);
-        if (note.getCommentInputType() == 1) { // We have a text comment input
+        if (note.getInitCommentInputType() == 1) { // We have a text comment input
             commentEditorContainer = (LinearLayout) findViewById(R.id.a_note_comment_editor_container);
             TextEditor commentEditor = new TextEditor(getApplicationContext(), 3);
             commentEditor.setEditTextHint("Enter you comment here");
             commentEditorContainer.addView(commentEditor);
             if (note.exists()) { // We have an existing note, need to set it's tags
-                commentEditor.setEditTextText(note.getComment());
+                commentEditor.setEditTextText(note.getInitComment());
             }
             // Add listener
-            TextWatcher commentTextWatcher = makeTextWatcher("Comment");
+            TextWatcher commentTextWatcher
+                    = makeTextWatcher("Comment", null, commentEditor);
             commentEditor.addListener(commentTextWatcher);
         }
 
@@ -178,38 +168,11 @@ public class NoteActivity extends AppCompatActivity {
         if (!exists) deleteButton.setVisibility(View.GONE);
 
 
-
-
-
-
-
-/*
-        final EditText noteContentEditText = (EditText) findViewById(R.id.a_note_note_text_et);
-
-
-        noteContentEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                Log.i(TAG, "noteTextEditText changed");
-                setDirty(noteContentEditText);
-            }
-        });
-*/
-
-
     }
 
-
-    private TextWatcher makeTextWatcher(final String section) {
+    // Create text watcher for edit text field or Text Editor
+    private TextWatcher makeTextWatcher(final String section, @Nullable final EditText editText,
+                                        @Nullable final TextEditor textEditor) {
         return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -223,137 +186,32 @@ public class NoteActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                if (section.equals("Name") && editText != null) { // This is name field
+                    note.setUpdatedName(editText.getText().toString());
+                } else if (section.equals("Content") && textEditor != null) { // This is content field
+                    note.setUpdatedContent(textEditor.getEditText());
+                } else if (section.equals("Comment") && textEditor != null) { // This is comment field
+                    note.setUpdatedComment(textEditor.getEditText());
+                } else if (section.equals("Tags") && textEditor != null) { // This is tags field
+                    note.setUpdatedTags(textEditor.getEditText());
+                } else { // Error: Field is not defined
+                    Log.e(TAG, "Error: edit text field could not be defined");
+                }
+                note.updateReadiness();
+                showSaveButtonIfReady();
                 Log.i(TAG, "Text changed in section: " + section);
             }
         };
     }
 
 
-
-
-    /*
-    private void maybeShowSaveButton() {
-        // must be changed state
-        if (isDirty) saveButton.setVisibility(View.VISIBLE);
-        else saveButton.setVisibility(View.GONE);
-    }
-
-
-    //
-    private void nameInitValue(EditText nameEditText) {
-        String nameInitValue = null;
-
-        if (activityMode == 1) { // we are in add new note mode
-            // read default from db
-            nameInitValue = DbUtils.getNameForNewNote(MainActivity.db, noteType);
-
-        } else if (activityMode == 2) { // we are in edit mode
-            // read for current noteId from db
-
-        } else { // wrong activityMode value
-            nameInitValue = "wrong activityMode value";
-            Log.e(TAG, "Wrong activityMode value");
-        }
-
-        nameEditText.setText(nameInitValue);
-        initValues.put(nameEditText, nameInitValue);
-    }
-
-
-    private void contentInitValue(EditText contentEditText) {
-        String contentInitValue = null;
-
-        if (activityMode == 1) { // we are in add new note mode
-            // read default from db
-            contentInitValue = "";
-
-        } else if (activityMode == 2) { // we are in edit mode
-            // read for current noteId from db
-
-        } else { // wrong activityMode value
-            contentInitValue = "wrong activityMode value";
-            Log.e(TAG, "Wrong activityMode value");
-        }
-
-        contentEditText.setText(contentInitValue);
-        initValues.put(contentEditText, contentInitValue);
-
-    }
-
-
-    private String getCurrentValue(View view) {
-        String currentValue = "wrong value";
-
-        // check the type of View
-        if (view instanceof EditText) { // it is EditText
-            EditText currentView = (EditText) view;
-            return currentView.getText().toString();
-        } else if (view instanceof Spinner) { // it is Spinner
-            Spinner currentView = (Spinner) view;
-            return currentView.toString();
-        } else { // type not defined
-            Log.e(TAG, "Wrong type for getting value from!");
-            return currentValue;
-        }
-
-    }
-
-
-    private boolean sameAsInitValue(View view) {
-        // compare current value with init value
-        return getCurrentValue(view).equals(initValues.get(view));
-    }
-
-
-    private void setDirty(View changedView) {
-        // TODO: 003 03 Jan 18 make only name and content obligatory
-        // TODO: 004 04 Jan 18 prevent inserting note with empty name/content 
-        if (!getCurrentValue(changedView).equals("") &&
-                !sameAsInitValue(changedView)) { // not empty and differs from init
-            isDirty = true;
-            if (!dirtyViews.contains(changedView)) dirtyViews.add(changedView);
-            maybeShowSaveButton();
-
-        } else { // either empty or same from init
-            dirtyViews.remove(changedView);
-            // set is changed to false if dirtyViews is empty
-            if (dirtyViews.size() == 0) {
-                isDirty = false;
-            }
-            maybeShowSaveButton();
+    // Decide if there is need to display save button
+    void showSaveButtonIfReady() {
+        if (note.isReadyForSave()) { // Show save button
+            saveButton.setVisibility(View.VISIBLE);
+        } else { // Hide save button
+            saveButton.setVisibility(View.GONE);
         }
     }
 
-
-    private void addOrUpdateNote(@Nullable Integer id, View... views) {
-        ContentValues contentValues = new ContentValues();
-
-        if (activityMode == 1 && id == -1) { // we are in add activityMode
-            contentValues.put(NOTES_TYPE_COLUMN, noteType);
-            contentValues.put(NOTES_NAME_COLUMN, getCurrentValue(views[0]));
-            contentValues.put(NOTES_CONTENT_COLUMN, getCurrentValue(views[1]));
-
-            if (MainActivity.db.insert(NOTES_TABLE_NAME, null,
-                    contentValues) == -1) {
-                Log.e(TAG, "ERROR INSERTING");
-            }
-
-        } else if (activityMode == 2 && id != -1) { // we are in edit activityMode
-
-            *//*contentValues.put(DbHelper.SETTINGS_1_COLUMN, 0);
-            contentValues.put(DbHelper.SETTINGS_2_COLUMN, 0);
-*//*
-            if (MainActivity.db.update(NOTES_TABLE_NAME, contentValues,
-                    DbHelper.ID_COLUMN + "=?",
-                    new String[]{"1"}) == -1) {
-                Log.e(TAG, "ERROR UPDATING");
-            }
-
-        } else { // error: probably activityMode var was not initialized properly
-            Log.e(TAG, "Error: wrong activityMode value! " +
-                    "Probably activityMode variable was not initialized properly");
-        }
-    }
-
-*/
 }

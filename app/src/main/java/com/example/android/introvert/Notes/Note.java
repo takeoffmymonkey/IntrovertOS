@@ -35,18 +35,31 @@ public class Note {
 
     private boolean exists; // whether the note exists, or it is fresh
     private int noteId; // id of the note from NOTES table or possible new id
-    private String type; // name of the type from NOTE_TYPES table
+    private String type; // initName of the type from NOTE_TYPES table
     private int typeId; // id of the type from NOTE_TYPES table
     private String category; // category of the type from NOTE_TYPES table
-    private String name; // default or actual
-    private int priority; // default or actual
-    private String content; // empty or actual
-    private int contentInputType; // default or actual
-    private String tags; // empty or actual
-    private int tagsInputType; // default or actual
-    private String comment; // empty or actual
-    private int commentInputType; // default or actual
 
+    // Changeable fields
+    private String initName; // default or actual
+    private int initPriority; // default or actual
+    private String initContent; // empty or actual
+    private int initContentInputType; // default or actual
+    private String initTags; // empty or actual
+    private int initTagsInputType; // default or actual
+    private String initComment; // empty or actual
+    private int initCommentInputType; // default or actual
+
+    // Updated versions of the fields
+    private String updatedName = "";
+    private int updatedPriority = 0;
+    private String updatedContent = "";
+    private int updatedContentInputType = 0;
+    private String updatedTags = "";
+    private int updatedTagsInputType = 0;
+    private String updatedComment = "";
+    private int updatedCommentInputType = 0;
+
+    private boolean isReadyForSave = false;
 
     // id in editMode - id from NOTES; id in addMode - id from NOTE_TYPES
     public Note(SQLiteDatabase db, boolean exists, int id) {
@@ -64,20 +77,20 @@ public class Note {
             if (noteCursor.getCount() == 1) { // row is found
                 noteCursor.moveToFirst();
                 typeId = noteCursor.getInt(noteCursor.getColumnIndexOrThrow(NOTES_TYPE_COLUMN));
-                name = noteCursor.getString(noteCursor.getColumnIndexOrThrow(NOTES_NAME_COLUMN));
-                priority = noteCursor.getInt(noteCursor.getColumnIndexOrThrow(NOTES_PRIORITY_COLUMN));
-                content = noteCursor.getString(noteCursor.getColumnIndexOrThrow(NOTES_CONTENT_COLUMN));
-                contentInputType = noteCursor.getInt(noteCursor
+                initName = noteCursor.getString(noteCursor.getColumnIndexOrThrow(NOTES_NAME_COLUMN));
+                initPriority = noteCursor.getInt(noteCursor.getColumnIndexOrThrow(NOTES_PRIORITY_COLUMN));
+                initContent = noteCursor.getString(noteCursor.getColumnIndexOrThrow(NOTES_CONTENT_COLUMN));
+                initContentInputType = noteCursor.getInt(noteCursor
                         .getColumnIndexOrThrow(NOTES_CONTENT_INPUT_TYPE_COLUMN));
-                tags = noteCursor.getString(noteCursor.getColumnIndexOrThrow(NOTES_TAGS_COLUMN));
-                tagsInputType = noteCursor.getInt(noteCursor
+                initTags = noteCursor.getString(noteCursor.getColumnIndexOrThrow(NOTES_TAGS_COLUMN));
+                initTagsInputType = noteCursor.getInt(noteCursor
                         .getColumnIndexOrThrow(NOTES_TAGS_INPUT_TYPE_COLUMN));
-                comment = noteCursor.getString(noteCursor.getColumnIndexOrThrow(NOTES_COMMENT_COLUMN));
-                commentInputType = noteCursor.getInt(noteCursor
+                initComment = noteCursor.getString(noteCursor.getColumnIndexOrThrow(NOTES_COMMENT_COLUMN));
+                initCommentInputType = noteCursor.getInt(noteCursor
                         .getColumnIndexOrThrow(NOTES_COMMENT_INPUT_TYPE_COLUMN));
                 noteCursor.close();
 
-                // Get type name and category data from NOTE_TYPES table
+                // Get type initName and category data from NOTE_TYPES table
                 Cursor noteTypeCursor = db.query(NOTE_TYPES_TABLE_NAME,
                         new String[]{NOTE_TYPES_CATEGORY_COLUMN, NOTE_TYPES_INTERNAL_TYPE_COLUMN},
                         ID_COLUMN, new String[]{Integer.toString(typeId)},
@@ -116,20 +129,20 @@ public class Note {
                         .getColumnIndexOrThrow(NOTE_TYPES_INTERNAL_TYPE_COLUMN));
                 category = noteTypesCursor.getString(noteTypesCursor
                         .getColumnIndexOrThrow(NOTE_TYPES_CATEGORY_COLUMN));
-                priority = noteTypesCursor.getInt(noteTypesCursor
+                initPriority = noteTypesCursor.getInt(noteTypesCursor
                         .getColumnIndexOrThrow(NOTE_TYPES_DEFAULT_PRIORITY_COLUMN));
-                content = "";
-                contentInputType = noteTypesCursor.getInt(noteTypesCursor
+                initContent = "";
+                initContentInputType = noteTypesCursor.getInt(noteTypesCursor
                         .getColumnIndexOrThrow(NOTE_TYPES_DEFAULT_CONTENT_INPUT_TYPE_COLUMN));
-                tags = "";
-                tagsInputType = noteTypesCursor.getInt(noteTypesCursor
+                initTags = "";
+                initTagsInputType = noteTypesCursor.getInt(noteTypesCursor
                         .getColumnIndexOrThrow(NOTE_TYPES_DEFAULT_TAGS_INPUT_TYPE_COLUMN));
-                comment = "";
-                commentInputType = noteTypesCursor.getInt(noteTypesCursor
+                initComment = "";
+                initCommentInputType = noteTypesCursor.getInt(noteTypesCursor
                         .getColumnIndexOrThrow(NOTE_TYPES_DEFAULT_COMMENT_INPUT_TYPE_COLUMN));
                 noteId = noteTypesCursor.getInt(noteTypesCursor
                         .getColumnIndexOrThrow(NOTE_TYPES_LAST_ID_COLUMN)) + 1;
-                name = noteTypesCursor.getString(noteTypesCursor
+                initName = noteTypesCursor.getString(noteTypesCursor
                         .getColumnIndexOrThrow(NOTE_TYPES_DEFAULT_NAME_COLUMN)) + noteId;
 
             } else {
@@ -162,35 +175,89 @@ public class Note {
         return category;
     }
 
-    public String getName() {
-        return name;
+
+    // Initial getters
+    public String getInitName() {
+        return initName;
     }
 
-    public int getPriority() {
-        return priority;
+    public int getInitPriority() {
+        return initPriority;
     }
 
-    public String getContent() {
-        return content;
+    public String getInitContent() {
+        return initContent;
     }
 
-    public int getContentInputType() {
-        return contentInputType;
+    public int getInitContentInputType() {
+        return initContentInputType;
     }
 
-    public String getTags() {
-        return tags;
+    public String getInitTags() {
+        return initTags;
     }
 
-    public int getTagsInputType() {
-        return tagsInputType;
+    public int getInitTagsInputType() {
+        return initTagsInputType;
     }
 
-    public String getComment() {
-        return comment;
+    public String getInitComment() {
+        return initComment;
     }
 
-    public int getCommentInputType() {
-        return commentInputType;
+    public int getInitCommentInputType() {
+        return initCommentInputType;
+    }
+
+
+    // Update setters
+    public void setUpdatedName(String updatedName) {
+        this.updatedName = updatedName;
+    }
+
+    public void setUpdatedPriority(int updatedPriority) {
+        this.updatedPriority = updatedPriority;
+    }
+
+    public void setUpdatedContent(String updatedContent) {
+        this.updatedContent = updatedContent;
+    }
+
+    public void setUpdatedContentInputType(int updatedContentInputType) {
+        this.updatedContentInputType = updatedContentInputType;
+    }
+
+    public void setUpdatedTags(String updatedTags) {
+        this.updatedTags = updatedTags;
+    }
+
+    public void setUpdatedTagsInputType(int updatedTagsInputType) {
+        this.updatedTagsInputType = updatedTagsInputType;
+    }
+
+    public void setUpdatedComment(String updatedComment) {
+        this.updatedComment = updatedComment;
+    }
+
+    public void setUpdatedCommentInputType(int updatedCommentInputType) {
+        this.updatedCommentInputType = updatedCommentInputType;
+    }
+
+    public boolean isReadyForSave() {
+        return isReadyForSave;
+    }
+
+    public void updateReadiness() {
+        // TODO: 009 09 Jan 18 make input type change check
+        // TODO: 009 09 Jan 18 check for spaces or enters
+        // Check if name or content is empty
+        if (!updatedName.isEmpty() && !updatedContent.isEmpty()) { // Name and content aren't empty
+            // At least 1 field should differ from the init value
+            isReadyForSave = !initName.equals(updatedName) || !initContent.equals(updatedContent)
+                    || !initTags.equals(updatedTags) || !initComment.equals(updatedContent);
+        } else { // Name or content is empty
+            isReadyForSave = false;
+        }
+        Log.i(TAG, "isReadyForSave: " + isReadyForSave);
     }
 }
