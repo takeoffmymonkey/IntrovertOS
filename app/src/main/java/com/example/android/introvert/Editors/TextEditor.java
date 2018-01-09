@@ -2,6 +2,7 @@ package com.example.android.introvert.Editors;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -52,10 +53,53 @@ public class TextEditor extends RelativeLayout {
 
     }
 
+    public void setEditTextHint(String hint) {
+        editText.setHint(hint);
+    }
 
-    public void setEditText(String name) {
-        editText.setText(name);
+    public void setEditTextHintColor(int color) {
+        editText.setHintTextColor(color);
+    }
 
+
+    public void setEditTextText(String text) {
+        editText.setText(text);
+    }
+
+    public void setEditTextColor(int color) {
+        editText.setTextColor(color);
+    }
+
+    public void setEditTextInputType(int type) {
+        editText.setInputType(type);
+    }
+
+    public void setEditTextGravity(int gravity) {
+        editText.setGravity(gravity);
+    }
+
+    public void setHeight(int pixels) {
+        editText.setHeight(pixels);
+    }
+
+    public void setWidth(int pixels) {
+        editText.setWidth(pixels);
+    }
+
+    public void setEditTextSize(int unit, float size) {
+        editText.setTextSize(unit, size);
+    }
+
+    public void setEditTextTypeface(Typeface typeface) {
+        editText.setTypeface(typeface);
+    }
+
+    public void setEditTextMinLines(int lines) {
+        editText.setMinLines(lines);
+    }
+
+    public void setEditTextMaxines(int lines) {
+        editText.setMaxLines(lines);
     }
 
     public String getEditText() {

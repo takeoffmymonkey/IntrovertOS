@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.introvert.Editors.TextEditor;
 import com.example.android.introvert.Fragments.TimelineFragment;
@@ -36,11 +38,14 @@ public class NoteActivity extends AppCompatActivity {
     boolean isDirty = false; // there are legitimate changes to save
 
     private LinearLayout contentEditorContainer;
+    private LinearLayout tagsEditorContainer;
+    private LinearLayout commentEditorContainer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note);
+
 
         // Get passed noteId and mode from extras
         Bundle extras = getIntent().getExtras();
@@ -49,13 +54,71 @@ public class NoteActivity extends AppCompatActivity {
             exists = extras.getBoolean(TimelineFragment.EXISTS, false);
         }
 
+
         // Create Note object
         note = new Note(db, exists, noteId);
+
+
+        // Create name field, set content and change listener
+        TextView noteNameTextView = (TextView) findViewById(R.id.a_note_note_name_tv);
+        final EditText noteNameEditText = (EditText) findViewById(R.id.a_note_note_name_et);
+        noteNameEditText.setText(note.getName());
+        noteNameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) { // Text changed
+                Log.i(TAG, "noteNameEditText changed");
+                //setDirty(noteNameEditText);
+            }
+        });
+
+
+        // Add content text view and editor
+        TextView noteContentTextView = (TextView) findViewById(R.id.a_note_note_content_tv);
+        contentEditorContainer = (LinearLayout) findViewById(R.id.a_note_content_editor_container);
+        TextEditor contentEditor = new TextEditor(getApplicationContext());
+        contentEditor.setEditTextHint("Enter you note here");
+        contentEditorContainer.addView(contentEditor);
+
+
+        // Add tags text view and editor
+        TextView noteTagsTextView = (TextView) findViewById(R.id.a_note_note_tags_tv);
+        tagsEditorContainer = (LinearLayout) findViewById(R.id.a_note_tags_editor_container);
+        TextEditor tagsEditor = new TextEditor(getApplicationContext());
+        tagsEditor.setEditTextHint("Enter you tags here");
+        tagsEditorContainer.addView(tagsEditor);
+
+
+        // Add comment text view and editor
+        TextView noteCommentTextView = (TextView) findViewById(R.id.a_note_note_comment_tv);
+        commentEditorContainer = (LinearLayout) findViewById(R.id.a_note_comment_editor_container);
+        TextEditor commentEditor = new TextEditor(getApplicationContext());
+        commentEditor.setEditTextHint("Enter you comment here");
+        commentEditorContainer.addView(commentEditor);
+
+
+        // Add settings text view and set onclick listener
+        TextView settingsTextView = (TextView) findViewById(R.id.a_note_settings_tv);
+        settingsTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(NoteActivity.this, "Settings pressed", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
         // Create buttons
         saveButton = (Button) findViewById(R.id.a_note_save_b);
         cancelButton = (Button) findViewById(R.id.a_note_cancel_b);
         deleteButton = (Button) findViewById(R.id.a_note_delete_b);
+
 
         // Add click listeners to buttons
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -82,37 +145,15 @@ public class NoteActivity extends AppCompatActivity {
             }
         });
 
+
         // Hide save button at the opening
         saveButton.setVisibility(View.GONE);
+
 
         // Hide delete button if note doesn't exist
         if (!exists) deleteButton.setVisibility(View.GONE);
 
-        // Create name field, set content and change listener
-        final EditText noteNameEditText = (EditText) findViewById(R.id.a_note_note_name_et);
-        noteNameEditText.setText(note.getName());
-        noteNameEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) { // Text changed
-                Log.i(TAG, "noteNameEditText changed");
-                //setDirty(noteNameEditText);
-            }
-        });
-
-
-        // Add content editor
-        contentEditorContainer = (LinearLayout) findViewById(R.id.a_note_content_editor_container);
-        TextEditor contentEditor = new TextEditor(getApplicationContext());
-        contentEditor.setEditText("test");
-        contentEditorContainer.addView(contentEditor);
 
 /*
         final EditText noteContentEditText = (EditText) findViewById(R.id.a_note_note_text_et);
