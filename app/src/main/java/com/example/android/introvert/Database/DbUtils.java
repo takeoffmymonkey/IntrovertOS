@@ -315,7 +315,41 @@ public class DbUtils {
     }
 
 
-    public static void saveNote(SQLiteDatabase db, Note note) {
+    private static boolean incrementLastId(SQLiteDatabase db, int noteTypeId) {
+        Cursor cursorLastId = db.query(NOTE_TYPES_TABLE_NAME,
+                new String[]{NOTE_TYPES_LAST_ID_COLUMN}, ID_COLUMN + "=?",
+                new String[]{Integer.toString(noteTypeId)}, null,
+                null, null
+        );
+
+        // Check if there is such type
+        if (cursorLastId.getCount() == 1) { // Row with type is found
+            cursorLastId.moveToFirst();
+            int lastId = cursorLastId.getInt(cursorLastId.
+                    getColumnIndexOrThrow(NOTE_TYPES_LAST_ID_COLUMN));
+            cursorLastId.close();
+            // Update last id value
+            ContentValues lastIdContentValues = new ContentValues();
+            lastIdContentValues.put(NOTE_TYPES_LAST_ID_COLUMN, (lastId + 1));
+            if (db.update(NOTE_TYPES_TABLE_NAME, lastIdContentValues,
+                    ID_COLUMN + "=?",
+                    new String[]{Integer.toString(noteTypeId)}) == 1) {
+                // Successful update of last id
+                Log.i(TAG, "Successfully updated last id of the type: " + noteTypeId);
+                return true;
+            } else { // Unsuccessful update of last id
+                Log.e(TAG, "Error while updating last id of the type: " + noteTypeId);
+                return false;
+            }
+        } else { // Problems while searching for the needed type
+            cursorLastId.close();
+            Log.e(TAG, "Error: problems when searching for type with id: " + noteTypeId);
+            return false;
+        }
+    }
+
+
+    public static boolean saveNote(SQLiteDatabase db, Note note) {
         int noteId = note.getNoteId();
 
         // TODO: 009 09 Jan 18 change getInit input types to getUpdated when ready
@@ -335,51 +369,29 @@ public class DbUtils {
                     new String[]{Integer.toString(noteId)}) == 1) {
                 // Update is successful
                 Log.i(TAG, "Successfully updated note with id: " + noteId);
+                return true;
             } else {
                 // Update is not successful
                 Log.e(TAG, "Error: unsuccessful update of the note with id: " + noteId);
+                return false;
             }
         } else { // Add new note
             if (db.insert(NOTES_TABLE_NAME, null, contentValues) != -1) {
                 // Successful insert
                 Log.i(TAG, "Successfully added new note: " + noteId);
+                // Increment note count for this type
+                int noteTypeId = note.getTypeId();
+                return incrementLastId(db, noteTypeId);
             } else {
                 // Unsuccessful insert
                 Log.e(TAG, "Inserting new note was unsuccessful: " + noteId);
-            }
-
-            // Increment count of notes of this type
-            int noteTypeId = note.getTypeId();
-            Cursor cursorLastId = db.query(NOTE_TYPES_TABLE_NAME,
-                    new String[]{NOTE_TYPES_LAST_ID_COLUMN}, ID_COLUMN + "=?",
-                    new String[]{Integer.toString(noteTypeId)}, null,
-                    null, null
-            );
-            if (cursorLastId.getCount() == 1) { // Row with type is found
-                cursorLastId.moveToFirst();
-                int lastId = cursorLastId.getInt(cursorLastId.
-                        getColumnIndexOrThrow(NOTE_TYPES_LAST_ID_COLUMN));
-                cursorLastId.close();
-                // Update last id value
-                ContentValues lastIdContentValues = new ContentValues();
-                lastIdContentValues.put(NOTE_TYPES_LAST_ID_COLUMN, (lastId + 1));
-                if (db.update(NOTE_TYPES_TABLE_NAME, lastIdContentValues,
-                        ID_COLUMN + "=?",
-                        new String[]{Integer.toString(noteTypeId)}) == 1) {
-                    // Successful update of last id
-                    Log.i(TAG, "Successfully updated last id of the type: " + noteTypeId);
-                } else { // Unsuccessful update of last id
-                    Log.e(TAG, "Error while updating last id of the type: " + noteTypeId);
-                }
-            } else { // Problems while searching for the needed type
-                cursorLastId.close();
-                Log.e(TAG, "Error: problems when searching for type with id: " + noteTypeId);
+                return false;
             }
         }
     }
 
 
-    public static void deleteNote(SQLiteDatabase db, Note note) {
+    public static boolean deleteNote(SQLiteDatabase db, Note note) {
         if (note.exists()) { // Double check that note exists
             int noteId = note.getNoteId();
 
@@ -387,10 +399,14 @@ public class DbUtils {
             if (db.delete(NOTES_TABLE_NAME, ID_COLUMN + "=?",
                     new String[]{Integer.toString(noteId)}) != 0) {
                 Log.i(TAG, "Successfully deleted note id: " + noteId);
+                return true;
             } else { // some issue while deleting
                 Log.e(TAG, "Error: note wasn't deleted properly");
+                return false;
             }
+        } else { // Note says it doesn't exist
+            Log.e(TAG, "Error: note says it doesn't exist: " + note.getNoteId());
+            return false;
         }
-
     }
 }

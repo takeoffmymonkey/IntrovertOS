@@ -141,7 +141,13 @@ public class NoteActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // TODO: 002 02 Jan 18 remove current activity from stack
                 Log.i(TAG, "save pressed");
-                DbUtils.saveNote(db, note);
+                if (DbUtils.saveNote(db, note)) {
+                    Toast.makeText(NoteActivity.this, "Note saved",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(NoteActivity.this, "Issues while saving the note",
+                            Toast.LENGTH_SHORT).show();
+                }
                 startActivity(getSupportParentActivityIntent());
             }
         });
@@ -150,9 +156,14 @@ public class NoteActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // TODO: 002 02 Jan 18 remove current activity from stack
                 Log.i(TAG, "delete pressed");
-                DbUtils.deleteNote(db, note);
+                if (DbUtils.deleteNote(db, note)) {
+                    Toast.makeText(NoteActivity.this, "Note deleted",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(NoteActivity.this, "Issues while deleting the note",
+                            Toast.LENGTH_SHORT).show();
+                }
                 startActivity(getSupportParentActivityIntent());
-
             }
         });
         cancelButton.setOnClickListener(new View.OnClickListener() {

@@ -50,7 +50,7 @@ public class Note {
     private int initCommentInputType; // default or actual
 
     // Updated versions of the fields
-    private String updatedName = "";
+    private String updatedName; // initially gets same value as initValue
     private int updatedPriority = 0;
     private String updatedContent = "";
     private int updatedContentInputType = 0;
@@ -77,7 +77,7 @@ public class Note {
             if (noteCursor.getCount() == 1) { // row is found
                 noteCursor.moveToFirst();
                 typeId = noteCursor.getInt(noteCursor.getColumnIndexOrThrow(NOTES_TYPE_COLUMN));
-                initName = noteCursor.getString(noteCursor.getColumnIndexOrThrow(NOTES_NAME_COLUMN));
+                updatedName = initName = noteCursor.getString(noteCursor.getColumnIndexOrThrow(NOTES_NAME_COLUMN));
                 initPriority = noteCursor.getInt(noteCursor.getColumnIndexOrThrow(NOTES_PRIORITY_COLUMN));
                 initContent = noteCursor.getString(noteCursor.getColumnIndexOrThrow(NOTES_CONTENT_COLUMN));
                 initContentInputType = noteCursor.getInt(noteCursor
@@ -142,7 +142,7 @@ public class Note {
                         .getColumnIndexOrThrow(NOTE_TYPES_DEFAULT_COMMENT_INPUT_TYPE_COLUMN));
                 noteId = noteTypesCursor.getInt(noteTypesCursor
                         .getColumnIndexOrThrow(NOTE_TYPES_LAST_ID_COLUMN)) + 1;
-                initName = noteTypesCursor.getString(noteTypesCursor
+                updatedName = initName = noteTypesCursor.getString(noteTypesCursor
                         .getColumnIndexOrThrow(NOTE_TYPES_DEFAULT_NAME_COLUMN)) + noteId;
 
             } else {
