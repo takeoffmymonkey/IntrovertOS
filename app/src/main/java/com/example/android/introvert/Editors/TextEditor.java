@@ -22,8 +22,11 @@ public class TextEditor extends RelativeLayout {
 
     private EditText editText;
 
-    public TextEditor(Context context) {
+    private int type; // 1 - content, 2 - tags, 3 - comment
+
+    public TextEditor(Context context, int type) {
         super(context);
+        this.type = type;
         initComponent();
     }
 
@@ -47,7 +50,7 @@ public class TextEditor extends RelativeLayout {
 
             @Override
             public void afterTextChanged(Editable s) {
-                Log.i(TAG, "edit text changed");
+                Log.i(TAG, "Text changed in section: " + typeAsString());
             }
         });
 
@@ -104,6 +107,17 @@ public class TextEditor extends RelativeLayout {
 
     public String getEditText() {
         return editText.getText().toString();
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public String typeAsString() {
+        if (type == 1) return "Content";
+        else if (type == 2) return "Tags";
+        else if (type == 3) return "Comment";
+        else return "Wrong type";
     }
 
 }

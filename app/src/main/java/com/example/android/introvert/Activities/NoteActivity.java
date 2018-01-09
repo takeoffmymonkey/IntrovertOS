@@ -84,7 +84,7 @@ public class NoteActivity extends AppCompatActivity {
         TextView noteContentTextView = (TextView) findViewById(R.id.a_note_note_content_tv);
         if (note.getContentInputType() == 1) { // We have a text content input
             contentEditorContainer = (LinearLayout) findViewById(R.id.a_note_content_editor_container);
-            TextEditor contentEditor = new TextEditor(getApplicationContext());
+            TextEditor contentEditor = new TextEditor(getApplicationContext(), 1);
             contentEditor.setEditTextHint("Enter you note here");
             contentEditorContainer.addView(contentEditor);
             if (note.exists()) { // We have an existing note, need to set it's content
@@ -92,11 +92,12 @@ public class NoteActivity extends AppCompatActivity {
             }
         }
 
+
         // Add tags text view and appropriate editor
         TextView noteTagsTextView = (TextView) findViewById(R.id.a_note_note_tags_tv);
         if (note.getTagsInputType() == 1) { // We have a text tags input
             tagsEditorContainer = (LinearLayout) findViewById(R.id.a_note_tags_editor_container);
-            TextEditor tagsEditor = new TextEditor(getApplicationContext());
+            TextEditor tagsEditor = new TextEditor(getApplicationContext(), 2);
             tagsEditor.setEditTextHint("Enter you tags here");
             tagsEditorContainer.addView(tagsEditor);
             if (note.exists()) { // We have an existing note, need to set it's tags
@@ -109,7 +110,7 @@ public class NoteActivity extends AppCompatActivity {
         TextView noteCommentTextView = (TextView) findViewById(R.id.a_note_note_comment_tv);
         if (note.getCommentInputType() == 1) { // We have a text comment input
             commentEditorContainer = (LinearLayout) findViewById(R.id.a_note_comment_editor_container);
-            TextEditor commentEditor = new TextEditor(getApplicationContext());
+            TextEditor commentEditor = new TextEditor(getApplicationContext(), 3);
             commentEditor.setEditTextHint("Enter you comment here");
             commentEditorContainer.addView(commentEditor);
             if (note.exists()) { // We have an existing note, need to set it's tags
@@ -166,6 +167,10 @@ public class NoteActivity extends AppCompatActivity {
 
         // Hide delete button if note doesn't exist
         if (!exists) deleteButton.setVisibility(View.GONE);
+
+
+
+
 
 
 
