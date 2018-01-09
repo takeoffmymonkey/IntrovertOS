@@ -80,28 +80,42 @@ public class NoteActivity extends AppCompatActivity {
         });
 
 
-        // Add content text view and editor
+        // Add content text view and appropriate editor
         TextView noteContentTextView = (TextView) findViewById(R.id.a_note_note_content_tv);
-        contentEditorContainer = (LinearLayout) findViewById(R.id.a_note_content_editor_container);
-        TextEditor contentEditor = new TextEditor(getApplicationContext());
-        contentEditor.setEditTextHint("Enter you note here");
-        contentEditorContainer.addView(contentEditor);
+        if (note.getContentInputType() == 1) { // We have a text content input
+            contentEditorContainer = (LinearLayout) findViewById(R.id.a_note_content_editor_container);
+            TextEditor contentEditor = new TextEditor(getApplicationContext());
+            contentEditor.setEditTextHint("Enter you note here");
+            contentEditorContainer.addView(contentEditor);
+            if (note.exists()) { // We have an existing note, need to set it's content
+                contentEditor.setEditTextText(note.getContent());
+            }
+        }
 
-
-        // Add tags text view and editor
+        // Add tags text view and appropriate editor
         TextView noteTagsTextView = (TextView) findViewById(R.id.a_note_note_tags_tv);
-        tagsEditorContainer = (LinearLayout) findViewById(R.id.a_note_tags_editor_container);
-        TextEditor tagsEditor = new TextEditor(getApplicationContext());
-        tagsEditor.setEditTextHint("Enter you tags here");
-        tagsEditorContainer.addView(tagsEditor);
+        if (note.getTagsInputType() == 1) { // We have a text tags input
+            tagsEditorContainer = (LinearLayout) findViewById(R.id.a_note_tags_editor_container);
+            TextEditor tagsEditor = new TextEditor(getApplicationContext());
+            tagsEditor.setEditTextHint("Enter you tags here");
+            tagsEditorContainer.addView(tagsEditor);
+            if (note.exists()) { // We have an existing note, need to set it's tags
+                tagsEditor.setEditTextText(note.getTags());
+            }
+        }
 
 
-        // Add comment text view and editor
+        // Add comment text view and appropriate editor
         TextView noteCommentTextView = (TextView) findViewById(R.id.a_note_note_comment_tv);
-        commentEditorContainer = (LinearLayout) findViewById(R.id.a_note_comment_editor_container);
-        TextEditor commentEditor = new TextEditor(getApplicationContext());
-        commentEditor.setEditTextHint("Enter you comment here");
-        commentEditorContainer.addView(commentEditor);
+        if (note.getCommentInputType() == 1) { // We have a text comment input
+            commentEditorContainer = (LinearLayout) findViewById(R.id.a_note_comment_editor_container);
+            TextEditor commentEditor = new TextEditor(getApplicationContext());
+            commentEditor.setEditTextHint("Enter you comment here");
+            commentEditorContainer.addView(commentEditor);
+            if (note.exists()) { // We have an existing note, need to set it's tags
+                commentEditor.setEditTextText(note.getComment());
+            }
+        }
 
 
         // Add settings text view and set onclick listener
