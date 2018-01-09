@@ -247,6 +247,40 @@ public class Note {
         return isReadyForSave;
     }
 
+
+    // Update getters
+    public String getUpdatedName() {
+        return updatedName;
+    }
+
+    public int getUpdatedPriority() {
+        return updatedPriority;
+    }
+
+    public String getUpdatedContent() {
+        return updatedContent;
+    }
+
+    public int getUpdatedContentInputType() {
+        return updatedContentInputType;
+    }
+
+    public String getUpdatedTags() {
+        return updatedTags;
+    }
+
+    public int getUpdatedTagsInputType() {
+        return updatedTagsInputType;
+    }
+
+    public String getUpdatedComment() {
+        return updatedComment;
+    }
+
+    public int getUpdatedCommentInputType() {
+        return updatedCommentInputType;
+    }
+
     public void updateReadiness() {
         // TODO: 009 09 Jan 18 make input type change check
         // TODO: 009 09 Jan 18 check for spaces or enters

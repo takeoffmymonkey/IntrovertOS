@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.example.android.introvert.Notes.Note;
+
 import java.util.ArrayList;
 
 import static com.example.android.introvert.Database.DbHelper.CATEGORIES_CATEGORY_COLUMN;
@@ -14,6 +16,16 @@ import static com.example.android.introvert.Database.DbHelper.CATEGORIES_TABLE_N
 import static com.example.android.introvert.Database.DbHelper.ID_COLUMN;
 import static com.example.android.introvert.Database.DbHelper.INPUT_TYPES_TABLE_NAME;
 import static com.example.android.introvert.Database.DbHelper.INPUT_TYPES_TYPE_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTES_COMMENT_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTES_COMMENT_INPUT_TYPE_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTES_CONTENT_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTES_CONTENT_INPUT_TYPE_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTES_NAME_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTES_PRIORITY_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTES_TABLE_NAME;
+import static com.example.android.introvert.Database.DbHelper.NOTES_TAGS_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTES_TAGS_INPUT_TYPE_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTES_TYPE_COLUMN;
 import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_CATEGORY_COLUMN;
 import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_DEFAULT_COMMENT_INPUT_TYPE_COLUMN;
 import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_DEFAULT_CONTENT_INPUT_TYPE_COLUMN;
@@ -303,35 +315,82 @@ public class DbUtils {
     }
 
 
-    public static String getNameForNewNote(SQLiteDatabase db, String noteType) {
+    public static void saveNote(SQLiteDatabase db, Note note) {
+        int noteId = note.getNoteId();
 
-        String noteTypeName = null;
-        int lastNote = -1;
-        // read from NOTE_TYPES table number of notes column
+        // TODO: 009 09 Jan 18 change getInit input types to getUpdated when ready
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(NOTES_TYPE_COLUMN, note.getType());
+        contentValues.put(NOTES_NAME_COLUMN, note.getUpdatedName());
+        contentValues.put(NOTES_PRIORITY_COLUMN, note.getUpdatedPriority());
+        contentValues.put(NOTES_CONTENT_COLUMN, note.getUpdatedContent());
+        contentValues.put(NOTES_CONTENT_INPUT_TYPE_COLUMN, note.getInitContentInputType());
+        contentValues.put(NOTES_TAGS_COLUMN, note.getUpdatedTags());
+        contentValues.put(NOTES_TAGS_INPUT_TYPE_COLUMN, note.getInitTagsInputType());
+        contentValues.put(NOTES_COMMENT_COLUMN, note.getUpdatedComment());
+        contentValues.put(NOTES_COMMENT_INPUT_TYPE_COLUMN, note.getInitCommentInputType());
 
-        Cursor cursor = db.query(NOTE_TYPES_TABLE_NAME,
-                new String[]{NOTE_TYPES_DEFAULT_NAME_COLUMN, NOTE_TYPES_LAST_ID_COLUMN},
-                NOTE_TYPES_INTERNAL_TYPE_COLUMN + "=?", new String[]{noteType},
-                null, null, null);
+        if (note.exists()) { // Update existing note
+            if (db.update(NOTES_TABLE_NAME, contentValues, ID_COLUMN + "=?",
+                    new String[]{Integer.toString(noteId)}) == 1) {
+                // Update is successful
+                Log.i(TAG, "Successfully updated note with id: " + noteId);
+            } else {
+                // Update is not successful
+                Log.e(TAG, "Error: unsuccessful update of the note with id: " + noteId);
+            }
+        } else { // Add new note
+            if (db.insert(NOTES_TABLE_NAME, null, contentValues) != -1) {
+                // Successful insert
+                Log.i(TAG, "Successfully added new note: " + noteId);
+            } else {
+                // Unsuccessful insert
+                Log.e(TAG, "Inserting new note was unsuccessful: " + noteId);
+            }
 
-        if (cursor.getCount() == 1) {
-            cursor.moveToFirst();
-            noteTypeName = cursor.getString(cursor
-                    .getColumnIndex(NOTE_TYPES_DEFAULT_NAME_COLUMN));
-            lastNote = cursor.getInt(cursor
-                    .getColumnIndex(NOTE_TYPES_LAST_ID_COLUMN));
-        } else {
-            Log.e(TAG, "Wrong number of rows received when querying name of note: "
-                    + cursor.getCount() + "; Should be: 1");
+            // Increment count of notes of this type
+            int noteTypeId = note.getTypeId();
+            Cursor cursorLastId = db.query(NOTE_TYPES_TABLE_NAME,
+                    new String[]{NOTE_TYPES_LAST_ID_COLUMN}, ID_COLUMN + "=?",
+                    new String[]{Integer.toString(noteTypeId)}, null,
+                    null, null
+            );
+            if (cursorLastId.getCount() == 1) { // Row with type is found
+                cursorLastId.moveToFirst();
+                int lastId = cursorLastId.getInt(cursorLastId.
+                        getColumnIndexOrThrow(NOTE_TYPES_LAST_ID_COLUMN));
+                cursorLastId.close();
+                // Update last id value
+                ContentValues lastIdContentValues = new ContentValues();
+                lastIdContentValues.put(NOTE_TYPES_LAST_ID_COLUMN, (lastId + 1));
+                if (db.update(NOTE_TYPES_TABLE_NAME, lastIdContentValues,
+                        ID_COLUMN + "=?",
+                        new String[]{Integer.toString(noteTypeId)}) == 1) {
+                    // Successful update of last id
+                    Log.i(TAG, "Successfully updated last id of the type: " + noteTypeId);
+                } else { // Unsuccessful update of last id
+                    Log.e(TAG, "Error while updating last id of the type: " + noteTypeId);
+                }
+            } else { // Problems while searching for the needed type
+                cursorLastId.close();
+                Log.e(TAG, "Error: problems when searching for type with id: " + noteTypeId);
+            }
         }
-        cursor.close();
-
-        // TODO: 003 03 Jan 18 prevent querying name column duplicates
-
-        // TODO: 003 03 Jan 18 make querying async
-
-        return noteTypeName + " " + (lastNote + 1);
     }
 
 
+    public static void deleteNote(SQLiteDatabase db, Note note) {
+        if (note.exists()) { // Double check that note exists
+            int noteId = note.getNoteId();
+
+            // try to delete the note
+            if (db.delete(NOTES_TABLE_NAME, ID_COLUMN + "=?",
+                    new String[]{Integer.toString(noteId)}) != 0) {
+                Log.i(TAG, "Successfully deleted note id: " + noteId);
+            } else { // some issue while deleting
+                Log.e(TAG, "Error: note wasn't deleted properly");
+            }
+        }
+
+    }
 }

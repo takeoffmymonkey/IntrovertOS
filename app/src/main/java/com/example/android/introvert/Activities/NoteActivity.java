@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.introvert.Database.DbUtils;
 import com.example.android.introvert.Editors.TextEditor;
 import com.example.android.introvert.Fragments.TimelineFragment;
 import com.example.android.introvert.Notes.Note;
@@ -140,14 +141,18 @@ public class NoteActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // TODO: 002 02 Jan 18 remove current activity from stack
                 Log.i(TAG, "save pressed");
-                // addOrUpdateNote();
+                DbUtils.saveNote(db, note);
                 startActivity(getSupportParentActivityIntent());
             }
         });
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // TODO: 002 02 Jan 18 remove current activity from stack
                 Log.i(TAG, "delete pressed");
+                DbUtils.deleteNote(db, note);
+                startActivity(getSupportParentActivityIntent());
+
             }
         });
         cancelButton.setOnClickListener(new View.OnClickListener() {
