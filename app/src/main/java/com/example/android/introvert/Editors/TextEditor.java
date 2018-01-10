@@ -14,7 +14,7 @@ import com.example.android.introvert.R;
  * Created by takeoff on 008 08 Jan 18.
  */
 
-public class TextEditor extends RelativeLayout {
+public class TextEditor extends RelativeLayout implements Editable {
 
     String TAG = "INTROWERT_TEXT_EDITOR:";
 
@@ -106,4 +106,13 @@ public class TextEditor extends RelativeLayout {
         else return "Wrong type";
     }
 
+    @Override
+    public void setContent(String content) {
+
+    }
+
+    @Override
+    public String getContent() {
+        return null;
+    }
 }

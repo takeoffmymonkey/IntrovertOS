@@ -97,11 +97,18 @@ public class TimelineFragment extends Fragment {
                 DbUtils.dumpTableExternal(db, CATEGORIES_TABLE_NAME);
                 return true;
 
-            case R.id.menu_timeline_add_note:
-                Intent intent = new Intent(getContext(), NoteActivity.class);
-                intent.putExtra(EXISTS, false);
-                intent.putExtra(ID, 1);
-                startActivity(intent);
+            case R.id.menu_timeline_add_text_note:
+                Intent intentAddTextNote = new Intent(getContext(), NoteActivity.class);
+                intentAddTextNote.putExtra(EXISTS, false);
+                intentAddTextNote.putExtra(ID, 1);
+                startActivity(intentAddTextNote);
+                return true;
+
+            case R.id.menu_timeline_add_audio_note:
+                Intent intentAddAudioNote = new Intent(getContext(), NoteActivity.class);
+                intentAddAudioNote.putExtra(EXISTS, false);
+                intentAddAudioNote.putExtra(ID, 2);
+                startActivity(intentAddAudioNote);
                 return true;
 
             default:

@@ -204,6 +204,9 @@ public class DbUtils {
         // Default text note for Ideas category
         addNoteType(false, db, null, 0, 0, 0,
                 0, 0);
+
+        addNoteType(false, db, "Idea (Audio)", 0, 0, 2,
+                0, 0);
     }
 
 

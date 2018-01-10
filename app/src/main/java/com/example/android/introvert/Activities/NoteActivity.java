@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.introvert.Database.DbUtils;
+import com.example.android.introvert.Editors.AudioEditor;
 import com.example.android.introvert.Editors.TextEditor;
 import com.example.android.introvert.Fragments.TimelineFragment;
 import com.example.android.introvert.Notes.Note;
@@ -36,7 +37,6 @@ public class NoteActivity extends AppCompatActivity {
     boolean exists = false;
     int noteId = 0; // if exists - this is Id of the note; for don't exists - this is Id for type
     Note note;
-    boolean isDirty = false; // there are legitimate changes to save
 
     private LinearLayout contentEditorContainer;
     private LinearLayout tagsEditorContainer;
@@ -70,8 +70,9 @@ public class NoteActivity extends AppCompatActivity {
 
         // Add content text view and appropriate editor
         TextView noteContentTextView = (TextView) findViewById(R.id.a_note_note_content_tv);
+        // TODO: 010 10 Jan 18 make makeEditor() method
+        contentEditorContainer = (LinearLayout) findViewById(R.id.a_note_content_editor_container);
         if (note.getInitContentInputType() == 1) { // We have a text content input
-            contentEditorContainer = (LinearLayout) findViewById(R.id.a_note_content_editor_container);
             TextEditor contentEditor = new TextEditor(getApplicationContext(), 1);
             contentEditor.setEditTextHint("Enter you note here");
             contentEditorContainer.addView(contentEditor);
@@ -82,13 +83,16 @@ public class NoteActivity extends AppCompatActivity {
             TextWatcher contentTextWatcher
                     = makeTextWatcher("Content", null, contentEditor);
             contentEditor.addListener(contentTextWatcher);
+        } else if (note.getInitContentInputType() == 2) { // We have an audio content input
+            AudioEditor contentEditor = new AudioEditor(this, "test content");
+            contentEditorContainer.addView(contentEditor);
         }
 
 
         // Add tags text view and appropriate editor
         TextView noteTagsTextView = (TextView) findViewById(R.id.a_note_note_tags_tv);
+        tagsEditorContainer = (LinearLayout) findViewById(R.id.a_note_tags_editor_container);
         if (note.getInitTagsInputType() == 1) { // We have a text tags input
-            tagsEditorContainer = (LinearLayout) findViewById(R.id.a_note_tags_editor_container);
             TextEditor tagsEditor = new TextEditor(getApplicationContext(), 2);
             tagsEditor.setEditTextHint("Enter you tags here");
             tagsEditorContainer.addView(tagsEditor);
@@ -104,8 +108,8 @@ public class NoteActivity extends AppCompatActivity {
 
         // Add comment text view and appropriate editor
         TextView noteCommentTextView = (TextView) findViewById(R.id.a_note_note_comment_tv);
+        commentEditorContainer = (LinearLayout) findViewById(R.id.a_note_comment_editor_container);
         if (note.getInitCommentInputType() == 1) { // We have a text comment input
-            commentEditorContainer = (LinearLayout) findViewById(R.id.a_note_comment_editor_container);
             TextEditor commentEditor = new TextEditor(getApplicationContext(), 3);
             commentEditor.setEditTextHint("Enter you comment here");
             commentEditorContainer.addView(commentEditor);
@@ -182,9 +186,8 @@ public class NoteActivity extends AppCompatActivity {
 
         // Hide delete button if note doesn't exist
         if (!exists) deleteButton.setVisibility(View.GONE);
-
-
     }
+
 
     // Create text watcher for edit text field or Text Editor
     private TextWatcher makeTextWatcher(final String section, @Nullable final EditText editText,
@@ -192,12 +195,10 @@ public class NoteActivity extends AppCompatActivity {
         return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -230,4 +231,10 @@ public class NoteActivity extends AppCompatActivity {
         }
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // TODO: 010 10 Jan 18 release media player 
+    }
 }

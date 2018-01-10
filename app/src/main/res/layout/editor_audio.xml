@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/program_frame"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dip">
+
+    <Button
+        android:id="@+id/editor_audio_play_b"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Play"/>
+
+    <Button
+        android:id="@+id/editor_audio_stop_b"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/editor_audio_play_b"
+        android:text="Stop"/>
+
+    <Button
+        android:id="@+id/editor_audio_record_b"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/editor_audio_stop_b"
+        android:text="Rec"/>
+
+    <SeekBar
+        android:id="@+id/editor_audio_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editor_audio_play_b"/>
+
+</RelativeLayout>

@@ -25,5 +25,15 @@
     <item
         android:id="@+id/menu_timeline_add_note"
         android:title="Add Note"
-        app:showAsAction="always" />
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/menu_timeline_add_text_note"
+                android:title="Text" />
+            <item
+                android:id="@+id/menu_timeline_add_audio_note"
+                android:title="Audio" />
+        </menu>
+    </item>
+
 </menu>
