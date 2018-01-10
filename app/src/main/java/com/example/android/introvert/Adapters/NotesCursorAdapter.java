@@ -1,6 +1,7 @@
 package com.example.android.introvert.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,13 +9,15 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.android.introvert.Activities.NoteActivity;
 import com.example.android.introvert.R;
 
 import static com.example.android.introvert.Database.DbHelper.ID_COLUMN;
 import static com.example.android.introvert.Database.DbHelper.NOTES_CONTENT_COLUMN;
 import static com.example.android.introvert.Database.DbHelper.NOTES_NAME_COLUMN;
+import static com.example.android.introvert.Fragments.TimelineFragment.EXISTS;
+import static com.example.android.introvert.Fragments.TimelineFragment.ID;
 
 /**
  * Created by takeoff on 005 05 Jan 18.
@@ -22,8 +25,11 @@ import static com.example.android.introvert.Database.DbHelper.NOTES_NAME_COLUMN;
 
 public class NotesCursorAdapter extends CursorAdapter {
 
+    Context context;
+
     public NotesCursorAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
+        this.context = context;
     }
 
     @Override
@@ -54,7 +60,10 @@ public class NotesCursorAdapter extends CursorAdapter {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "one, one", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(context, NoteActivity.class);
+                intent.putExtra(EXISTS, true);
+                intent.putExtra(ID, rowIdInt);
+                context.startActivity(intent);
             }
         });
     }

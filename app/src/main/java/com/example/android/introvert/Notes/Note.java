@@ -93,7 +93,7 @@ public class Note {
                 // Get type initName and category data from NOTE_TYPES table
                 Cursor noteTypeCursor = db.query(NOTE_TYPES_TABLE_NAME,
                         new String[]{NOTE_TYPES_CATEGORY_COLUMN, NOTE_TYPES_INTERNAL_TYPE_COLUMN},
-                        ID_COLUMN, new String[]{Integer.toString(typeId)},
+                        ID_COLUMN + "=?", new String[]{Integer.toString(typeId)},
                         null, null, null);
 
                 if (noteTypeCursor.getCount() == 1) { // row is found
