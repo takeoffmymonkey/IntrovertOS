@@ -16,9 +16,24 @@ public class PhotoEditor extends RelativeLayout implements MyEditor {
         super(context);
     }
 
-    public PhotoEditor (LinearLayout editorContainer, int editorType, int editorRole, boolean exists,
-                        Note note, Activity activity){
+    public PhotoEditor(LinearLayout editorContainer, int editorType, int editorRole, boolean exists,
+                       Note note, Activity activity) {
         super(activity);
+    }
+
+    @Override
+    public int getEditorType() {
+        return 0;
+    }
+
+    @Override
+    public int getEditorRole() {
+        return 0;
+    }
+
+    @Override
+    public Note getNote() {
+        return null;
     }
 
     @Override
@@ -32,7 +47,7 @@ public class PhotoEditor extends RelativeLayout implements MyEditor {
     }
 
     @Override
-    public void deleteEditor() {
-
+    public boolean deleteEditor() {
+        return false;
     }
 }

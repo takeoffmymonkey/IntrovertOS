@@ -11,14 +11,29 @@ import com.example.android.introvert.Notes.Note;
  * Created by takeoff on 011 11 Jan 18.
  */
 
-public class ImageEditor extends RelativeLayout implements MyEditor{
+public class ImageEditor extends RelativeLayout implements MyEditor {
     public ImageEditor(Context context) {
         super(context);
     }
 
-    public ImageEditor (LinearLayout editorContainer, int editorType, int editorRole, boolean exists,
-                        Note note, Activity activity){
+    public ImageEditor(LinearLayout editorContainer, int editorType, int editorRole, boolean exists,
+                       Note note, Activity activity) {
         super(activity);
+    }
+
+    @Override
+    public int getEditorType() {
+        return 0;
+    }
+
+    @Override
+    public int getEditorRole() {
+        return 0;
+    }
+
+    @Override
+    public Note getNote() {
+        return null;
     }
 
     @Override
@@ -32,7 +47,7 @@ public class ImageEditor extends RelativeLayout implements MyEditor{
     }
 
     @Override
-    public void deleteEditor() {
-
+    public boolean deleteEditor() {
+        return false;
     }
 }

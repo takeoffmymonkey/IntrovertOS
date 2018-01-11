@@ -22,6 +22,21 @@ public class VideoEditor extends RelativeLayout implements MyEditor {
     }
 
     @Override
+    public int getEditorType() {
+        return 0;
+    }
+
+    @Override
+    public int getEditorRole() {
+        return 0;
+    }
+
+    @Override
+    public Note getNote() {
+        return null;
+    }
+
+    @Override
     public String getContent() {
         return null;
     }
@@ -32,7 +47,8 @@ public class VideoEditor extends RelativeLayout implements MyEditor {
     }
 
     @Override
-    public void deleteEditor() {
-
+    public boolean deleteEditor() {
+        // TODO: 011 11 Jan 18 free up video player/recorder 
+        return true;
     }
 }

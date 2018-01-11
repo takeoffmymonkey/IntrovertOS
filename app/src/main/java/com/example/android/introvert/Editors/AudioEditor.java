@@ -51,7 +51,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
 
     private int type; // 1 - content, 2 - tags, 3 - comment
 
-    public AudioEditor (Context context){
+    public AudioEditor(Context context) {
         super(context);
     }
 
@@ -107,7 +107,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         recStopButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-               recordStop();
+                recordStop();
             }
         });
 
@@ -116,9 +116,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         handler = new Handler();
 
 
-
 //        mediaPlayer = MediaPlayer.create(context, R.raw.voice37);
-
 
 
         // React to seekbar changes by user
@@ -183,7 +181,6 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     }
 
 
-
     public void playStart() {
         try {
             releasePlayer();
@@ -242,7 +239,6 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         }*/
 
 
-
     MediaPlayer getMediaPlayer() {
         return mediaPlayer;
     }
@@ -277,8 +273,24 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     }
 
     @Override
-    public void deleteEditor() {
+    public boolean deleteEditor() {
+        // TODO: 011 11 Jan 18 free up audio player/recorder
+        return true;
+    }
 
+    @Override
+    public int getEditorType() {
+        return 0;
+    }
+
+    @Override
+    public int getEditorRole() {
+        return 0;
+    }
+
+    @Override
+    public Note getNote() {
+        return null;
     }
 
     @Override

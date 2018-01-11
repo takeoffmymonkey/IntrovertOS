@@ -1,6 +1,5 @@
 package com.example.android.introvert.Activities;
 
-import android.app.Activity;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -43,13 +42,6 @@ public class NoteActivity extends AppCompatActivity {
     int noteId = 0; // if exists - this is Id of the note; for don't exists - this is Id for type
     Note note;
 
-    private LinearLayout contentEditorContainer
-            = (LinearLayout) findViewById(R.id.a_note_content_editor_container);
-    private LinearLayout tagsEditorContainer
-            = (LinearLayout) findViewById(R.id.a_note_tags_editor_container);
-    private LinearLayout commentEditorContainer
-            = (LinearLayout) findViewById(R.id.a_note_comment_editor_container);
-
     MyEditor contentEditor;
     MyEditor tagsEditor;
     MyEditor commentEditor;
@@ -71,6 +63,15 @@ public class NoteActivity extends AppCompatActivity {
 
         // Create Note object
         note = new Note(db, exists, noteId);
+
+
+        // Create containers for editors
+        LinearLayout contentEditorContainer
+                = (LinearLayout) findViewById(R.id.a_note_content_editor_container);
+        LinearLayout tagsEditorContainer
+                = (LinearLayout) findViewById(R.id.a_note_tags_editor_container);
+        LinearLayout commentEditorContainer
+                = (LinearLayout) findViewById(R.id.a_note_comment_editor_container);
 
 
         // Create name field, set content and change listener
@@ -105,11 +106,11 @@ public class NoteActivity extends AppCompatActivity {
 
         // Add content, tags and comment editors
         contentEditor = makeEditor(contentEditorContainer, note.getInitContentInputType(),
-                1, exists, note, NoteActivity.this);
+                1, exists, note, this);
         tagsEditor = makeEditor(contentEditorContainer, note.getInitTagsInputType(),
-                2, exists, note, NoteActivity.this);
+                2, exists, note, this);
         commentEditor = makeEditor(commentEditorContainer, note.getInitCommentInputType(),
-                3, exists, note, NoteActivity.this);
+                3, exists, note, this);
 
 
         // Add settings text view and set onclick listener
@@ -180,7 +181,7 @@ public class NoteActivity extends AppCompatActivity {
 
 
     // Decide if there is need to display save button
-    void showSaveButtonIfReady() {
+    public void showSaveButtonIfReady() {
         if (note.isReadyForSave()) { // Show save button
             saveButton.setVisibility(View.VISIBLE);
         } else { // Hide save button
@@ -200,39 +201,39 @@ public class NoteActivity extends AppCompatActivity {
      * @param exists          Boolean to specify if this is an empty editor (for a new {@link Note}),
      *                        or it contains existing content
      * @param note            Note object (either fresh or existing), for which editor is created
-     * @param activity        Link to current activity. Required for updating UI elements of editor,
-     *                        such as scroll bar, or providing context for layout.
+     * @param noteActivity    Link to current NoteActivity. Required for updating UI elements of
+     *                        editor, such as scroll bar, or providing context for layout.
      * @return MyEditor interface
      */
     MyEditor makeEditor(LinearLayout editorContainer, int editorType, int editorRole, boolean exists,
-                        Note note, Activity activity) {
+                        Note note, NoteActivity noteActivity) {
 
         switch (editorType) {
 
             default:
             case 1: // Text editor
                 TextEditor textEditor = new TextEditor(editorContainer, editorType, editorRole, exists,
-                        note, activity);
+                        note, noteActivity);
                 editorContainer.addView(textEditor);
                 return textEditor;
             case 2: // Audio editor
                 AudioEditor audioEditor = new AudioEditor(editorContainer, editorType, editorRole,
-                        exists, note, activity);
+                        exists, note, noteActivity);
                 editorContainer.addView(audioEditor);
                 return audioEditor;
             case 3: // Video editor
                 VideoEditor videoEditor = new VideoEditor(editorContainer, editorType, editorRole,
-                        exists, note, activity);
+                        exists, note, noteActivity);
                 editorContainer.addView(videoEditor);
                 return videoEditor;
             case 4: // Photo editor
                 PhotoEditor photoEditor = new PhotoEditor(editorContainer, editorType, editorRole,
-                        exists, note, activity);
+                        exists, note, noteActivity);
                 editorContainer.addView(photoEditor);
                 return photoEditor;
             case 5: // Image editor
                 ImageEditor imageEditor = new ImageEditor(editorContainer, editorType, editorRole,
-                        exists, note, activity);
+                        exists, note, noteActivity);
                 editorContainer.addView(imageEditor);
                 return imageEditor;
         }

@@ -1,9 +1,7 @@
 package com.example.android.introvert.Editors;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +9,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.example.android.introvert.Activities.NoteActivity;
 import com.example.android.introvert.Notes.Note;
 import com.example.android.introvert.R;
 
@@ -20,70 +19,77 @@ import com.example.android.introvert.R;
 
 public class TextEditor extends RelativeLayout implements MyEditor {
 
-    String TAG = "INTROWERT_TEXT_EDITOR:";
+    private final String TAG = "INTROWERT_TEXT_EDITOR:";
 
+    // Which type of content will be used: 1 - text, 2 - audio, 3 - video, 4 - photo, 5 - image
+    private int editorType = 0;
+    // What is the role (context) in which editor is used: 1 - content, 2 - tags, 3 - comment
+    private int editorRole = 0;
+    // Whether the note exist and its content should be used, or created empty
+    private boolean exists;
+    // Note for which editor is created
+    private Note note;
+    // Key edit text UI element of the Editor
     private EditText editText;
+    // Activity where editor is used
+    private NoteActivity noteActivity;
 
-    private int role; // 1 - content, 2 - tags, 3 - comment
-
-    public TextEditor(Context context){
+    /* Required constructor */
+    private TextEditor(Context context) {
         super(context);
     }
 
+    /* Regular constructor */
     public TextEditor(LinearLayout editorContainer, int editorType, int editorRole, boolean exists,
-                      Note note, Activity activity) {
-        super(activity);
-        this.role = role;
-        initComponent();
+                      Note note, NoteActivity noteActivity) {
+        this(noteActivity); // basic constructor
 
+        this.editorType = editorType;
+        this.editorRole = editorRole;
+        this.exists = exists;
+        this.note = note;
+        this.noteActivity = noteActivity;
+
+        initComponents();
     }
 
 
-    private void initComponent() {
+    /* Initialize layout and its components */
+    private void initComponents() {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService
                 (Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.editor_text, this);
+
+        if (inflater != null) {
+            inflater.inflate(R.layout.editor_text, this);
+        } else {
+            Log.e(TAG, "Error: could not find editor_text view!");
+        }
+
+        // Set up edit text field
         editText = (EditText) findViewById(R.id.editor_text_content_et);
         editText.setTextColor(Color.BLACK);
+        editText.setHint("Enter your text here");
+        editText.addTextChangedListener(makeTextWatcher());
+        if (exists) { // Set text if note exists
+            switch (editorRole) {
+                case 1: // Content
+                    editText.setText(note.getInitContent());
+                    break;
+                case 2: // Tags
+                    editText.setText(note.getInitTags());
+                    break;
+                case 3: // Comment
+                    editText.setText(note.getInitComment());
+                    break;
+                default: // Something is wrong
+                    Log.e(TAG, "Error: editor role could not be defined when setting init text");
+            }
+        }
     }
 
 
-    public void addListener(TextWatcher textWatcher) {
-        editText.addTextChangedListener(textWatcher);
-    }
-
-    public void setEditTextHint(String hint) {
-        editText.setHint(hint);
-    }
-
-
-
-    public String typeAsString() {
-        if (role == 1) return "Content";
-        else if (role == 2) return "Tags";
-        else if (role == 3) return "Comment";
-        else return "Wrong role";
-    }
-
-    @Override
-    public void setContent(String content) {
-
-    }
-
-    @Override
-    public void deleteEditor() {
-
-    }
-
-    @Override
-    public String getContent() {
-        return null;
-    }
-
-
-
-    // Create text watcher for edit text field or Text MyEditor
- /*   private TextWatcher makeTextWatcher(int role) {
+    /* Create text watcher for edit text field or Text MyEditor */
+    private TextWatcher makeTextWatcher() {
         return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -95,21 +101,75 @@ public class TextEditor extends RelativeLayout implements MyEditor {
 
             @Override
             public void afterTextChanged(android.text.Editable s) {
-                if (section.equals("Name") && editText != null) { // This is name field
-                    note.setUpdatedName(editText.getText().toString());
-                } else if (section.equals("Content") && textEditor != null) { // This is content field
-                    note.setUpdatedContent(textEditor.getEditText());
-                } else if (section.equals("Comment") && textEditor != null) { // This is comment field
-                    note.setUpdatedComment(textEditor.getEditText());
-                } else if (section.equals("Tags") && textEditor != null) { // This is tags field
-                    note.setUpdatedTags(textEditor.getEditText());
-                } else { // Error: Field is not defined
-                    Log.e(TAG, "Error: edit text field could not be defined");
+                switch (editorRole) {
+                    case 1: // Content
+                        note.setUpdatedContent(editText.getText().toString());
+                        note.updateReadiness();
+                        noteActivity.showSaveButtonIfReady();
+                        break;
+                    case 2: // Tags
+                        note.setUpdatedTags(editText.getText().toString());
+                        note.updateReadiness();
+                        noteActivity.showSaveButtonIfReady();
+                        break;
+                    case 3: // Comment
+                        note.setUpdatedComment(editText.getText().toString());
+                        note.updateReadiness();
+                        noteActivity.showSaveButtonIfReady();
+                        break;
+                    default: // Something is wrong
+                        Log.e(TAG, "Error: editor role could not be defined when changing text");
+                        note.updateReadiness();
+                        noteActivity.showSaveButtonIfReady();
+                        break;
                 }
-                note.updateReadiness();
-                showSaveButtonIfReady();
-                Log.i(TAG, "Text changed in section: " + section);
             }
         };
-    }*/
+    }
+
+
+    /* Interface methods */
+    @Override
+    public void setContent(String content) {
+        editText.setText(content);
+        switch (editorRole) {
+            case 1: // Content
+                note.setUpdatedContent(content);
+                break;
+            case 2: // Tags
+                note.setUpdatedTags(content);
+                break;
+            case 3: // Comment
+                note.setUpdatedComment(content);
+                break;
+            default: // Something is wrong
+                Log.e(TAG, "Error: editor role could not be defined when setting content");
+        }
+
+    }
+
+    @Override
+    public String getContent() {
+        return editText.getText().toString();
+    }
+
+    @Override
+    public int getEditorType() {
+        return editorType;
+    }
+
+    @Override
+    public int getEditorRole() {
+        return editorRole;
+    }
+
+    @Override
+    public Note getNote() {
+        return note;
+    }
+
+    @Override
+    public boolean deleteEditor() {
+        return false;
+    }
 }
