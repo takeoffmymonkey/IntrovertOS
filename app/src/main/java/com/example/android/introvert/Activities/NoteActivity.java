@@ -107,7 +107,7 @@ public class NoteActivity extends AppCompatActivity {
         // Add content, tags and comment editors
         contentEditor = makeEditor(contentEditorContainer, note.getInitContentInputType(),
                 1, exists, note, this);
-        tagsEditor = makeEditor(contentEditorContainer, note.getInitTagsInputType(),
+        tagsEditor = makeEditor(tagsEditorContainer, note.getInitTagsInputType(),
                 2, exists, note, this);
         commentEditor = makeEditor(commentEditorContainer, note.getInitCommentInputType(),
                 3, exists, note, this);
