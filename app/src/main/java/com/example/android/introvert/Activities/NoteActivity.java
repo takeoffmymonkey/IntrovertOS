@@ -1,5 +1,6 @@
 package com.example.android.introvert.Activities;
 
+import android.app.Activity;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,7 +17,11 @@ import android.widget.Toast;
 
 import com.example.android.introvert.Database.DbUtils;
 import com.example.android.introvert.Editors.AudioEditor;
+import com.example.android.introvert.Editors.ImageEditor;
+import com.example.android.introvert.Editors.MyEditor;
+import com.example.android.introvert.Editors.PhotoEditor;
 import com.example.android.introvert.Editors.TextEditor;
+import com.example.android.introvert.Editors.VideoEditor;
 import com.example.android.introvert.Fragments.TimelineFragment;
 import com.example.android.introvert.Notes.Note;
 import com.example.android.introvert.R;
@@ -38,9 +43,17 @@ public class NoteActivity extends AppCompatActivity {
     int noteId = 0; // if exists - this is Id of the note; for don't exists - this is Id for type
     Note note;
 
-    private LinearLayout contentEditorContainer;
-    private LinearLayout tagsEditorContainer;
-    private LinearLayout commentEditorContainer;
+    private LinearLayout contentEditorContainer
+            = (LinearLayout) findViewById(R.id.a_note_content_editor_container);
+    private LinearLayout tagsEditorContainer
+            = (LinearLayout) findViewById(R.id.a_note_tags_editor_container);
+    private LinearLayout commentEditorContainer
+            = (LinearLayout) findViewById(R.id.a_note_comment_editor_container);
+
+    MyEditor contentEditor;
+    MyEditor tagsEditor;
+    MyEditor commentEditor;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,66 +75,41 @@ public class NoteActivity extends AppCompatActivity {
 
         // Create name field, set content and change listener
         TextView noteNameTextView = (TextView) findViewById(R.id.a_note_note_name_tv);
-        EditText noteNameEditText = (EditText) findViewById(R.id.a_note_note_name_et);
+        final EditText noteNameEditText = (EditText) findViewById(R.id.a_note_note_name_et);
         noteNameEditText.setText(note.getInitName());
-        TextWatcher nameTextWatcher = makeTextWatcher("Name", noteNameEditText, null);
-        noteNameEditText.addTextChangedListener(nameTextWatcher);
+        noteNameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                note.setUpdatedName(noteNameEditText.getText().toString());
+                note.updateReadiness();
+                showSaveButtonIfReady();
+            }
+        });
 
 
-        // Add content text view and appropriate editor
+        // Add content, tags and comment text views
         TextView noteContentTextView = (TextView) findViewById(R.id.a_note_note_content_tv);
-        // TODO: 010 10 Jan 18 make makeEditor() method
-        contentEditorContainer = (LinearLayout) findViewById(R.id.a_note_content_editor_container);
-        if (note.getInitContentInputType() == 1) { // We have a text content input
-            TextEditor contentEditor = new TextEditor(getApplicationContext(), 1);
-            contentEditor.setEditTextHint("Enter you note here");
-            contentEditorContainer.addView(contentEditor);
-            if (note.exists()) { // We have an existing note, need to set it's content
-                contentEditor.setEditTextText(note.getInitContent());
-            }
-            // Add listener
-            TextWatcher contentTextWatcher
-                    = makeTextWatcher("Content", null, contentEditor);
-            contentEditor.addListener(contentTextWatcher);
-        } else if (note.getInitContentInputType() == 2) { // We have an audio content input
-            AudioEditor contentEditor = new AudioEditor(this, "test content",
-                    NoteActivity.this);
-            contentEditorContainer.addView(contentEditor);
-        }
-
-
-        // Add tags text view and appropriate editor
         TextView noteTagsTextView = (TextView) findViewById(R.id.a_note_note_tags_tv);
-        tagsEditorContainer = (LinearLayout) findViewById(R.id.a_note_tags_editor_container);
-        if (note.getInitTagsInputType() == 1) { // We have a text tags input
-            TextEditor tagsEditor = new TextEditor(getApplicationContext(), 2);
-            tagsEditor.setEditTextHint("Enter you tags here");
-            tagsEditorContainer.addView(tagsEditor);
-            if (note.exists()) { // We have an existing note, need to set it's tags
-                tagsEditor.setEditTextText(note.getInitTags());
-            }
-            // Add listener
-            TextWatcher tagsTextWatcher
-                    = makeTextWatcher("Tags", null, tagsEditor);
-            tagsEditor.addListener(tagsTextWatcher);
-        }
-
-
-        // Add comment text view and appropriate editor
         TextView noteCommentTextView = (TextView) findViewById(R.id.a_note_note_comment_tv);
-        commentEditorContainer = (LinearLayout) findViewById(R.id.a_note_comment_editor_container);
-        if (note.getInitCommentInputType() == 1) { // We have a text comment input
-            TextEditor commentEditor = new TextEditor(getApplicationContext(), 3);
-            commentEditor.setEditTextHint("Enter you comment here");
-            commentEditorContainer.addView(commentEditor);
-            if (note.exists()) { // We have an existing note, need to set it's tags
-                commentEditor.setEditTextText(note.getInitComment());
-            }
-            // Add listener
-            TextWatcher commentTextWatcher
-                    = makeTextWatcher("Comment", null, commentEditor);
-            commentEditor.addListener(commentTextWatcher);
-        }
+
+
+        // Add content, tags and comment editors
+        contentEditor = makeEditor(contentEditorContainer, note.getInitContentInputType(),
+                1, exists, note, NoteActivity.this);
+        tagsEditor = makeEditor(contentEditorContainer, note.getInitTagsInputType(),
+                2, exists, note, NoteActivity.this);
+        commentEditor = makeEditor(commentEditorContainer, note.getInitCommentInputType(),
+                3, exists, note, NoteActivity.this);
 
 
         // Add settings text view and set onclick listener
@@ -191,39 +179,6 @@ public class NoteActivity extends AppCompatActivity {
     }
 
 
-    // Create text watcher for edit text field or Text Editor
-    private TextWatcher makeTextWatcher(final String section, @Nullable final EditText editText,
-                                        @Nullable final TextEditor textEditor) {
-        return new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (section.equals("Name") && editText != null) { // This is name field
-                    note.setUpdatedName(editText.getText().toString());
-                } else if (section.equals("Content") && textEditor != null) { // This is content field
-                    note.setUpdatedContent(textEditor.getEditText());
-                } else if (section.equals("Comment") && textEditor != null) { // This is comment field
-                    note.setUpdatedComment(textEditor.getEditText());
-                } else if (section.equals("Tags") && textEditor != null) { // This is tags field
-                    note.setUpdatedTags(textEditor.getEditText());
-                } else { // Error: Field is not defined
-                    Log.e(TAG, "Error: edit text field could not be defined");
-                }
-                note.updateReadiness();
-                showSaveButtonIfReady();
-                Log.i(TAG, "Text changed in section: " + section);
-            }
-        };
-    }
-
-
     // Decide if there is need to display save button
     void showSaveButtonIfReady() {
         if (note.isReadyForSave()) { // Show save button
@@ -234,10 +189,62 @@ public class NoteActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Creates and returns a specified type editor for a specified View group container
+     *
+     * @param editorContainer View container (Linear Layout) where editor View elements will be added
+     * @param editorType      Int with type of the requested editor (1 - text, 2 - audio, 3 - video,
+     *                        4 - photo, 5 - image)
+     * @param editorRole      Int specifying context for the use of editor (1 - content editor, 2 -
+     *                        tags editor, 3 - comment editor)
+     * @param exists          Boolean to specify if this is an empty editor (for a new {@link Note}),
+     *                        or it contains existing content
+     * @param note            Note object (either fresh or existing), for which editor is created
+     * @param activity        Link to current activity. Required for updating UI elements of editor,
+     *                        such as scroll bar, or providing context for layout.
+     * @return MyEditor interface
+     */
+    MyEditor makeEditor(LinearLayout editorContainer, int editorType, int editorRole, boolean exists,
+                        Note note, Activity activity) {
+
+        switch (editorType) {
+
+            default:
+            case 1: // Text editor
+                TextEditor textEditor = new TextEditor(editorContainer, editorType, editorRole, exists,
+                        note, activity);
+                editorContainer.addView(textEditor);
+                return textEditor;
+            case 2: // Audio editor
+                AudioEditor audioEditor = new AudioEditor(editorContainer, editorType, editorRole,
+                        exists, note, activity);
+                editorContainer.addView(audioEditor);
+                return audioEditor;
+            case 3: // Video editor
+                VideoEditor videoEditor = new VideoEditor(editorContainer, editorType, editorRole,
+                        exists, note, activity);
+                editorContainer.addView(videoEditor);
+                return videoEditor;
+            case 4: // Photo editor
+                PhotoEditor photoEditor = new PhotoEditor(editorContainer, editorType, editorRole,
+                        exists, note, activity);
+                editorContainer.addView(photoEditor);
+                return photoEditor;
+            case 5: // Image editor
+                ImageEditor imageEditor = new ImageEditor(editorContainer, editorType, editorRole,
+                        exists, note, activity);
+                editorContainer.addView(imageEditor);
+                return imageEditor;
+        }
+    }
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // TODO: 010 10 Jan 18 release media player 
+        contentEditor.deleteEditor();
+        tagsEditor.deleteEditor();
+        commentEditor.deleteEditor();
         // TODO: 010 10 Jan 18 handler.removeCallbacks(runnable)
     }
 }

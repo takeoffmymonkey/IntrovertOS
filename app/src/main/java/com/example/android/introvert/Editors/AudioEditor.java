@@ -9,9 +9,11 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 
+import com.example.android.introvert.Notes.Note;
 import com.example.android.introvert.R;
 
 import java.io.File;
@@ -21,7 +23,7 @@ import java.io.File;
  * Created by takeoff on 010 10 Jan 18.
  */
 
-public class AudioEditor extends RelativeLayout implements Editable {
+public class AudioEditor extends RelativeLayout implements MyEditor {
 
     String TAG = "INTROWERT_AUDIO_EDITOR:";
 
@@ -31,8 +33,12 @@ public class AudioEditor extends RelativeLayout implements Editable {
     Handler handler;
     Runnable runnable;
 
+    final String DIR_SD = "Introvert";
+    final String FILENAME_SD = "fileSD";
 
-    String content = Environment.getExternalStorageDirectory() + "/record.3gpp";
+    File sdPath;
+
+    String content = Environment.getExternalStorageDirectory() + "/" + DIR_SD + "/record.3gpp";
 
     private Button playButton;
     private Button stopButton;
@@ -45,8 +51,13 @@ public class AudioEditor extends RelativeLayout implements Editable {
 
     private int type; // 1 - content, 2 - tags, 3 - comment
 
-    public AudioEditor(Context context, String content, Activity activity) {
+    public AudioEditor (Context context){
         super(context);
+    }
+
+    public AudioEditor(LinearLayout editorContainer, int editorType, int editorRole, boolean exists,
+                       Note note, Activity activity) {
+        super(activity);
         this.context = context;
         //this.content = content;
         this.activity = activity;
@@ -58,6 +69,14 @@ public class AudioEditor extends RelativeLayout implements Editable {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService
                 (Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.editor_audio, this);
+
+        if (Environment.getExternalStorageState().equals(
+                Environment.MEDIA_MOUNTED)) {
+            sdPath = Environment.getExternalStorageDirectory();
+            sdPath = new File(sdPath.getAbsolutePath() + "/" + DIR_SD);
+            // создаем каталог
+            sdPath.mkdirs();
+        }
 
 
         playButton = (Button) findViewById(R.id.editor_audio_play_b);
@@ -258,9 +277,18 @@ public class AudioEditor extends RelativeLayout implements Editable {
     }
 
     @Override
+    public void deleteEditor() {
+
+    }
+
+    @Override
     public String getContent() {
         return content;
     }
 
 
+
+    /*При удалении пользователем вашего приложения система Android удаляет из внешних хранилищ файлы
+    этого приложения, только если они сохраняются в директории из getExternalFilesDir().
+*/
 }

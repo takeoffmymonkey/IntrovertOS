@@ -1,31 +1,41 @@
 package com.example.android.introvert.Editors;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.example.android.introvert.Notes.Note;
 import com.example.android.introvert.R;
 
 /**
  * Created by takeoff on 008 08 Jan 18.
  */
 
-public class TextEditor extends RelativeLayout implements Editable {
+public class TextEditor extends RelativeLayout implements MyEditor {
 
     String TAG = "INTROWERT_TEXT_EDITOR:";
 
     private EditText editText;
 
-    private int type; // 1 - content, 2 - tags, 3 - comment
+    private int role; // 1 - content, 2 - tags, 3 - comment
 
-    public TextEditor(Context context, int type) {
+    public TextEditor(Context context){
         super(context);
-        this.type = type;
+    }
+
+    public TextEditor(LinearLayout editorContainer, int editorType, int editorRole, boolean exists,
+                      Note note, Activity activity) {
+        super(activity);
+        this.role = role;
         initComponent();
+
     }
 
 
@@ -46,64 +56,13 @@ public class TextEditor extends RelativeLayout implements Editable {
         editText.setHint(hint);
     }
 
-    public void setEditTextHintColor(int color) {
-        editText.setHintTextColor(color);
-    }
 
-
-    public void setEditTextText(String text) {
-        editText.setText(text);
-    }
-
-    public void setEditTextColor(int color) {
-        editText.setTextColor(color);
-    }
-
-    public void setEditTextInputType(int type) {
-        editText.setInputType(type);
-    }
-
-    public void setEditTextGravity(int gravity) {
-        editText.setGravity(gravity);
-    }
-
-    public void setHeight(int pixels) {
-        editText.setHeight(pixels);
-    }
-
-    public void setWidth(int pixels) {
-        editText.setWidth(pixels);
-    }
-
-    public void setEditTextSize(int unit, float size) {
-        editText.setTextSize(unit, size);
-    }
-
-    public void setEditTextTypeface(Typeface typeface) {
-        editText.setTypeface(typeface);
-    }
-
-    public void setEditTextMinLines(int lines) {
-        editText.setMinLines(lines);
-    }
-
-    public void setEditTextMaxines(int lines) {
-        editText.setMaxLines(lines);
-    }
-
-    public String getEditText() {
-        return editText.getText().toString();
-    }
-
-    public int getType() {
-        return type;
-    }
 
     public String typeAsString() {
-        if (type == 1) return "Content";
-        else if (type == 2) return "Tags";
-        else if (type == 3) return "Comment";
-        else return "Wrong type";
+        if (role == 1) return "Content";
+        else if (role == 2) return "Tags";
+        else if (role == 3) return "Comment";
+        else return "Wrong role";
     }
 
     @Override
@@ -112,7 +71,45 @@ public class TextEditor extends RelativeLayout implements Editable {
     }
 
     @Override
+    public void deleteEditor() {
+
+    }
+
+    @Override
     public String getContent() {
         return null;
     }
+
+
+
+    // Create text watcher for edit text field or Text MyEditor
+ /*   private TextWatcher makeTextWatcher(int role) {
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {
+                if (section.equals("Name") && editText != null) { // This is name field
+                    note.setUpdatedName(editText.getText().toString());
+                } else if (section.equals("Content") && textEditor != null) { // This is content field
+                    note.setUpdatedContent(textEditor.getEditText());
+                } else if (section.equals("Comment") && textEditor != null) { // This is comment field
+                    note.setUpdatedComment(textEditor.getEditText());
+                } else if (section.equals("Tags") && textEditor != null) { // This is tags field
+                    note.setUpdatedTags(textEditor.getEditText());
+                } else { // Error: Field is not defined
+                    Log.e(TAG, "Error: edit text field could not be defined");
+                }
+                note.updateReadiness();
+                showSaveButtonIfReady();
+                Log.i(TAG, "Text changed in section: " + section);
+            }
+        };
+    }*/
 }
