@@ -84,7 +84,8 @@ public class NoteActivity extends AppCompatActivity {
                     = makeTextWatcher("Content", null, contentEditor);
             contentEditor.addListener(contentTextWatcher);
         } else if (note.getInitContentInputType() == 2) { // We have an audio content input
-            AudioEditor contentEditor = new AudioEditor(this, "test content");
+            AudioEditor contentEditor = new AudioEditor(this, "test content",
+                    NoteActivity.this);
             contentEditorContainer.addView(contentEditor);
         }
 
@@ -186,6 +187,7 @@ public class NoteActivity extends AppCompatActivity {
 
         // Hide delete button if note doesn't exist
         if (!exists) deleteButton.setVisibility(View.GONE);
+
     }
 
 
@@ -236,5 +238,6 @@ public class NoteActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         // TODO: 010 10 Jan 18 release media player 
+        // TODO: 010 10 Jan 18 handler.removeCallbacks(runnable)
     }
 }
