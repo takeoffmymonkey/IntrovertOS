@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.example.android.introvert.Adapters.CategoryAdapter;
 import com.example.android.introvert.Database.DbHelper;
 import com.example.android.introvert.R;
+import com.example.android.introvert.Utils.FileUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,5 +46,10 @@ public class MainActivity extends AppCompatActivity {
 
         db = dbHelper.getReadableDatabase();
 
+
+        // Set storage locations
+        FileUtils.INTERNAL_APP_STORAGE = getFilesDir().toString();
+        if (FileUtils.externalStorageIsReady())
+            FileUtils.EXTERNAL_APP_STORAGE = getExternalFilesDir(null).toString();
     }
 }

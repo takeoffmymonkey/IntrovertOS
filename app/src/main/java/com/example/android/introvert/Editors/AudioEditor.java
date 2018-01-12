@@ -1,11 +1,10 @@
 package com.example.android.introvert.Editors;
 
-import android.app.Activity;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Environment;
-import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -13,8 +12,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 
+import com.example.android.introvert.Activities.NoteActivity;
 import com.example.android.introvert.Notes.Note;
 import com.example.android.introvert.R;
+import com.example.android.introvert.Utils.FileUtils;
 
 import java.io.File;
 
@@ -25,60 +26,72 @@ import java.io.File;
 
 public class AudioEditor extends RelativeLayout implements MyEditor {
 
-    String TAG = "INTROWERT_AUDIO_EDITOR:";
+    private final String TAG = "INTROWERT_AUDIO_EDITOR:";
 
-    MediaPlayer mediaPlayer;
-    MediaRecorder mediaRecorder;
+    // for interface methods
+    private int editorType = 0; // Should be 2 (audio)
+    private int editorRole = 0; // 1 - content, 2 - tags, 3 - comment
+    private boolean exists;
+    private Note note;
+    private NoteActivity noteActivity;
 
-    Handler handler;
-    Runnable runnable;
+    // Player/recorder
+    private MediaPlayer mediaPlayer;
+    private MediaRecorder mediaRecorder;
 
-    final String DIR_SD = "Introvert";
-    final String FILENAME_SD = "fileSD";
-
-    File sdPath;
-
-    String content = Environment.getExternalStorageDirectory() + "/" + DIR_SD + "/record.3gpp";
-
+    // UI elements
     private Button playButton;
     private Button stopButton;
     private Button recButton;
     private Button recStopButton;
     private SeekBar seekBar;
 
-    Context context;
-    Activity activity;
 
-    private int type; // 1 - content, 2 - tags, 3 - comment
+    final String DIR_SD = "Introvert";
+    String content = Environment.getExternalStorageDirectory() + "/" + DIR_SD + "/record.3gpp";
 
+    File sdPath;
+
+    /*Handler handler;
+    Runnable runnable;
+    final String FILENAME_SD = "fileSD";
+
+    */
+
+
+    /* Basic required constructor */
     public AudioEditor(Context context) {
         super(context);
     }
 
+
+    /* Regular constructor */
     public AudioEditor(LinearLayout editorContainer, int editorType, int editorRole, boolean exists,
-                       Note note, Activity activity) {
-        super(activity);
-        this.context = context;
-        //this.content = content;
-        this.activity = activity;
-        initComponent();
+                       Note note, NoteActivity noteActivity) {
+        this(noteActivity);
+
+        this.editorType = editorType;
+        this.editorRole = editorRole;
+        this.exists = exists;
+        this.note = note;
+        this.noteActivity = noteActivity;
+
+        initComponents();
     }
 
 
-    private void initComponent() {
+    /* Initialize layout and its components */
+    private void initComponents() {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService
                 (Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.editor_audio, this);
 
-        if (Environment.getExternalStorageState().equals(
-                Environment.MEDIA_MOUNTED)) {
-            sdPath = Environment.getExternalStorageDirectory();
-            sdPath = new File(sdPath.getAbsolutePath() + "/" + DIR_SD);
-            // создаем каталог
-            sdPath.mkdirs();
+        if (inflater != null) {
+            inflater.inflate(R.layout.editor_audio, this);
+        } else {
+            Log.e(TAG, "Error: could not find editor_audio view!");
         }
 
-
+        //Init UI elements
         playButton = (Button) findViewById(R.id.editor_audio_play_b);
         playButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -86,8 +99,6 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
                 playStart();
             }
         });
-
-
         stopButton = (Button) findViewById(R.id.editor_audio_stop_b);
         stopButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -95,7 +106,6 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
                 playStop();
             }
         });
-
         recButton = (Button) findViewById(R.id.editor_audio_record_b);
         recButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -110,10 +120,26 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
                 recordStop();
             }
         });
-
         seekBar = (SeekBar) findViewById(R.id.editor_audio_seekbar);
 
-        handler = new Handler();
+
+        if (FileUtils.externalStorageIsReady()) {
+
+            Log.i(TAG, "Internal folder:" + noteActivity.getFilesDir().getPath());
+            Log.i(TAG, "External folder:" + noteActivity.getExternalFilesDir(null).getPath());
+
+
+
+            /*            sdPath = Environment.getExternalStorageDirectory();
+            sdPath = new File(sdPath.getAbsolutePath() + "/" + DIR_SD);
+            // создаем каталог
+            sdPath.mkdirs();
+
+            Log.i (TAG, var);*/
+        }
+
+
+        //handler = new Handler();
 
 
 //        mediaPlayer = MediaPlayer.create(context, R.raw.voice37);
@@ -152,15 +178,30 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
 
     }
 
+
+    public void playStart() {
+        try {
+            deleteEditor(); // Release the player
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setDataSource(content);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public void playStop() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
         }
     }
 
+
     public void recordStart() {
         try {
-            releaseRecorder();
+            deleteEditor(); // Release the recorder
 
             File outFile = new File(content);
             if (outFile.exists()) {
@@ -177,21 +218,8 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
-
-    public void playStart() {
-        try {
-            releasePlayer();
-            mediaPlayer = new MediaPlayer();
-            mediaPlayer.setDataSource(content);
-            mediaPlayer.prepare();
-            mediaPlayer.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public void recordStop() {
         if (mediaRecorder != null) {
@@ -199,19 +227,6 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         }
     }
 
-    private void releasePlayer() {
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
-    }
-
-    private void releaseRecorder() {
-        if (mediaRecorder != null) {
-            mediaRecorder.release();
-            mediaRecorder = null;
-        }
-    }
 
 /*    public void playCycle() {
         activity.runOnUiThread(new Runnable() {
@@ -239,15 +254,11 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         }*/
 
 
-    MediaPlayer getMediaPlayer() {
-        return mediaPlayer;
-    }
-
-    public void start() {
+    /*public void start() {
         mediaPlayer = MediaPlayer.create(context, R.raw.voice37);
         seekBar.setMax(mediaPlayer.getDuration());
 
-        mediaPlayer.start();
+        mediaPlayer.start();*/
 
 
         /*mediaPlayer = new MediaPlayer();
@@ -255,52 +266,62 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mediaPlayer.prepare();
         mediaPlayer.start();*/
-    }
-
-    public void stop() {
-        mediaPlayer.stop();
-    }
-
-    public void releaseMediaPlayer() {
-        mediaPlayer.release();
-        mediaPlayer = null;
-    }
+    /*}*/
 
 
+    /* Interface methods */
     @Override
     public void setContent(String content) {
-        this.content = content;
-    }
 
-    @Override
-    public boolean deleteEditor() {
-        // TODO: 011 11 Jan 18 free up audio player/recorder
-        return true;
-    }
-
-    @Override
-    public int getEditorType() {
-        return 0;
-    }
-
-    @Override
-    public int getEditorRole() {
-        return 0;
-    }
-
-    @Override
-    public Note getNote() {
-        return null;
+        switch (editorRole) {
+            case 1: // Content
+                note.setUpdatedContent(content);
+                break;
+            case 2: // Tags
+                note.setUpdatedTags(content);
+                break;
+            case 3: // Comment
+                note.setUpdatedComment(content);
+                break;
+            default: // Something is wrong
+                Log.e(TAG, "Error: editor role could not be defined when setting content");
+        }
     }
 
     @Override
     public String getContent() {
-        return content;
+        return null;
     }
 
+    @Override
+    public int getEditorType() {
+        return editorType;
+    }
 
+    @Override
+    public int getEditorRole() {
+        return editorRole;
+    }
 
-    /*При удалении пользователем вашего приложения система Android удаляет из внешних хранилищ файлы
-    этого приложения, только если они сохраняются в директории из getExternalFilesDir().
-*/
+    @Override
+    public Note getNote() {
+        return note;
+    }
+
+    @Override
+    public boolean deleteEditor() {
+        // release player
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+
+        // release recorder
+        if (mediaRecorder != null) { //
+            mediaRecorder.release();
+            mediaRecorder = null;
+        }
+
+        return true;
+    }
 }

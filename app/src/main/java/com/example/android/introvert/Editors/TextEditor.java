@@ -34,15 +34,17 @@ public class TextEditor extends RelativeLayout implements MyEditor {
     // Activity where editor is used
     private NoteActivity noteActivity;
 
-    /* Required constructor */
+
+    /* Basic required constructor */
     private TextEditor(Context context) {
         super(context);
     }
 
+
     /* Regular constructor */
     public TextEditor(LinearLayout editorContainer, int editorType, int editorRole, boolean exists,
                       Note note, NoteActivity noteActivity) {
-        this(noteActivity); // basic constructor
+        this(noteActivity);
 
         this.editorType = editorType;
         this.editorRole = editorRole;
@@ -145,7 +147,6 @@ public class TextEditor extends RelativeLayout implements MyEditor {
             default: // Something is wrong
                 Log.e(TAG, "Error: editor role could not be defined when setting content");
         }
-
     }
 
     @Override
