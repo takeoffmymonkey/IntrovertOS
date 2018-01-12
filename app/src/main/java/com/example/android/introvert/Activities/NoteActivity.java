@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.introvert.Database.DbUtils;
+import com.example.android.introvert.Utils.DbUtils;
 import com.example.android.introvert.Editors.AudioEditor;
 import com.example.android.introvert.Editors.ImageEditor;
 import com.example.android.introvert.Editors.MyEditor;

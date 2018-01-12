@@ -5,9 +5,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import static com.example.android.introvert.Database.DbUtils.createDefaultCategories;
-import static com.example.android.introvert.Database.DbUtils.createDefaultNoteTypes;
-import static com.example.android.introvert.Database.DbUtils.createInputTypes;
+import static com.example.android.introvert.Utils.DbUtils.createDefaultCategories;
+import static com.example.android.introvert.Utils.DbUtils.createDefaultNoteTypes;
+import static com.example.android.introvert.Utils.DbUtils.createInputTypes;
 
 /**
  * Created by takeoff on 026 26 Oct 17.
@@ -24,7 +24,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     /*CATEGORIES table*/
     public static final String CATEGORIES_TABLE_NAME = "CATEGORIES";
-    static final String CATEGORIES_CATEGORY_COLUMN = "category";
+    public static final String CATEGORIES_CATEGORY_COLUMN = "category";
     //table create command
     static final String CATEGORIES_TABLE_CREATE_COMMAND = "CREATE TABLE "
             + CATEGORIES_TABLE_NAME
@@ -37,7 +37,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     /*INPUT_TYPES table*/
     public static final String INPUT_TYPES_TABLE_NAME = "INPUT_TYPES";
-    static final String INPUT_TYPES_TYPE_COLUMN = "input_type";
+    public static final String INPUT_TYPES_TYPE_COLUMN = "input_type";
     //table create command
     static final String INPUT_TYPES_TABLE_CREATE_COMMAND = "CREATE TABLE "
             + INPUT_TYPES_TABLE_NAME

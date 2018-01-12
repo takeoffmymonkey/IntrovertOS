@@ -17,7 +17,7 @@ import android.widget.ListView;
 import com.example.android.introvert.Activities.MainActivity;
 import com.example.android.introvert.Activities.NoteActivity;
 import com.example.android.introvert.Adapters.NotesCursorAdapter;
-import com.example.android.introvert.Database.DbUtils;
+import com.example.android.introvert.Utils.DbUtils;
 import com.example.android.introvert.R;
 
 import static com.example.android.introvert.Database.DbHelper.CATEGORIES_TABLE_NAME;

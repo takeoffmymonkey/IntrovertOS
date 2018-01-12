@@ -1,4 +1,4 @@
-package com.example.android.introvert.Database;
+package com.example.android.introvert.Utils;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.example.android.introvert.Database.DBTypeValues;
 import com.example.android.introvert.Notes.Note;
 
 import java.util.ArrayList;
@@ -82,14 +83,14 @@ public class DbUtils {
     }
 
 
-    static void createDefaultCategories(SQLiteDatabase db) {
+    public static void createDefaultCategories(SQLiteDatabase db) {
         for (String defaultCategory : DBTypeValues.defaultCategories) {
             addCategory(db, defaultCategory);
         }
     }
 
 
-    static void createInputTypes(SQLiteDatabase db) {
+    public static void createInputTypes(SQLiteDatabase db) {
         // Add input types to INPUT_TYPES_TABLE_NAME
         for (String inputType : DBTypeValues.inputTypes) {
             ContentValues inputsContentValues = new ContentValues();
@@ -200,7 +201,7 @@ public class DbUtils {
     }
 
 
-    static void createDefaultNoteTypes(SQLiteDatabase db) {
+    public static void createDefaultNoteTypes(SQLiteDatabase db) {
         // Default text note for Ideas category
         addNoteType(false, db, null, 0, 0, 0,
                 0, 0);

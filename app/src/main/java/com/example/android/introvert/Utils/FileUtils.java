@@ -37,7 +37,7 @@ public class FileUtils {
     *  a File array with entries each location. The first entry in the array is considered the
     *  primary external storage and you should use that location unless it's full or unavailable."
     *
-    *  Ok, trying this method on Android 4.4 and it returns array of 1 file only, which is still:
+    *  Ok, trying this method on Android 4.4 and it returns an array of 1 file only, which is still:
     *  >> /storage/sdcard0/Android/data/com.example.android.introvert/files
     *
     *  More info and possible kostili here:
