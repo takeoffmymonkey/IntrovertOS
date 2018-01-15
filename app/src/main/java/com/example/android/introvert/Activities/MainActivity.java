@@ -2,6 +2,7 @@ package com.example.android.introvert.Activities;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -22,16 +23,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Set activity's layout
+        // Set defaults for main preferences
+        PreferenceManager.setDefaultValues(this, R.xml.preferences_main, false);
+
+
+        // Set activity's layout
         setContentView(R.layout.activity_main);
 
 
-        //Get saved data
+        // Get saved data
         if (savedInstanceState != null) {
         }
 
 
-        //Setup tabs
+        // Setup tabs
         CategoryAdapter categoryAdapter
                 = new CategoryAdapter(getSupportFragmentManager());
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);

@@ -45,6 +45,7 @@ public class TimelineFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
