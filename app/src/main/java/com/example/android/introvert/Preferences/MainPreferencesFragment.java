@@ -2,22 +2,46 @@ package com.example.android.introvert.Preferences;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.example.android.introvert.R;
+import com.example.android.introvert.Utils.DbUtils;
+
+import static com.example.android.introvert.Activities.MainActivity.db;
+import static com.example.android.introvert.Database.DbHelper.CATEGORIES_TABLE_NAME;
+import static com.example.android.introvert.Database.DbHelper.INPUT_TYPES_TABLE_NAME;
+import static com.example.android.introvert.Database.DbHelper.NOTES_TABLE_NAME;
+import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_TABLE_NAME;
 
 public class MainPreferencesFragment extends PreferenceFragment implements
         SharedPreferences.OnSharedPreferenceChangeListener {
-    // Register listener for SharedPreferences
+
     SharedPreferences sharedPref;
 
     SharedPreferences.OnSharedPreferenceChangeListener listener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-                    // listener implementation
-                    Log.i(TAG, "preference changed 11");
+
+                    if (key.equals("preferences_main_dump_table")) {
+                        ListPreference dumpTable = (ListPreference) findPreference(key);
+
+                        switch (dumpTable.getValue()) {
+                            case "NOTES":
+                                DbUtils.dumpTableExternal(db, NOTES_TABLE_NAME);
+                                break;
+                            case "NOTE_TYPES":
+                                DbUtils.dumpTableExternal(db, NOTE_TYPES_TABLE_NAME);
+                                break;
+                            case "INPUT_TYPES":
+                                DbUtils.dumpTableExternal(db, INPUT_TYPES_TABLE_NAME);
+                                break;
+                            case "CATEGORIES":
+                                DbUtils.dumpTableExternal(db, CATEGORIES_TABLE_NAME);
+                                break;
+                        }
+                    }
                 }
             };
 
