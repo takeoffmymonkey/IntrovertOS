@@ -1,14 +1,19 @@
 package com.example.android.introvert.Activities;
 
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.example.android.introvert.Adapters.CategoryAdapter;
 import com.example.android.introvert.Database.DbHelper;
+import com.example.android.introvert.Preferences.MainPreferencesActivity;
 import com.example.android.introvert.R;
 import com.example.android.introvert.Utils.FileUtils;
 
@@ -16,6 +21,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     String TAG = "INTROWERT_MAIN:";
+
+    public static final String ID = "id";
+    public static final String EXISTS = "exists";
+
     public static DbHelper dbHelper;
     public static SQLiteDatabase db;
 
@@ -57,5 +66,42 @@ public class MainActivity extends AppCompatActivity {
             FileUtils.INTERNAL_APP_STORAGE = getFilesDir().toString();
         if (FileUtils.EXTERNAL_APP_STORAGE == null && FileUtils.externalStorageIsReady())
             FileUtils.EXTERNAL_APP_STORAGE = getExternalFilesDir(null).toString();
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.menu_main_add_text_note:
+                Intent intentAddTextNote = new Intent(this, NoteActivity.class);
+                intentAddTextNote.putExtra(EXISTS, false);
+                intentAddTextNote.putExtra(ID, 1);
+                startActivity(intentAddTextNote);
+                return true;
+
+            case R.id.menu_main_add_audio_note:
+                Intent intentAddAudioNote = new Intent(this, NoteActivity.class);
+                intentAddAudioNote.putExtra(EXISTS, false);
+                intentAddAudioNote.putExtra(ID, 2);
+                startActivity(intentAddAudioNote);
+                return true;
+
+            case R.id.menu_main_preferences:
+                Intent intentPreferences = new Intent(this, MainPreferencesActivity.class);
+                startActivity(intentPreferences);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

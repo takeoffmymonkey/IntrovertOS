@@ -29,7 +29,12 @@
 
         <activity
             android:name=".Preferences.MainPreferencesActivity"
-            android:parentActivityName="com.example.android.introvert.Activities.MainActivity"></activity>
+            android:parentActivityName="com.example.android.introvert.Activities.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 

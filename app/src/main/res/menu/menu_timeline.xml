@@ -1,44 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/menu_timeline_dump"
-        android:title="Dump"
-        app:showAsAction="always">
-        <!-- "file" submenu -->
-        <menu>
-            <item
-                android:id="@+id/menu_timeline_dump_notes"
-                android:title="Notes" />
-            <item
-                android:id="@+id/menu_timeline_dump_note_types"
-                android:title="Note types" />
-            <item
-                android:id="@+id/menu_timeline_dump_input_types"
-                android:title="Input types" />
-            <item
-                android:id="@+id/menu_timeline_dump_categories"
-                android:title="Categories" />
-        </menu>
-    </item>
-
-    <item
-        android:id="@+id/menu_timeline_add_note"
-        android:title="Add Note"
-        app:showAsAction="always">
-        <menu>
-            <item
-                android:id="@+id/menu_timeline_add_text_note"
-                android:title="Text" />
-            <item
-                android:id="@+id/menu_timeline_add_audio_note"
-                android:title="Audio" />
-        </menu>
-    </item>
-
-
-    <item
-        android:id="@+id/menu_preferences"
-        android:title="Preferences"
-        app:showAsAction="always" />
+        android:id="@+id/menu_timelime_test_option"
+        android:title="Timeline option" />
 </menu>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- "add note" -->
+    <item
+        android:id="@+id/menu_main_add_note"
+        android:title="@string/menu_main_add_note"
+        app:showAsAction="ifRoom">
+        <!-- submenu -->
+        <menu>
+            <item
+                android:id="@+id/menu_main_add_text_note"
+                android:title="@string/menu_main_add_note_text" />
+            <item
+                android:id="@+id/menu_main_add_audio_note"
+                android:title="@string/menu_main_add_note_audio" />
+        </menu>
+    </item>
+
+    <!-- "..." -->
+    <item
+        android:id="@+id/menu_main_preferences"
+        android:title="@string/menu_main_preferences" />
+</menu>

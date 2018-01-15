@@ -1,6 +1,5 @@
 package com.example.android.introvert.Tabs;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -15,16 +14,10 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.example.android.introvert.Activities.MainActivity;
-import com.example.android.introvert.Activities.NoteActivity;
 import com.example.android.introvert.Adapters.NotesCursorAdapter;
-import com.example.android.introvert.Preferences.MainPreferencesActivity;
 import com.example.android.introvert.R;
-import com.example.android.introvert.Utils.DbUtils;
 
-import static com.example.android.introvert.Database.DbHelper.CATEGORIES_TABLE_NAME;
-import static com.example.android.introvert.Database.DbHelper.INPUT_TYPES_TABLE_NAME;
 import static com.example.android.introvert.Database.DbHelper.NOTES_TABLE_NAME;
-import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_TABLE_NAME;
 
 /**
  * Created by takeoff on 024 24 Oct 17.
@@ -83,7 +76,7 @@ public class TimelineFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
-            case R.id.menu_timeline_dump_notes:
+/*            case R.id.menu_timeline_dump_notes:
                 DbUtils.dumpTableExternal(db, NOTES_TABLE_NAME);
                 return true;
 
@@ -97,25 +90,9 @@ public class TimelineFragment extends Fragment {
 
             case R.id.menu_timeline_dump_categories:
                 DbUtils.dumpTableExternal(db, CATEGORIES_TABLE_NAME);
-                return true;
+                return true;*/
 
-            case R.id.menu_timeline_add_text_note:
-                Intent intentAddTextNote = new Intent(getContext(), NoteActivity.class);
-                intentAddTextNote.putExtra(EXISTS, false);
-                intentAddTextNote.putExtra(ID, 1);
-                startActivity(intentAddTextNote);
-                return true;
-
-            case R.id.menu_timeline_add_audio_note:
-                Intent intentAddAudioNote = new Intent(getContext(), NoteActivity.class);
-                intentAddAudioNote.putExtra(EXISTS, false);
-                intentAddAudioNote.putExtra(ID, 2);
-                startActivity(intentAddAudioNote);
-                return true;
-
-            case R.id.menu_preferences:
-                Intent intentPreferences = new Intent(getContext(), MainPreferencesActivity.class);
-                startActivity(intentPreferences);
+            case R.id.menu_timelime_test_option:
                 return true;
 
             default:
