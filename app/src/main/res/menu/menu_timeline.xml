@@ -36,4 +36,9 @@
         </menu>
     </item>
 
+
+    <item
+        android:id="@+id/menu_preferences"
+        android:title="Preferences"
+        app:showAsAction="always" />
 </menu>

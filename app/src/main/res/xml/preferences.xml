@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="pref_key_storage_settings"
+        android:title="Category">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_sync"
+            android:summary="summary"
+            android:title="title" />
+        <ListPreference
+            android:defaultValue="def value"
+            android:dependency="pref_sync"
+            android:dialogTitle="dialog title"
+            android:entries="@array/media_names"
+            android:entryValues="@array/media_names_val"
+            android:key="pref_syncConnectionType"
+            android:title="another title" />
+        <Preference android:title="prefs_web_page">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://www.example.com" />
+        </Preference>
+    </PreferenceCategory>
+    <PreferenceScreen
+        android:key="button_voicemail_category_key"
+        android:persistent="false"
+        android:title="voicemail">
+        <ListPreference
+            android:key="button_voicemail_provider_key"
+            android:title="voicemail_provider" />
+        <!-- opens another nested subscreen -->
+        <PreferenceScreen
+            android:key="button_voicemail_setting_key"
+            android:persistent="false"
+            android:title="voicemail_settings">
+
+        </PreferenceScreen>
+        <RingtonePreference
+            android:key="button_voicemail_ringtone_key"
+            android:ringtoneType="notification"
+            android:title="voicemail_ringtone_title" />
+
+    </PreferenceScreen>
+</PreferenceScreen>

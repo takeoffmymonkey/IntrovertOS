@@ -47,9 +47,10 @@ public class MainActivity extends AppCompatActivity {
         db = dbHelper.getReadableDatabase();
 
 
-        // Set storage locations
-        FileUtils.INTERNAL_APP_STORAGE = getFilesDir().toString();
-        if (FileUtils.externalStorageIsReady())
+        // Set app storage locations
+        if (FileUtils.INTERNAL_APP_STORAGE == null)
+            FileUtils.INTERNAL_APP_STORAGE = getFilesDir().toString();
+        if (FileUtils.EXTERNAL_APP_STORAGE == null && FileUtils.externalStorageIsReady())
             FileUtils.EXTERNAL_APP_STORAGE = getExternalFilesDir(null).toString();
     }
 }

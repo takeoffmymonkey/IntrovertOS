@@ -4,10 +4,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.example.android.introvert.Fragments.ExtensionsFragment;
-import com.example.android.introvert.Fragments.ProjectsFragment;
-import com.example.android.introvert.Fragments.TimelineFragment;
-import com.example.android.introvert.Fragments.ToDoFragment;
+import com.example.android.introvert.Tabs.ExtensionsFragment;
+import com.example.android.introvert.Tabs.ProjectsFragment;
+import com.example.android.introvert.Tabs.TimelineFragment;
+import com.example.android.introvert.Tabs.ToDoFragment;
 
 /**
  * Created by takeoff on 024 24 Oct 17.

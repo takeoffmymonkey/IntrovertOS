@@ -16,8 +16,8 @@ import com.example.android.introvert.R;
 import static com.example.android.introvert.Database.DbHelper.ID_COLUMN;
 import static com.example.android.introvert.Database.DbHelper.NOTES_CONTENT_COLUMN;
 import static com.example.android.introvert.Database.DbHelper.NOTES_NAME_COLUMN;
-import static com.example.android.introvert.Fragments.TimelineFragment.EXISTS;
-import static com.example.android.introvert.Fragments.TimelineFragment.ID;
+import static com.example.android.introvert.Tabs.TimelineFragment.EXISTS;
+import static com.example.android.introvert.Tabs.TimelineFragment.ID;
 
 /**
  * Created by takeoff on 005 05 Jan 18.

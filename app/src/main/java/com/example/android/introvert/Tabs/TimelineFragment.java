@@ -1,4 +1,4 @@
-package com.example.android.introvert.Fragments;
+package com.example.android.introvert.Tabs;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -17,8 +17,9 @@ import android.widget.ListView;
 import com.example.android.introvert.Activities.MainActivity;
 import com.example.android.introvert.Activities.NoteActivity;
 import com.example.android.introvert.Adapters.NotesCursorAdapter;
-import com.example.android.introvert.Utils.DbUtils;
+import com.example.android.introvert.Preferences.MainPreferencesActivity;
 import com.example.android.introvert.R;
+import com.example.android.introvert.Utils.DbUtils;
 
 import static com.example.android.introvert.Database.DbHelper.CATEGORIES_TABLE_NAME;
 import static com.example.android.introvert.Database.DbHelper.INPUT_TYPES_TABLE_NAME;
@@ -109,6 +110,11 @@ public class TimelineFragment extends Fragment {
                 intentAddAudioNote.putExtra(EXISTS, false);
                 intentAddAudioNote.putExtra(ID, 2);
                 startActivity(intentAddAudioNote);
+                return true;
+
+            case R.id.menu_preferences:
+                Intent intentPreferences = new Intent(getContext(), MainPreferencesActivity.class);
+                startActivity(intentPreferences);
                 return true;
 
             default:

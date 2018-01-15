@@ -21,7 +21,7 @@ import com.example.android.introvert.Editors.MyEditor;
 import com.example.android.introvert.Editors.PhotoEditor;
 import com.example.android.introvert.Editors.TextEditor;
 import com.example.android.introvert.Editors.VideoEditor;
-import com.example.android.introvert.Fragments.TimelineFragment;
+import com.example.android.introvert.Tabs.TimelineFragment;
 import com.example.android.introvert.Notes.Note;
 import com.example.android.introvert.R;
 

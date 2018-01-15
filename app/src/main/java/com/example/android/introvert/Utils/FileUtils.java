@@ -53,9 +53,9 @@ public class FileUtils {
     // TODO: 012 12 Jan 18 Make defining storage dynamic.
 
     // /data/data/com.example.android.introvert/files
-    public static String INTERNAL_APP_STORAGE;
+    public static String INTERNAL_APP_STORAGE = null;
     // /storage/sdcard0/Android/data/com.example.android.introvert/files
-    public static String EXTERNAL_APP_STORAGE;
+    public static String EXTERNAL_APP_STORAGE = null;
     // /storage/sdcard0
     public static final String EXTERNAL_STORAGE = getAbsolutePathOfFile(getExternalStorageRootDir());
     public static final String SD_STORAGE = "/storage/sdcard1";
