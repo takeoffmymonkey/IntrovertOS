@@ -3,19 +3,29 @@
 
     <!-- "Editors" -->
     <PreferenceCategory android:title="@string/preferences_main_category_editors">
+        <!-- "Text Editor" -->
         <PreferenceScreen
-            android:key="button_voicemail_category_key"
+            android:key="menu_main_text_editor"
             android:persistent="false"
-            android:title="voicemail">
-            <ListPreference
-                android:key="button_voicemail_provider_key"
-                android:title="voicemail_provider" />
-            <!-- opens another nested subscreen -->
-            <PreferenceScreen
-                android:key="button_voicemail_setting_key"
-                android:persistent="false"
-                android:title="voicemail_settings">
-            </PreferenceScreen>
+            android:title="@string/preferences_main_text_editor">
+            <!-- "Text Editor" items -->
+            <RingtonePreference
+                android:key="preferences_main_notification_sound"
+                android:ringtoneType="notification"
+                android:showSilent="true"
+                android:title="@string/preferences_main_notification_sound" />
+        </PreferenceScreen>
+        <!-- "Audio Editor" -->
+        <PreferenceScreen
+            android:key="menu_main_audio_editor"
+            android:persistent="false"
+            android:title="@string/preferences_main_audio_editor">
+            <!-- "Audio Editor" items -->
+            <RingtonePreference
+                android:key="preferences_main_notification_sound"
+                android:ringtoneType="notification"
+                android:showSilent="true"
+                android:title="@string/preferences_main_notification_sound" />
         </PreferenceScreen>
     </PreferenceCategory>
 
