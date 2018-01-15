@@ -8,4 +8,19 @@
     <string name="menu_main_add_note_audio">Audio</string>
     <string name="menu_main_preferences">Preferences</string>
 
+    <!-- Main preferences strings -->
+    <string name="preferences_main_category_editors">Editors</string>
+    <string name="preferences_main_text_editor">Text editor</string>
+    <string name="preferences_main_audio_editor">Audio editor</string>
+    <string name="preferences_main_category_debug">Debug</string>
+    <string name="preferences_main_debug_mode">Debug mode</string>
+    <string name="preferences_main_debug_mode_summary">Debug mode activates ability debug application.
+        For example, you can dump tables. </string>
+    <string name="preferences_main_dump_table">Dump table</string>
+    <string name="preferences_main_dump_table_dialog">Choose a table to dump.</string>
+    <string name="preferences_main_category_other">Other</string>
+    <string name="preferences_main_open_webpage">Go to Internet</string>
+    <string name="preferences_main_notification_sound">Notification sound</string>
+    <string name="preferences_main_notification_sound_dialog">Choose notification sound</string>
+
 </resources>

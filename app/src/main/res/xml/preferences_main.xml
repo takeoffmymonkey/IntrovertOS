@@ -1,45 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory
-        android:key="pref_key_storage_settings"
-        android:title="Category">
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="pref_sync"
-            android:summary="summary"
-            android:title="title" />
-        <ListPreference
-            android:defaultValue="def value"
-            android:dependency="pref_sync"
-            android:dialogTitle="dialog title"
-            android:entries="@array/media_names"
-            android:entryValues="@array/media_names_val"
-            android:key="pref_syncConnectionType"
-            android:title="another title" />
-        <Preference android:title="prefs_web_page">
+
+    <!-- "Editors" -->
+    <PreferenceCategory android:title="@string/preferences_main_category_editors">
+        <PreferenceScreen
+            android:key="button_voicemail_category_key"
+            android:persistent="false"
+            android:title="voicemail">
+            <ListPreference
+                android:key="button_voicemail_provider_key"
+                android:title="voicemail_provider" />
+            <!-- opens another nested subscreen -->
+            <PreferenceScreen
+                android:key="button_voicemail_setting_key"
+                android:persistent="false"
+                android:title="voicemail_settings">
+            </PreferenceScreen>
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+    <!-- "Other" -->
+    <PreferenceCategory android:title="@string/preferences_main_category_other">
+        <!-- "Go to Internet" option -->
+        <Preference android:title="@string/preferences_main_open_webpage">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="http://www.example.com" />
+                android:data="http://www.google.com" />
         </Preference>
-    </PreferenceCategory>
-    <PreferenceScreen
-        android:key="button_voicemail_category_key"
-        android:persistent="false"
-        android:title="voicemail">
-        <ListPreference
-            android:key="button_voicemail_provider_key"
-            android:title="voicemail_provider" />
-        <!-- opens another nested subscreen -->
-        <PreferenceScreen
-            android:key="button_voicemail_setting_key"
-            android:persistent="false"
-            android:title="voicemail_settings">
-
-        </PreferenceScreen>
+        <!-- "Notification sound" option -->
         <RingtonePreference
-            android:key="button_voicemail_ringtone_key"
+            android:key="preferences_main_notification_sound"
             android:ringtoneType="notification"
-            android:title="voicemail_ringtone_title" />
+            android:showSilent="true"
+            android:title="@string/preferences_main_notification_sound" />
+    </PreferenceCategory>
 
-    </PreferenceScreen>
+    <!-- "Debug" -->
+    <PreferenceCategory android:title="@string/preferences_main_category_debug">
+        <!-- "Debug mode" check box -->
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="preferences_main_debug_mode"
+            android:summary="@string/preferences_main_debug_mode_summary"
+            android:title="@string/preferences_main_debug_mode" />
+        <!-- "Dump table" spinner (maybe use DialogPreference instead of ListPreference) -->
+        <ListPreference
+            android:defaultValue="Notes"
+            android:dependency="preferences_main_debug_mode"
+            android:dialogTitle="@string/preferences_main_dump_table_dialog"
+            android:entries="@array/tables"
+            android:entryValues="@array/tables_values"
+            android:key="preferences_main_dump_table"
+            android:title="@string/preferences_main_dump_table" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

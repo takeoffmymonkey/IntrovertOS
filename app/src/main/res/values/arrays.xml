@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="media_names">
-        <item>Big Buck Bunny</item>
-        <item>Elephants Dream</item>
-        <item>Sintel</item>
-        <item>Tears of Steel</item>
+
+    <string-array name="tables">
+        <item>Notes</item>
+        <item>Note types</item>
+        <item>Input types</item>
+        <item>Categories</item>
     </string-array>
 
-
-    <string-array name="media_names_val">
-        <item>Big Buck Bunnycds</item>
-        <item>Elephants Dreamasd</item>
-        <item>Sintelsdd</item>
-        <item>Tears of Steels</item>
+    <string-array name="tables_values">
+        <item>NOTES</item>
+        <item>NOTE_TYPES</item>
+        <item>INPUT_TYPES</item>
+        <item>CATEGORIES</item>
     </string-array>
+
 </resources>
