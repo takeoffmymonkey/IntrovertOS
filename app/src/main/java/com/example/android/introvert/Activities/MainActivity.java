@@ -1,6 +1,7 @@
 package com.example.android.introvert.Activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -66,6 +67,12 @@ public class MainActivity extends AppCompatActivity {
             FileUtils.INTERNAL_APP_STORAGE = getFilesDir().toString();
         if (FileUtils.EXTERNAL_APP_STORAGE == null && FileUtils.externalStorageIsReady())
             FileUtils.EXTERNAL_APP_STORAGE = getExternalFilesDir(null).toString();
+
+
+        // Temp: reading preferences example
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean m = sharedPreferences.getBoolean("preferences_main_debug_mode", false);
+
     }
 
 

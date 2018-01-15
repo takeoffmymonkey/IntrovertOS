@@ -1,7 +1,9 @@
 package com.example.android.introvert.Activities;
 
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -14,16 +16,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.introvert.Utils.DbUtils;
 import com.example.android.introvert.Editors.AudioEditor;
 import com.example.android.introvert.Editors.ImageEditor;
 import com.example.android.introvert.Editors.MyEditor;
 import com.example.android.introvert.Editors.PhotoEditor;
 import com.example.android.introvert.Editors.TextEditor;
 import com.example.android.introvert.Editors.VideoEditor;
-import com.example.android.introvert.Tabs.TimelineFragment;
 import com.example.android.introvert.Notes.Note;
 import com.example.android.introvert.R;
+import com.example.android.introvert.Tabs.TimelineFragment;
+import com.example.android.introvert.Utils.DbUtils;
 
 /**
  * Created by takeoff on 029 29 Dec 17.
