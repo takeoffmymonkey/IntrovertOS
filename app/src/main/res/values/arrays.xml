@@ -15,4 +15,18 @@
         <item>CATEGORIES</item>
     </string-array>
 
+    <string-array name="locations">
+        <item>Internal (not visible)</item>
+        <item>External (visible to other apps, but not Media scanner)</item>
+        <item>External (visible to apps and Media scanner)</item>
+        <item>External SD Card (visible to apps and Media scanner)</item>
+    </string-array>
+
+    <string-array name="locations_values">
+        <item>INTERNAL</item>
+        <item>EXTERNAL_MS</item>
+        <item>EXTERNAL</item>
+        <item>EXTERNAL_SD</item>
+    </string-array>
+
 </resources>

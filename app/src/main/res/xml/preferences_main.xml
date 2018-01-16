@@ -29,6 +29,42 @@
         </PreferenceScreen>
     </PreferenceCategory>
 
+    <!-- "Export" -->
+    <PreferenceCategory android:title="@string/preferences_main_category_export">
+        <!-- "Export notes" option -->
+        <com.example.android.introvert.Preferences.MyDialogPreference
+            android:dialogIcon="@mipmap/ic_launcher_round"
+            android:dialogLayout="@layout/item_note"
+            android:dialogMessage="This message will appear when not using custom layout"
+            android:key="export_dialog"
+            android:negativeButtonText="Cancel"
+            android:positiveButtonText="Ok"
+            android:title="@string/preferences_main_export_notes" />
+        <!-- "Media files location" screen -->
+        <PreferenceScreen
+            android:key="preferences_main_notes_location"
+            android:persistent="false"
+            android:title="@string/preferences_main_notes_location">
+            <!-- "Notes location" items -->
+            <!-- "Text notes location" option -->
+            <ListPreference
+                android:defaultValue="INTERNAL"
+                android:dialogTitle="@string/preferences_main_text_notes_location"
+                android:entries="@array/locations"
+                android:entryValues="@array/locations_values"
+                android:key="preferences_main_text_notes_location"
+                android:title="@string/preferences_main_text_notes_location" />
+            <!-- "Audio notes location" option -->
+            <ListPreference
+                android:defaultValue="EXTERNAL_MS"
+                android:dialogTitle="@string/preferences_main_audio_notes_location"
+                android:entries="@array/locations"
+                android:entryValues="@array/locations_values"
+                android:key="preferences_main_audio_notes_location"
+                android:title="@string/preferences_main_audio_notes_location" />
+        </PreferenceScreen>
+    </PreferenceCategory>
+
     <!-- "Other" -->
     <PreferenceCategory android:title="@string/preferences_main_category_other">
         <!-- "Go to Internet" option -->

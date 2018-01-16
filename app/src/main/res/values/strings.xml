@@ -22,5 +22,10 @@
     <string name="preferences_main_open_webpage">Go to Internet</string>
     <string name="preferences_main_notification_sound">Notification sound</string>
     <string name="preferences_main_notification_sound_dialog">Choose notification sound</string>
+    <string name="preferences_main_category_export">Export</string>
+    <string name="preferences_main_export_notes">Export notes</string>
+    <string name="preferences_main_notes_location">Notes location</string>
+    <string name="preferences_main_text_notes_location">Text notes location</string>
+    <string name="preferences_main_audio_notes_location">Audio notes location</string>
 
 </resources>
