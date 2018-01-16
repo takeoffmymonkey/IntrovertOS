@@ -16,8 +16,10 @@ import static com.example.android.introvert.Database.DbHelper.CATEGORIES_TABLE_N
 import static com.example.android.introvert.Database.DbHelper.INPUT_TYPES_TABLE_NAME;
 import static com.example.android.introvert.Database.DbHelper.NOTES_TABLE_NAME;
 import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_TABLE_NAME;
-import static com.example.android.introvert.Utils.FileUtils.externalStorageIsReady;
-import static com.example.android.introvert.Utils.FileUtils.sdStorageExists;
+import static com.example.android.introvert.Utils.FileUtils.EXTERNAL_APP_STORAGE;
+import static com.example.android.introvert.Utils.FileUtils.EXTERNAL_STORAGE;
+import static com.example.android.introvert.Utils.FileUtils.SD_STORAGE;
+import static com.example.android.introvert.Utils.FileUtils.storageIsReady;
 
 public class MainPreferencesFragment extends PreferenceFragment implements
         SharedPreferences.OnSharedPreferenceChangeListener {
@@ -41,7 +43,7 @@ public class MainPreferencesFragment extends PreferenceFragment implements
                                         (MainActivity.db, 1, 1);
                                 break;
                             case "external_app_storage":
-                                if (externalStorageIsReady()) { // external storage is ready
+                                if (storageIsReady(EXTERNAL_APP_STORAGE)) { // external storage is ready
                                     DbUtils.setInputTypesContentLocation
                                             (MainActivity.db, 1, 2);
                                 } else { // external storage is NOT ready
@@ -49,7 +51,7 @@ public class MainPreferencesFragment extends PreferenceFragment implements
                                 }
                                 break;
                             case "external_storage":
-                                if (externalStorageIsReady()) { // external storage is ready
+                                if (storageIsReady(EXTERNAL_STORAGE)) { // external storage is ready
                                     DbUtils.setInputTypesContentLocation
                                             (MainActivity.db, 1, 3);
                                 } else { // external storage is NOT ready
@@ -57,7 +59,7 @@ public class MainPreferencesFragment extends PreferenceFragment implements
                                 }
                                 break;
                             case "sd_storage":
-                                if (sdStorageExists()) { // SD card storage exists
+                                if (storageIsReady(SD_STORAGE)) { // SD card storage exists
                                     DbUtils.setInputTypesContentLocation
                                             (MainActivity.db, 1, 4);
                                 } else { // SD card storage DOES NOT exist

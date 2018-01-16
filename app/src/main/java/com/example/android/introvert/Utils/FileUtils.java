@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.io.File;
 
@@ -64,19 +66,28 @@ public class FileUtils {
     public static final String SD_STORAGE = "/storage/sdcard1";
 
 
-    /* Checks if external storage is mounted */
-    public static boolean externalStorageIsReady() {
-        return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+    /* Checks if storage is mounted */
+    public static boolean storageIsReady(@Nullable String storage) {
+        if (storage == null || storage.equals(EXTERNAL_APP_STORAGE) ||
+                storage.equals(EXTERNAL_STORAGE))
+            // null is for initializing; all cases should perform same check
+            return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+        else if (storage.equals(INTERNAL_APP_STORAGE)) {
+            // internal storage should always true
+            return true;
+        } else if (storage.equals(SD_STORAGE)) {
+            // SD card should be checked on existance
+            return makeFileForPath(SD_STORAGE).exists();
+        } else {
+            Log.e(TAG, "This location should not exist");
+            return false;
+        }
     }
 
-    /* Checks if SD storage exists */
-    public static boolean sdStorageExists() {
-        return makeFileForPath(SD_STORAGE).exists();
-    }
 
     /* Returns root directory of external storage drive */
     private static File getExternalStorageRootDir() {
-        if (externalStorageIsReady()) return Environment.getExternalStorageDirectory();
+        if (storageIsReady(EXTERNAL_STORAGE)) return Environment.getExternalStorageDirectory();
         else return null;
     }
 

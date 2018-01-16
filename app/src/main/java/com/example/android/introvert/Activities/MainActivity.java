@@ -18,6 +18,8 @@ import com.example.android.introvert.Preferences.MainPreferencesActivity;
 import com.example.android.introvert.R;
 import com.example.android.introvert.Utils.FileUtils;
 
+import static com.example.android.introvert.Utils.FileUtils.EXTERNAL_APP_STORAGE;
+
 public class MainActivity extends AppCompatActivity {
 
 
@@ -65,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
         // Set app storage locations
         if (FileUtils.INTERNAL_APP_STORAGE == null)
             FileUtils.INTERNAL_APP_STORAGE = getFilesDir().toString();
-        if (FileUtils.EXTERNAL_APP_STORAGE == null && FileUtils.externalStorageIsReady())
-            FileUtils.EXTERNAL_APP_STORAGE = getExternalFilesDir(null).toString();
+        if (EXTERNAL_APP_STORAGE == null && FileUtils.storageIsReady(null))
+            EXTERNAL_APP_STORAGE = getExternalFilesDir(null).toString();
 
 
         // Temp: reading preferences example
