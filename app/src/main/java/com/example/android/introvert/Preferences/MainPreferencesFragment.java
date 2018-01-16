@@ -14,6 +14,8 @@ import static com.example.android.introvert.Database.DbHelper.CATEGORIES_TABLE_N
 import static com.example.android.introvert.Database.DbHelper.INPUT_TYPES_TABLE_NAME;
 import static com.example.android.introvert.Database.DbHelper.NOTES_TABLE_NAME;
 import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_TABLE_NAME;
+import static com.example.android.introvert.Utils.FileUtils.externalStorageIsReady;
+import static com.example.android.introvert.Utils.FileUtils.sdStorageExists;
 
 public class MainPreferencesFragment extends PreferenceFragment implements
         SharedPreferences.OnSharedPreferenceChangeListener {
@@ -24,7 +26,37 @@ public class MainPreferencesFragment extends PreferenceFragment implements
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 
-                    if (key.equals("preferences_main_dump_table")) {
+                    if (key.equals("preferences_main_audio_notes_location")) {
+                        // user changed text location table option
+                        ListPreference locations = (ListPreference) findPreference(key);
+
+                        switch (locations.getValue()) {
+                            case "internal_app_storage":
+                                break;
+                            case "external_app_storage":
+                                if (externalStorageIsReady()) { // external storage is ready
+
+                                } else { // external storage is NOT ready
+
+                                }
+                                break;
+                            case "external_storage":
+                                if (externalStorageIsReady()) { // external storage is ready
+
+                                } else { // external storage is NOT ready
+
+                                }
+                                break;
+                            case "sd_storage":
+                                if (sdStorageExists()) { // SD card storage exists
+
+                                } else { // SD card storage DOES NOT exist
+
+                                }
+                                break;
+                        }
+                    } else if (key.equals("preferences_main_dump_table")) {
+                        // user changed dump table option
                         ListPreference dumpTable = (ListPreference) findPreference(key);
 
                         switch (dumpTable.getValue()) {

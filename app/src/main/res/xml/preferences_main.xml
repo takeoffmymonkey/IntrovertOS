@@ -46,17 +46,9 @@
             android:persistent="false"
             android:title="@string/preferences_main_notes_location">
             <!-- "Notes location" items -->
-            <!-- "Text notes location" option -->
-            <ListPreference
-                android:defaultValue="INTERNAL"
-                android:dialogTitle="@string/preferences_main_text_notes_location"
-                android:entries="@array/locations"
-                android:entryValues="@array/locations_values"
-                android:key="preferences_main_text_notes_location"
-                android:title="@string/preferences_main_text_notes_location" />
             <!-- "Audio notes location" option -->
             <ListPreference
-                android:defaultValue="EXTERNAL_MS"
+                android:defaultValue="internal_app_storage"
                 android:dialogTitle="@string/preferences_main_audio_notes_location"
                 android:entries="@array/locations"
                 android:entryValues="@array/locations_values"

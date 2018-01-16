@@ -1,6 +1,9 @@
 package com.example.android.introvert.Utils;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 
 import java.io.File;
 
@@ -66,6 +69,10 @@ public class FileUtils {
         return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
     }
 
+    /* Checks if SD storage exists */
+    public static boolean sdStorageExists() {
+        return makeFileForPath(SD_STORAGE).exists();
+    }
 
     /* Returns root directory of external storage drive */
     private static File getExternalStorageRootDir() {
@@ -98,4 +105,19 @@ public class FileUtils {
     public static boolean mkDirs(File file) {
         return file.mkdirs();
     }
+
+
+    /* Returns current path option for audio notes */
+    public static String getAudioNotesPathOption(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean m = sharedPreferences.getBoolean("preferences_main_debug_mode", false);
+        return null;
+    }
+
+
+    /* Creates folders structure for note type */
+    public static boolean makeDirsForType() {
+        return false;
+    }
+
 }

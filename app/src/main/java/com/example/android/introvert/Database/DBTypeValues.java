@@ -18,6 +18,14 @@ public class DBTypeValues {
             "picture"
     };
 
+    public static final String[] contentLocations = {
+            "db_storage",
+            "internal_app_storage",
+            "external_app_storage",
+            "external_storage",
+            "sd_storage"
+    };
+
     public static final String[] defaultCategories = {
             "Ideas",
             "Jokes",

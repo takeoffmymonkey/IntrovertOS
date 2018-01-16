@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import static com.example.android.introvert.Database.DbHelper.CATEGORIES_CATEGORY_COLUMN;
 import static com.example.android.introvert.Database.DbHelper.CATEGORIES_TABLE_NAME;
 import static com.example.android.introvert.Database.DbHelper.ID_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.INPUT_TYPES_CONTENT_LOCATION;
 import static com.example.android.introvert.Database.DbHelper.INPUT_TYPES_TABLE_NAME;
 import static com.example.android.introvert.Database.DbHelper.INPUT_TYPES_TYPE_COLUMN;
 import static com.example.android.introvert.Database.DbHelper.NOTES_COMMENT_COLUMN;
@@ -92,15 +93,24 @@ public class DbUtils {
 
     public static void createInputTypes(SQLiteDatabase db) {
         // Add input types to INPUT_TYPES_TABLE_NAME
+        int i = 0;
         for (String inputType : DBTypeValues.inputTypes) {
             ContentValues inputsContentValues = new ContentValues();
             inputsContentValues.put(INPUT_TYPES_TYPE_COLUMN, inputType);
+            if (i == 0) { // this is text type, should go to db_storage
+                inputsContentValues.put(INPUT_TYPES_CONTENT_LOCATION,
+                        DBTypeValues.contentLocations[i]);
+            } else { // the rest should go to internal_app_storage by default
+                inputsContentValues.put(INPUT_TYPES_CONTENT_LOCATION,
+                        DBTypeValues.contentLocations[1]);
+            }
             if (db.insert(INPUT_TYPES_TABLE_NAME, null,
                     inputsContentValues) == -1) {
                 Log.e(TAG, "Error adding input type: " + inputType);
             } else {
                 Log.i(TAG, "Input type added successfully: " + inputType);
             }
+            i++;
         }
     }
 

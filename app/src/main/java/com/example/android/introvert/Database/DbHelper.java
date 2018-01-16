@@ -38,10 +38,12 @@ public class DbHelper extends SQLiteOpenHelper {
     /*INPUT_TYPES table*/
     public static final String INPUT_TYPES_TABLE_NAME = "INPUT_TYPES";
     public static final String INPUT_TYPES_TYPE_COLUMN = "input_type";
+    public static final String INPUT_TYPES_CONTENT_LOCATION = "content_location";
     //table create command
     static final String INPUT_TYPES_TABLE_CREATE_COMMAND = "CREATE TABLE "
             + INPUT_TYPES_TABLE_NAME
             + " (" + ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            INPUT_TYPES_CONTENT_LOCATION + " TEXT NOT NULL, " +
             INPUT_TYPES_TYPE_COLUMN + " TEXT NOT NULL);";
     //DROP TABLE command
     static final String INPUT_TYPES_TABLE_DROP_COMMAND = "DROP TABLE "
