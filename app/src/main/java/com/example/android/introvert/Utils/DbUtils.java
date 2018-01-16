@@ -126,17 +126,19 @@ public class DbUtils {
                 INPUT_TYPES_TYPE_COLUMN + "=?",
                 new String[]{inputTypes[type]}) == 1) {
             // Successful update of content type
-            Log.i(TAG, "Successfully updated content type");
+            Log.i(TAG, "Successfully updated content type: " + inputTypes[type] +
+                    " with new content location: " + contentLocations[location]);
             return true;
         } else { // Unsuccessful update of last id
-            Log.e(TAG, "Error while updating last id of the type");
+            Log.e(TAG, "Error while updating type: " + inputTypes[type] +
+                    " with new content location: " + contentLocations[location]);
             return false;
         }
     }
 
 
     // Create default names for note types - user and system
-    static String generateInternalTypeName(boolean user, SQLiteDatabase db) {
+    private static String generateInternalTypeName(boolean user, SQLiteDatabase db) {
         // User: id_ + user
         // System: id_ + system
         String origin;
