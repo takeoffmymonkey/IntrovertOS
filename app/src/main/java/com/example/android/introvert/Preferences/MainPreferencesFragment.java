@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
+import com.example.android.introvert.Activities.MainActivity;
 import com.example.android.introvert.R;
 import com.example.android.introvert.Utils.DbUtils;
 
@@ -20,6 +22,9 @@ import static com.example.android.introvert.Utils.FileUtils.sdStorageExists;
 public class MainPreferencesFragment extends PreferenceFragment implements
         SharedPreferences.OnSharedPreferenceChangeListener {
 
+    String TAG = "INTROWERT_MAIN_PREFERENCES_FRAGMENT:";
+
+
     SharedPreferences sharedPref;
 
     SharedPreferences.OnSharedPreferenceChangeListener listener =
@@ -29,29 +34,34 @@ public class MainPreferencesFragment extends PreferenceFragment implements
                     if (key.equals("preferences_main_audio_notes_location")) {
                         // user changed text location table option
                         ListPreference locations = (ListPreference) findPreference(key);
-
-                        switch (locations.getValue()) {
+                        String locationValue = locations.getValue();
+                        switch (locationValue) {
                             case "internal_app_storage":
+                                DbUtils.setInputTypesContentLocation
+                                        (MainActivity.db, 1, 1);
                                 break;
                             case "external_app_storage":
                                 if (externalStorageIsReady()) { // external storage is ready
-
+                                    DbUtils.setInputTypesContentLocation
+                                            (MainActivity.db, 1, 2);
                                 } else { // external storage is NOT ready
-
+                                    Log.e(TAG, "Error: External storage is not ready");
                                 }
                                 break;
                             case "external_storage":
                                 if (externalStorageIsReady()) { // external storage is ready
-
+                                    DbUtils.setInputTypesContentLocation
+                                            (MainActivity.db, 1, 3);
                                 } else { // external storage is NOT ready
-
+                                    Log.e(TAG, "Error: External storage is not ready");
                                 }
                                 break;
                             case "sd_storage":
                                 if (sdStorageExists()) { // SD card storage exists
-
+                                    DbUtils.setInputTypesContentLocation
+                                            (MainActivity.db, 1, 4);
                                 } else { // SD card storage DOES NOT exist
-
+                                    Log.e(TAG, "Error: SD Card is not ready");
                                 }
                                 break;
                         }
@@ -77,8 +87,6 @@ public class MainPreferencesFragment extends PreferenceFragment implements
                 }
             };
 
-
-    String TAG = "INTROWERT_MAIN_PREFERENCES_FRAGMENT:";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

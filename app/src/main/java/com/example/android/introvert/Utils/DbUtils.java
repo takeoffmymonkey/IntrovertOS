@@ -7,11 +7,13 @@ import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.example.android.introvert.Database.DBTypeValues;
 import com.example.android.introvert.Notes.Note;
 
 import java.util.ArrayList;
 
+import static com.example.android.introvert.Database.DBTypeValues.contentLocations;
+import static com.example.android.introvert.Database.DBTypeValues.defaultCategories;
+import static com.example.android.introvert.Database.DBTypeValues.inputTypes;
 import static com.example.android.introvert.Database.DbHelper.CATEGORIES_CATEGORY_COLUMN;
 import static com.example.android.introvert.Database.DbHelper.CATEGORIES_TABLE_NAME;
 import static com.example.android.introvert.Database.DbHelper.ID_COLUMN;
@@ -85,7 +87,7 @@ public class DbUtils {
 
 
     public static void createDefaultCategories(SQLiteDatabase db) {
-        for (String defaultCategory : DBTypeValues.defaultCategories) {
+        for (String defaultCategory : defaultCategories) {
             addCategory(db, defaultCategory);
         }
     }
@@ -94,15 +96,15 @@ public class DbUtils {
     public static void createInputTypes(SQLiteDatabase db) {
         // Add input types to INPUT_TYPES_TABLE_NAME
         int i = 0;
-        for (String inputType : DBTypeValues.inputTypes) {
+        for (String inputType : inputTypes) {
             ContentValues inputsContentValues = new ContentValues();
             inputsContentValues.put(INPUT_TYPES_TYPE_COLUMN, inputType);
             if (i == 0) { // this is text type, should go to db_storage
                 inputsContentValues.put(INPUT_TYPES_CONTENT_LOCATION,
-                        DBTypeValues.contentLocations[i]);
+                        contentLocations[i]);
             } else { // the rest should go to internal_app_storage by default
                 inputsContentValues.put(INPUT_TYPES_CONTENT_LOCATION,
-                        DBTypeValues.contentLocations[1]);
+                        contentLocations[1]);
             }
             if (db.insert(INPUT_TYPES_TABLE_NAME, null,
                     inputsContentValues) == -1) {
@@ -111,6 +113,24 @@ public class DbUtils {
                 Log.i(TAG, "Input type added successfully: " + inputType);
             }
             i++;
+        }
+    }
+
+
+    // Updates input type location
+    public static boolean setInputTypesContentLocation(SQLiteDatabase db, int type, int location) {
+        ContentValues locationContentValues = new ContentValues();
+
+        locationContentValues.put(INPUT_TYPES_CONTENT_LOCATION, contentLocations[location]);
+        if (db.update(INPUT_TYPES_TABLE_NAME, locationContentValues,
+                INPUT_TYPES_TYPE_COLUMN + "=?",
+                new String[]{inputTypes[type]}) == 1) {
+            // Successful update of content type
+            Log.i(TAG, "Successfully updated content type");
+            return true;
+        } else { // Unsuccessful update of last id
+            Log.e(TAG, "Error while updating last id of the type");
+            return false;
         }
     }
 
