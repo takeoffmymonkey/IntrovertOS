@@ -40,4 +40,11 @@
         android:layout_marginTop="8dp"
         android:text="00:00" />
 
+    <SeekBar
+        android:id="@+id/editor_audio_empty_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editor_audio_empty_time"
+        android:layout_marginTop="8dp" />
+
 </RelativeLayout>

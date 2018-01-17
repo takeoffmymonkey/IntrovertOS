@@ -12,7 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.introvert.Activities.NoteActivity;
 import com.example.android.introvert.Notes.Note;
@@ -43,20 +42,29 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     private MediaPlayer mediaPlayer;
     private MediaRecorder mediaRecorder;
 
-    // UI elements: empty editor
+    // Editor container
+    LinearLayout editorContainer;
+
+    // Currently displaying view of the editor
+    View currentView;
+
+    // UI elements: empty mode
     TextView emptyRecHintTextView;
     Button emptyRecStopButton;
     TextView emptyTimeTextView;
+    SeekBar emptySeekBar; // Just for holding space
 
-    // UI elements: existing editor
+    // UI elements: non empty mode
     Button recButton;
     Button playPauseButton;
     Button stopButton;
     TextView timeTextView;
     SeekBar seekBar;
 
-    // Editor container
-    LinearLayout editorContainer;
+    // Empty and non empty mode layouts
+    int emptyModeLayout = R.layout.editor_audio_empty;
+    int nonEmptyModeLayout = R.layout.editor_audio;
+    boolean emptyMode = true;
 
 
     final String DIR_SD = "Introvert";
@@ -86,28 +94,73 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         this.note = note;
         this.noteActivity = noteActivity;
 
-        initComponents();
+        // Initialize appropriate layout and its components
+        if (exists) initNonEmptyModeComponents(); // Current note has previous content
+        else initEmptyModeComponents(); // Current note has no previous content
+    }
+
+
+    /* Initialize empty mode layout and its components */
+    private void initEmptyModeComponents() {
+        // Set fresh layout
+        setEditorLayout(emptyModeLayout);
+
+        // Init UI elements
+        emptyRecHintTextView = (TextView) findViewById(R.id.editor_audio_empty_record_hint_tv);
+        emptyRecStopButton = (Button) findViewById(R.id.editor_audio_empty_rec_stop_b);
+        emptyTimeTextView = (TextView) findViewById(R.id.editor_audio_empty_time);
+        emptySeekBar = (SeekBar) findViewById(R.id.editor_audio_empty_seekbar);
+
+        // Hide seekbar as it is just a placeholder
+        emptySeekBar.setVisibility(INVISIBLE);
+
+        // Set onclick listeners
+        emptyRecStopButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initNonEmptyModeComponents();
+            }
+        });
+
+    }
+
+    /* Initialize non mode layout and its components */
+    private void initNonEmptyModeComponents() {
+        // Set fresh layout
+        setEditorLayout(nonEmptyModeLayout);
+
+        // Init UI elements
+        recButton = (Button) findViewById(R.id.editor_audio_record_b);
+        playPauseButton = (Button) findViewById(R.id.editor_audio_play_pause_b);
+        stopButton = (Button) findViewById(R.id.editor_audio_stop_b);
+        timeTextView = (TextView) findViewById(R.id.editor_audio_time);
+        seekBar = (SeekBar) findViewById(R.id.editor_audio_empty_seekbar);
+
+        // Set onclick listeners
+        recButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initEmptyModeComponents();
+            }
+        });
     }
 
 
     /* Initialize layout and its components */
     private void initComponents() {
-        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService
-                (Context.LAYOUT_INFLATER_SERVICE);
+// Init empty mode components
 
-        if (inflater != null) {
-            inflater.inflate(R.layout.editor_audio, this);
-        } else {
-            Log.e(TAG, "Error: could not find editor_audio view!");
-        }
+
+        // Set appropriate initial layout
+        if (exists) setEditorLayout(nonEmptyModeLayout);
+        else setEditorLayout(emptyModeLayout);
 
         //Init UI elements
         playPauseButton = (Button) findViewById(R.id.editor_audio_play_pause_b);
         playPauseButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(noteActivity, "hey", Toast.LENGTH_SHORT).show();
-                //playStart();
+                playStart();
             }
         });
         stopButton = (Button) findViewById(R.id.editor_audio_stop_b);
@@ -124,7 +177,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
                 recordStart();
             }
         });
-        seekBar = (SeekBar) findViewById(R.id.editor_audio_seekbar);
+        //seekBar = (SeekBar) findViewById(R.id.editor_audio_seekbar);
         timeTextView = (TextView) findViewById(R.id.editor_audio_time);
 
 
@@ -176,6 +229,44 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         });*/
 
 
+    }
+
+
+    /**
+     * Sets the layout for editor. Either editor_audio_empty.xml or editor_audio.xml
+     */
+    private void setEditorLayout(int layout) {
+
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService
+                (Context.LAYOUT_INFLATER_SERVICE);
+
+        if (inflater != null) { // Android makes me check this
+
+            // Check if there is a set layout
+            if (currentView != null) { // There is a set layout
+                editorContainer.removeView(currentView);
+                removeAllViewsInLayout();
+                View newView = inflater.inflate(layout, this);
+                editorContainer.addView(newView);
+                Log.i(TAG, "Updated layout");
+                currentView = newView;
+            } else { // No previously set layout
+                currentView = inflater.inflate(layout, this);
+                Log.i(TAG, "Set new layout");
+            }
+            setEditorLayoutMode(layout); // Update mode
+        }
+    }
+
+
+    private void setEditorLayoutMode(int layout) {
+        if (layout == emptyModeLayout) {
+            emptyMode = true;
+        } else if (layout == nonEmptyModeLayout) {
+            emptyMode = false;
+        } else {
+            Log.e(TAG, "Unknown layout: " + layout);
+        }
     }
 
 
