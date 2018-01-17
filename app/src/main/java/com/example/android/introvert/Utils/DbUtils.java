@@ -2,7 +2,6 @@ package com.example.android.introvert.Utils;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -120,7 +119,7 @@ public class DbUtils {
     }
 
 
-    static boolean addCategory(SQLiteDatabase db, String category) {
+    static boolean addCategory(String category) {
         // Check if category is empty
         if (category != null && !category.equals("")) { // category is not empty
 
@@ -157,14 +156,14 @@ public class DbUtils {
     }
 
 
-    public static void createDefaultCategories(SQLiteDatabase db) {
+    public static void createDefaultCategories() {
         for (String defaultCategory : defaultCategories) {
-            addCategory(db, defaultCategory);
+            addCategory(defaultCategory);
         }
     }
 
 
-    public static void createInputTypes(SQLiteDatabase db) {
+    public static void createInputTypes() {
         // Add input types to INPUT_TYPES_TABLE_NAME
         int i = 0;
         for (String inputType : inputTypeCodes) {
@@ -189,7 +188,7 @@ public class DbUtils {
 
 
     // Updates input type location
-    public static boolean setInputTypesContentLocation(SQLiteDatabase db, int type, int location) {
+    public static boolean setInputTypesContentLocation(int type, int location) {
         ContentValues locationContentValues = new ContentValues();
 
         locationContentValues.put(INPUT_TYPES_CONTENT_LOCATION, contentLocationCodes[location]);
@@ -209,7 +208,7 @@ public class DbUtils {
 
 
     // Create default names for note types - user and system
-    private static String generateInternalTypeName(boolean user, SQLiteDatabase db) {
+    private static String generateInternalTypeName(boolean user) {
         // User: id_ + user
         // System: id_ + system
         String origin;
@@ -233,7 +232,6 @@ public class DbUtils {
 
     // pass null or 0 for default setting
     static void addNoteType(boolean user,
-                            SQLiteDatabase db,
                             @Nullable String defaultName,
                             int category,
                             int defaultPriority,
@@ -242,7 +240,7 @@ public class DbUtils {
                             int commentInputType) {
 
         // Generate type name
-        String internalTypeName = generateInternalTypeName(user, db);
+        String internalTypeName = generateInternalTypeName(user);
 
         // Get default values if custom not provided
         // Check if category is not provided
@@ -323,22 +321,22 @@ public class DbUtils {
         return contentLocation;
     }
 
-    public static void createDefaultNoteTypes(SQLiteDatabase db) {
+    public static void createDefaultNoteTypes() {
         // Default text note for Ideas category
-        addNoteType(false, db, "Idea (Text)", 0, 0, 0,
+        addNoteType(false, "Idea (Text)", 0, 0, 0,
                 0, 0);
 
-        addNoteType(false, db, "Idea (Audio)", 0, 0, 2,
+        addNoteType(false, "Idea (Audio)", 0, 0, 2,
                 0, 0);
     }
 
 
-    public static void dumpTableExternal(SQLiteDatabase db, String tableName) {
-        new DumpTable(db, tableName).execute();
+    public static void dumpTableExternal(String tableName) {
+        new DumpTable(tableName).execute();
     }
 
 
-    private static void dumpTableInternal(SQLiteDatabase db, String tableName) {
+    private static void dumpTableInternal(String tableName) {
 
         //Table Heading
         Log.i(TAG, "Starting " + tableName + " dump...");
@@ -423,16 +421,14 @@ public class DbUtils {
 
 
     public static class DumpTable extends AsyncTask<String, Void, Boolean> {
-        SQLiteDatabase db;
         String tableName;
 
-        DumpTable(SQLiteDatabase db, String tableName) {
-            this.db = db;
+        DumpTable(String tableName) {
             this.tableName = tableName;
         }
 
         protected Boolean doInBackground(String... params) {
-            dumpTableInternal(db, tableName);
+            dumpTableInternal(tableName);
             return true;
         }
 
@@ -442,7 +438,7 @@ public class DbUtils {
     }
 
 
-    private static boolean incrementLastId(SQLiteDatabase db, int noteTypeId) {
+    private static boolean incrementLastId(int noteTypeId) {
         Cursor cursorLastId = db.query(NOTE_TYPES_TABLE_NAME,
                 new String[]{NOTE_TYPES_LAST_ID_COLUMN}, ID_COLUMN + "=?",
                 new String[]{Integer.toString(noteTypeId)}, null,
@@ -476,7 +472,7 @@ public class DbUtils {
     }
 
 
-    public static boolean saveNote(SQLiteDatabase db, Note note) {
+    public static boolean saveNote(Note note) {
         int noteId = note.getNoteId();
 
         // TODO: 009 09 Jan 18 change getInit input types to getUpdated when ready
@@ -508,7 +504,7 @@ public class DbUtils {
                 Log.i(TAG, "Successfully added new note: " + noteId);
                 // Increment note count for this type
                 int noteTypeId = note.getTypeId();
-                return incrementLastId(db, noteTypeId);
+                return incrementLastId(noteTypeId);
             } else {
                 // Unsuccessful insert
                 Log.e(TAG, "Inserting new note was unsuccessful: " + noteId);
@@ -518,7 +514,7 @@ public class DbUtils {
     }
 
 
-    public static boolean deleteNote(SQLiteDatabase db, Note note) {
+    public static boolean deleteNote(Note note) {
         if (note.exists()) { // Double check that note exists
             int noteId = note.getNoteId();
 

@@ -24,7 +24,7 @@ import static com.example.android.introvert.Utils.FileUtils.storageIsReady;
 public class MainPreferencesFragment extends PreferenceFragment implements
         SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private final String TAG = "INTROWERT_MAIN_PREFERENCES_FRAGMENT";
+    private final String TAG = "INTROWERT_MAIN_PREF_FRG";
 
 
     SharedPreferences sharedPref;
@@ -40,12 +40,12 @@ public class MainPreferencesFragment extends PreferenceFragment implements
                         switch (locationValue) {
                             case "internal_app_storage":
                                 DbUtils.setInputTypesContentLocation
-                                        (MainActivity.db, 1, 1);
+                                        (1, 1);
                                 break;
                             case "external_app_storage":
                                 if (storageIsReady(EXTERNAL_APP_STORAGE)) { // external storage is ready
                                     DbUtils.setInputTypesContentLocation
-                                            (MainActivity.db, 1, 2);
+                                            (1, 2);
                                 } else { // external storage is NOT ready
                                     Log.e(TAG, "Error: External storage is not ready");
                                 }
@@ -53,7 +53,7 @@ public class MainPreferencesFragment extends PreferenceFragment implements
                             case "external_storage":
                                 if (storageIsReady(EXTERNAL_STORAGE)) { // external storage is ready
                                     DbUtils.setInputTypesContentLocation
-                                            (MainActivity.db, 1, 3);
+                                            (1, 3);
                                 } else { // external storage is NOT ready
                                     Log.e(TAG, "Error: External storage is not ready");
                                 }
@@ -61,7 +61,7 @@ public class MainPreferencesFragment extends PreferenceFragment implements
                             case "sd_storage":
                                 if (storageIsReady(SD_STORAGE)) { // SD card storage exists
                                     DbUtils.setInputTypesContentLocation
-                                            (MainActivity.db, 1, 4);
+                                            (1, 4);
                                 } else { // SD card storage DOES NOT exist
                                     Log.e(TAG, "Error: SD Card is not ready");
                                 }
@@ -73,16 +73,16 @@ public class MainPreferencesFragment extends PreferenceFragment implements
 
                         switch (dumpTable.getValue()) {
                             case "NOTES":
-                                DbUtils.dumpTableExternal(db, NOTES_TABLE_NAME);
+                                DbUtils.dumpTableExternal(NOTES_TABLE_NAME);
                                 break;
                             case "NOTE_TYPES":
-                                DbUtils.dumpTableExternal(db, NOTE_TYPES_TABLE_NAME);
+                                DbUtils.dumpTableExternal(NOTE_TYPES_TABLE_NAME);
                                 break;
                             case "INPUT_TYPES":
-                                DbUtils.dumpTableExternal(db, INPUT_TYPES_TABLE_NAME);
+                                DbUtils.dumpTableExternal(INPUT_TYPES_TABLE_NAME);
                                 break;
                             case "CATEGORIES":
-                                DbUtils.dumpTableExternal(db, CATEGORIES_TABLE_NAME);
+                                DbUtils.dumpTableExternal(CATEGORIES_TABLE_NAME);
                                 break;
                         }
                     }

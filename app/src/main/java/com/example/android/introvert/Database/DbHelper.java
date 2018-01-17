@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.android.introvert.Activities.MainActivity;
+
 import static com.example.android.introvert.Utils.DbUtils.createDefaultCategories;
 import static com.example.android.introvert.Utils.DbUtils.createDefaultNoteTypes;
 import static com.example.android.introvert.Utils.DbUtils.createInputTypes;
@@ -113,21 +115,23 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        // In case methods below will have no db to work with
+        MainActivity.db = db;
 
         // Create CATEGORIES table, add default categories
         db.execSQL(CATEGORIES_TABLE_CREATE_COMMAND);
         Log.i(TAG, "CATEGORIES table created successfully");
-        createDefaultCategories(db);
+        createDefaultCategories();
 
         // Create INPUT_TYPES table, add standard input types
         db.execSQL(INPUT_TYPES_TABLE_CREATE_COMMAND);
         Log.i(TAG, "INPUT_TYPES table created successfully");
-        createInputTypes(db);
+        createInputTypes();
 
         // Create NOTE_TYPES table, add default note types
         db.execSQL(NOTE_TYPES_TABLE_CREATE_COMMAND);
         Log.i(TAG, "NOTE_TYPES table created successfully");
-        createDefaultNoteTypes(db);
+        createDefaultNoteTypes();
 
         // Create NOTES table
         db.execSQL(NOTES_TABLE_CREATE_COMMAND);
