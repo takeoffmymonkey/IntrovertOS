@@ -9,6 +9,7 @@ import com.example.android.introvert.Notes.Note;
  */
 
 public interface MyEditor {
+
     /* Retrieving editor type (1 -text, 2 -audio, etc.) */
     int getEditorType();
 

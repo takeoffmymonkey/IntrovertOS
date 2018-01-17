@@ -25,7 +25,7 @@ import static com.example.android.introvert.Database.DbHelper.NOTES_TABLE_NAME;
 
 public class TimelineFragment extends Fragment {
 
-    String TAG = "INTROWERT_TIMELINE_FRAGMENT:";
+    private final String TAG = "INTROWERT_TIMELINE_FRAGMENT";
     public static final String ID = "id";
     public static final String EXISTS = "exists";
 
@@ -75,22 +75,6 @@ public class TimelineFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-
-/*            case R.id.menu_timeline_dump_notes:
-                DbUtils.dumpTableExternal(db, NOTES_TABLE_NAME);
-                return true;
-
-            case R.id.menu_timeline_dump_note_types:
-                DbUtils.dumpTableExternal(db, NOTE_TYPES_TABLE_NAME);
-                return true;
-
-            case R.id.menu_timeline_dump_input_types:
-                DbUtils.dumpTableExternal(db, INPUT_TYPES_TABLE_NAME);
-                return true;
-
-            case R.id.menu_timeline_dump_categories:
-                DbUtils.dumpTableExternal(db, CATEGORIES_TABLE_NAME);
-                return true;*/
 
             case R.id.menu_timelime_test_option:
                 return true;

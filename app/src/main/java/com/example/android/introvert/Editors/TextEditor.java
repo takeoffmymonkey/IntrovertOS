@@ -19,7 +19,7 @@ import com.example.android.introvert.R;
 
 public class TextEditor extends RelativeLayout implements MyEditor {
 
-    private final String TAG = "INTROWERT_TEXT_EDITOR:";
+    private final String TAG = "INTROWERT_TEXT_EDITOR";
 
     // Which type of content will be used: 1 - text, 2 - audio, 3 - video, 4 - photo, 5 - image
     private int editorType = 0;

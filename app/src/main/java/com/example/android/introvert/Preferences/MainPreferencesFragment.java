@@ -24,7 +24,7 @@ import static com.example.android.introvert.Utils.FileUtils.storageIsReady;
 public class MainPreferencesFragment extends PreferenceFragment implements
         SharedPreferences.OnSharedPreferenceChangeListener {
 
-    String TAG = "INTROWERT_MAIN_PREFERENCES_FRAGMENT:";
+    private final String TAG = "INTROWERT_MAIN_PREFERENCES_FRAGMENT";
 
 
     SharedPreferences sharedPref;

@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -11,9 +12,10 @@ import com.example.android.introvert.Notes.Note;
 
 import java.util.ArrayList;
 
-import static com.example.android.introvert.Database.DBTypeValues.contentLocations;
+import static com.example.android.introvert.Activities.MainActivity.db;
+import static com.example.android.introvert.Database.DBTypeValues.contentLocationCodes;
 import static com.example.android.introvert.Database.DBTypeValues.defaultCategories;
-import static com.example.android.introvert.Database.DBTypeValues.inputTypes;
+import static com.example.android.introvert.Database.DBTypeValues.inputTypeCodes;
 import static com.example.android.introvert.Database.DbHelper.CATEGORIES_CATEGORY_COLUMN;
 import static com.example.android.introvert.Database.DbHelper.CATEGORIES_TABLE_NAME;
 import static com.example.android.introvert.Database.DbHelper.ID_COLUMN;
@@ -46,7 +48,76 @@ import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_TABLE_N
 
 public class DbUtils {
 
-    static private String TAG = "INTROWERT_DBUTILS:";
+    static private final String TAG = "INTROWERT_DBUTILS";
+
+
+    // TODO: 017 17 Jan 18 make db var local
+
+    // TODO: 017 17 Jan 18 make methods for returning columns for any table
+
+
+    /* Returns String values of the specified columns of the specified table*/
+    public static ArrayList<String> getRowStringDataById(String table, int id, String[] columns) {
+        ArrayList<String> stringsList = new ArrayList<>();
+
+        Cursor cursor = db.query(table, columns, ID_COLUMN + "=?",
+                new String[]{Integer.toString(id)}, null, null, null);
+
+        if (cursor.getCount() == 1) { // Row is found
+            cursor.moveToFirst();
+            for (String column : columns) {
+                int index = cursor.getColumnIndex(column);
+                if (index != -1) { // Column exists
+                    try {
+                        stringsList.add(cursor.getString(index));
+                    } catch (IllegalArgumentException e) {
+                        Log.e(TAG, "CATCHED EXCEPTION (probably asking for string from int " +
+                                "column):" + e);
+                    }
+                } else { // Column doesn't exist
+                    Log.e(TAG, "Error: column doesn't exist: " + column);
+                }
+            }
+        } else { // Row is not fount or found more than 1
+            Log.e(TAG, "Row with such id is not found or found more than 1: " + id);
+        }
+
+        cursor.close();
+
+        return stringsList;
+    }
+
+
+    /* Returns Integer values of the specified columns of the specified table*/
+    public static ArrayList<Integer> getRowIntegerDataById(String table, int id, String[] columns) {
+        ArrayList<Integer> intList = new ArrayList<>();
+
+        Cursor cursor = db.query(table, columns, ID_COLUMN + "=?",
+                new String[]{Integer.toString(id)}, null, null, null);
+
+        if (cursor.getCount() == 1) { // Row is found
+            cursor.moveToFirst();
+            for (String column : columns) {
+                int index = cursor.getColumnIndex(column);
+                if (index != -1) { // Column exists
+                    try {
+                        intList.add(cursor.getInt(index));
+                    } catch (IllegalArgumentException e) {
+                        Log.e(TAG, "CATCHED EXCEPTION (probably asking for int from string " +
+                                "column):" + e);
+                    }
+                } else { // Column doesn't exist
+                    Log.e(TAG, "Error: column doesn't exist: " + column);
+                }
+            }
+        } else { // Row is not fount or found more than 1
+            Log.e(TAG, "Row with such id is not found or found more than 1: " + id);
+        }
+
+        cursor.close();
+
+        return intList;
+    }
 
 
     static boolean addCategory(SQLiteDatabase db, String category) {
@@ -96,15 +167,15 @@ public class DbUtils {
     public static void createInputTypes(SQLiteDatabase db) {
         // Add input types to INPUT_TYPES_TABLE_NAME
         int i = 0;
-        for (String inputType : inputTypes) {
+        for (String inputType : inputTypeCodes) {
             ContentValues inputsContentValues = new ContentValues();
             inputsContentValues.put(INPUT_TYPES_TYPE_COLUMN, inputType);
             if (i == 0) { // this is text type, should go to db_storage
                 inputsContentValues.put(INPUT_TYPES_CONTENT_LOCATION,
-                        contentLocations[i]);
+                        contentLocationCodes[i]);
             } else { // the rest should go to internal_app_storage by default
                 inputsContentValues.put(INPUT_TYPES_CONTENT_LOCATION,
-                        contentLocations[1]);
+                        contentLocationCodes[1]);
             }
             if (db.insert(INPUT_TYPES_TABLE_NAME, null,
                     inputsContentValues) == -1) {
@@ -121,17 +192,17 @@ public class DbUtils {
     public static boolean setInputTypesContentLocation(SQLiteDatabase db, int type, int location) {
         ContentValues locationContentValues = new ContentValues();
 
-        locationContentValues.put(INPUT_TYPES_CONTENT_LOCATION, contentLocations[location]);
+        locationContentValues.put(INPUT_TYPES_CONTENT_LOCATION, contentLocationCodes[location]);
         if (db.update(INPUT_TYPES_TABLE_NAME, locationContentValues,
                 INPUT_TYPES_TYPE_COLUMN + "=?",
-                new String[]{inputTypes[type]}) == 1) {
+                new String[]{inputTypeCodes[type]}) == 1) {
             // Successful update of content type
-            Log.i(TAG, "Successfully updated content type: " + inputTypes[type] +
-                    " with new content location: " + contentLocations[location]);
+            Log.i(TAG, "Successfully updated content type: " + inputTypeCodes[type] +
+                    " with new content location: " + contentLocationCodes[location]);
             return true;
         } else { // Unsuccessful update of last id
-            Log.e(TAG, "Error while updating type: " + inputTypes[type] +
-                    " with new content location: " + contentLocations[location]);
+            Log.e(TAG, "Error while updating type: " + inputTypeCodes[type] +
+                    " with new content location: " + contentLocationCodes[location]);
             return false;
         }
     }
@@ -233,9 +304,28 @@ public class DbUtils {
     }
 
 
+    /* Returns location like INTERNAL_APP_STORAGE for the specified input type*/
+    public static String getRootContentLocationCodeForInputType(@NonNull String inputType) {
+        String contentLocation = "";
+
+        Cursor cursor = db.query(INPUT_TYPES_TABLE_NAME, new String[]{INPUT_TYPES_CONTENT_LOCATION},
+                INPUT_TYPES_TYPE_COLUMN + "=?", new String[]{inputType},
+                null, null, null);
+        if (cursor.getCount() == 1) { // input type is found
+            cursor.moveToFirst();
+            contentLocation = cursor.getString(cursor.getColumnIndexOrThrow
+                    (INPUT_TYPES_CONTENT_LOCATION));
+        } else { // Input type is not fount
+            Log.e(TAG, "Input type is not found or wrong number of types found: "
+                    + inputType);
+        }
+        cursor.close();
+        return contentLocation;
+    }
+
     public static void createDefaultNoteTypes(SQLiteDatabase db) {
         // Default text note for Ideas category
-        addNoteType(false, db, null, 0, 0, 0,
+        addNoteType(false, db, "Idea (Text)", 0, 0, 0,
                 0, 0);
 
         addNoteType(false, db, "Idea (Audio)", 0, 0, 2,
@@ -348,6 +438,7 @@ public class DbUtils {
 
         protected void onPostExecute() {
         }
+
     }
 
 

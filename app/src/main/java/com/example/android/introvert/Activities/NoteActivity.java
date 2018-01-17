@@ -33,7 +33,7 @@ import com.example.android.introvert.Utils.DbUtils;
 
 public class NoteActivity extends AppCompatActivity {
 
-    String TAG = "INTROWERT_NOTE_ACTIVITY:";
+    private final String TAG = "INTROWERT_NOTE_ACTIVITY";
 
     Button saveButton;
     Button deleteButton;

@@ -12,6 +12,8 @@ import com.example.android.introvert.Notes.Note;
  */
 
 public class ImageEditor extends RelativeLayout implements MyEditor {
+    private final String TAG = "INTROWERT_IMAGE_EDITOR";
+
     public ImageEditor(Context context) {
         super(context);
     }

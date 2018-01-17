@@ -6,11 +6,11 @@ package com.example.android.introvert.Database;
 
 public class DBTypeValues {
 
-    static private String TAG = "INTROWERT_DBTYPEVALUES:";
+    static private final String TAG = "INTROWERT_DBTYPEVALUES";
 
     static final byte[] priorities = {1, 2, 3, 4, 5};
 
-    public static final String[] inputTypes = {
+    public static final String[] inputTypeCodes = {
             "text",
             "audio",
             "video",
@@ -18,7 +18,7 @@ public class DBTypeValues {
             "picture"
     };
 
-    public static final String[] contentLocations = {
+    public static final String[] contentLocationCodes = {
             "db_storage",
             "internal_app_storage",
             "external_app_storage",
@@ -27,11 +27,11 @@ public class DBTypeValues {
     };
 
     public static final String[] defaultCategories = {
-            "Ideas",
-            "Jokes",
-            "Tracks",
-            "Videos",
-            "Photos",
-            "Spendings"
+            "Idea",
+            "Joke",
+            "Track",
+            "Video",
+            "Photo",
+            "Spending"
     };
 }

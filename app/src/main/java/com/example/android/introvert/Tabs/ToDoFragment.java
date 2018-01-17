@@ -16,7 +16,7 @@ import com.example.android.introvert.R;
 public class ToDoFragment extends Fragment {
 
 
-    String TAG = "INTROWERT_TODO:";
+    private final String TAG = "INTROWERT_TODO";
 
     @Nullable
     @Override

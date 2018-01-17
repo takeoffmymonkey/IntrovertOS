@@ -15,7 +15,7 @@ import static com.example.android.introvert.Utils.DbUtils.createInputTypes;
 
 public class DbHelper extends SQLiteOpenHelper {
 
-    private String TAG = "INTROWERT_DBHELPER:";
+    private final String TAG = "INTROWERT_DBHELPER";
 
     public static final String DATABASE_NAME = "INTROVERT_db";
     public static final int DATABASE_VERSION = 1;

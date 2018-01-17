@@ -15,6 +15,7 @@ import android.widget.SeekBar;
 import com.example.android.introvert.Activities.NoteActivity;
 import com.example.android.introvert.Notes.Note;
 import com.example.android.introvert.R;
+import com.example.android.introvert.Utils.FileUtils;
 
 import java.io.File;
 
@@ -25,7 +26,7 @@ import java.io.File;
 
 public class AudioEditor extends RelativeLayout implements MyEditor {
 
-    private final String TAG = "INTROWERT_AUDIO_EDITOR:";
+    private final String TAG = "INTROWERT_AUDIO_EDITOR";
 
     // for interface methods
     private int editorType = 0; // Should be 2 (audio)
@@ -121,9 +122,8 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         });
         seekBar = (SeekBar) findViewById(R.id.editor_audio_seekbar);
 
-        Log.i(TAG, "Internal folder:" + noteActivity.getFilesDir().getPath());
-        Log.i(TAG, "External folder:" + noteActivity.getExternalFilesDir(null).getPath());
-
+        Log.i (TAG, "Creating folder for audio:"
+                + FileUtils.makeDirsForInputType("audio", note.getTypeId()));
 
             /*            sdPath = Environment.getExternalStorageDirectory();
             sdPath = new File(sdPath.getAbsolutePath() + "/" + DIR_SD);

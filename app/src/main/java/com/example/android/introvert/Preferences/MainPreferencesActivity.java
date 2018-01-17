@@ -11,7 +11,7 @@ public class MainPreferencesActivity extends AppCompatActivity {
 
     // TODO: 015 15 Jan 18 use headers instead of categories https://developer.android.com/guide/topics/ui/settings.html#PreferenceHeaders
 
-    String TAG = "INTROWERT_MAIN_PREFERENCES_ACTIVITY:";
+    private final String TAG = "INTROWERT_MAIN_PREFERENCES_ACTIVITY";
 
 
     @Override

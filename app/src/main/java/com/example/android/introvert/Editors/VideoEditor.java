@@ -12,6 +12,9 @@ import com.example.android.introvert.Notes.Note;
  */
 
 public class VideoEditor extends RelativeLayout implements MyEditor {
+
+    private final String TAG = "INTROWERT_VIDEO_EDITOR";
+
     public VideoEditor(Context context) {
         super(context);
     }

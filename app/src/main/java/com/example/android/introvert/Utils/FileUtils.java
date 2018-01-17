@@ -1,20 +1,25 @@
 package com.example.android.introvert.Utils;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.example.android.introvert.Database.DBTypeValues;
+
 import java.io.File;
+
+import static com.example.android.introvert.Database.DbHelper.CATEGORIES_CATEGORY_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.CATEGORIES_TABLE_NAME;
+import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_CATEGORY_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_DEFAULT_NAME_COLUMN;
+import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_TABLE_NAME;
 
 /**
  * Created by takeoff on 009 09 Jan 18.
  */
 
 public class FileUtils {
-    private static final String TAG = "INTROWERT_UTILS:";
+    private static final String TAG = "INTROWERT_UTILS";
 
     /* Android doesn't separate external SD card from external storage, which in some cases may be
     *  an internal card. In such cases methods like getExternalStorageDirectory()... will return
@@ -118,17 +123,51 @@ public class FileUtils {
     }
 
 
-    /* Returns current path option for audio notes */
-    public static String getAudioNotesPathOption(Context context) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean m = sharedPreferences.getBoolean("preferences_main_debug_mode", false);
-        return null;
+    /**
+     * Creates folders structure for input type
+     *
+     * @return <code>true</code> if and only if the directory was created,
+     * along with all necessary parent directories; <code>false</code>
+     * otherwise
+     */
+    public static boolean makeDirsForInputType(String inputType, int noteType) {
+
+        // Get root location for the specified type
+        String rootContentLocation = DbUtils.getRootContentLocationCodeForInputType(inputType);
+        if (rootContentLocation.equals(DBTypeValues.contentLocationCodes[1])) {
+            // internal_app_storage
+            rootContentLocation = INTERNAL_APP_STORAGE;
+        } else if (rootContentLocation.equals(DBTypeValues.contentLocationCodes[2])) {
+            // external_app_storage
+            rootContentLocation = EXTERNAL_APP_STORAGE;
+        } else if (rootContentLocation.equals(DBTypeValues.contentLocationCodes[3])) {
+            // external_storage
+            rootContentLocation = EXTERNAL_STORAGE;
+        } else if (rootContentLocation.equals(DBTypeValues.contentLocationCodes[4])) {
+            // sd_storage
+            rootContentLocation = SD_STORAGE;
+        } else { // Match for code isn't found
+            Log.e(TAG, "Couldn't find match for content location code: " + rootContentLocation);
+        }
+
+        // Get category name for such type data
+        int categoryId = DbUtils.getRowIntegerDataById(NOTE_TYPES_TABLE_NAME, noteType,
+                new String[]{NOTE_TYPES_CATEGORY_COLUMN}).get(0);
+        String category = DbUtils.getRowStringDataById(CATEGORIES_TABLE_NAME, categoryId,
+                new String[]{CATEGORIES_CATEGORY_COLUMN}).get(0);
+
+        // Get note default name for such type data
+        String defaultName = DbUtils.getRowStringDataById(NOTE_TYPES_TABLE_NAME, noteType,
+                new String[]{NOTE_TYPES_DEFAULT_NAME_COLUMN}).get(0);
+
+        // Construct a file path and make a file
+        String filePath = rootContentLocation + "/Introvert/" + category + "/" + defaultName;
+        Log.i(TAG, "about to try and create folder: " + filePath);
+        File file = makeFileForPath(filePath);
+
+        // Create folders if don't exist
+        return mkDirs(file);
     }
 
-
-    /* Creates folders structure for note type */
-    public static boolean makeDirsForType() {
-        return false;
-    }
 
 }

@@ -15,6 +15,7 @@ import com.example.android.introvert.Tabs.ToDoFragment;
  */
 
 public class CategoryAdapter extends FragmentPagerAdapter {
+    private final String TAG = "INTROWERT_CATEGORY_ADAPTER";
 
     public CategoryAdapter(FragmentManager fm) {
         super(fm);

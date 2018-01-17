@@ -9,6 +9,7 @@ import android.util.AttributeSet;
  */
 
 public class MyDialogPreference extends DialogPreference {
+    private final String TAG = "INTROWERT_MY_DIALOG_PREFERENCE";
 
     public MyDialogPreference(Context context, AttributeSet attrs) {
         super(context, attrs);

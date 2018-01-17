@@ -16,7 +16,7 @@ import com.example.android.introvert.R;
 public class ProjectsFragment extends Fragment {
 
 
-    String TAG = "INTROWERT_PROJECTS:";
+    private final String TAG = "INTROWERT_PROJECTS";
 
 
     @Nullable

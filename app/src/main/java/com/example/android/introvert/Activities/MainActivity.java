@@ -23,7 +23,7 @@ import static com.example.android.introvert.Utils.FileUtils.EXTERNAL_APP_STORAGE
 public class MainActivity extends AppCompatActivity {
 
 
-    String TAG = "INTROWERT_MAIN:";
+    private final String TAG = "INTROWERT_MAIN";
 
     public static final String ID = "id";
     public static final String EXISTS = "exists";

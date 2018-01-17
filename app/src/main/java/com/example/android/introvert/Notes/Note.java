@@ -31,7 +31,7 @@ import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_TABLE_N
 
 public class Note {
 
-    String TAG = "INTROWERT_NOTE";
+    private final String TAG = "INTROWERT_NOTE";
 
     private boolean exists; // whether the note exists, or it is fresh
     private int noteId; // id of the note from NOTES table or possible new id

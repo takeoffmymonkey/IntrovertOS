@@ -25,6 +25,8 @@ import static com.example.android.introvert.Tabs.TimelineFragment.ID;
 
 public class NotesCursorAdapter extends CursorAdapter {
 
+    private final String TAG = "INTROWERT_NOTES_CURSOR_ADAPTER";
+
     Context context;
 
     public NotesCursorAdapter(Context context, Cursor c, int flags) {

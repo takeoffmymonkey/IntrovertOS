@@ -16,7 +16,7 @@ import com.example.android.introvert.R;
 public class ExtensionsFragment extends Fragment {
 
 
-    String TAG = "INTROWERT_EXTENSIONS:";
+    private final String TAG = "INTROWERT_EXTENSIONS";
 
 
     @Nullable
