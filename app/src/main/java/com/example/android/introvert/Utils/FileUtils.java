@@ -162,7 +162,7 @@ public class FileUtils {
 
         // Construct a file path and make a file
         String filePath = rootContentLocation + "/Introvert/" + category + "/" + defaultName;
-        Log.i(TAG, "about to try and create folder: " + filePath);
+        Log.i(TAG, "about to create folder: " + filePath);
         File file = makeFileForPath(filePath);
 
         // Create folders if don't exist

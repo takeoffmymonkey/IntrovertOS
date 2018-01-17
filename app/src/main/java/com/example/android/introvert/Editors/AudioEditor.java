@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.introvert.Activities.NoteActivity;
 import com.example.android.introvert.Notes.Note;
@@ -26,12 +28,14 @@ import java.io.File;
 
 public class AudioEditor extends RelativeLayout implements MyEditor {
 
+    // TODO: 017 17 Jan 18 auto-record mode
+
     private final String TAG = "INTROWERT_AUDIO_EDITOR";
 
     // for interface methods
     private int editorType = 0; // Should be 2 (audio)
     private int editorRole = 0; // 1 - content, 2 - tags, 3 - comment
-    private boolean exists;
+    private boolean exists; // Whether this note has content
     private Note note;
     private NoteActivity noteActivity;
 
@@ -39,23 +43,28 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     private MediaPlayer mediaPlayer;
     private MediaRecorder mediaRecorder;
 
-    // UI elements
-    private Button playButton;
-    private Button stopButton;
-    private Button recButton;
-    private Button recStopButton;
-    private SeekBar seekBar;
+    // UI elements: empty editor
+    TextView emptyRecHintTextView;
+    Button emptyRecStopButton;
+    TextView emptyTimeTextView;
+
+    // UI elements: existing editor
+    Button recButton;
+    Button playPauseButton;
+    Button stopButton;
+    TextView timeTextView;
+    SeekBar seekBar;
+
+    // Editor container
+    LinearLayout editorContainer;
 
 
     final String DIR_SD = "Introvert";
     String content = Environment.getExternalStorageDirectory() + "/" + DIR_SD + "/record.3gpp";
 
-    File sdPath;
-
-    /*Handler handler;
+/*
+    Handler handler;
     Runnable runnable;
-    final String FILENAME_SD = "fileSD";
-
     */
 
 
@@ -70,6 +79,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
                        Note note, NoteActivity noteActivity) {
         this(noteActivity);
 
+        this.editorContainer = editorContainer;
         this.editorType = editorType;
         this.editorRole = editorRole;
         this.exists = exists;
@@ -92,11 +102,12 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         }
 
         //Init UI elements
-        playButton = (Button) findViewById(R.id.editor_audio_play_b);
-        playButton.setOnClickListener(new OnClickListener() {
+        playPauseButton = (Button) findViewById(R.id.editor_audio_play_pause_b);
+        playPauseButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                playStart();
+                Toast.makeText(noteActivity, "hey", Toast.LENGTH_SHORT).show();
+                //playStart();
             }
         });
         stopButton = (Button) findViewById(R.id.editor_audio_stop_b);
@@ -113,16 +124,11 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
                 recordStart();
             }
         });
-        recStopButton = (Button) findViewById(R.id.editor_audio_record_stop_b);
-        recStopButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recordStop();
-            }
-        });
         seekBar = (SeekBar) findViewById(R.id.editor_audio_seekbar);
+        timeTextView = (TextView) findViewById(R.id.editor_audio_time);
 
-        Log.i (TAG, "Creating folder for audio:"
+
+        Log.i(TAG, "Creating folder for audio:"
                 + FileUtils.makeDirsForInputType("audio", note.getTypeId()));
 
             /*            sdPath = Environment.getExternalStorageDirectory();

@@ -28,4 +28,14 @@
     <string name="preferences_main_text_notes_location">Text notes location</string>
     <string name="preferences_main_audio_notes_location">Audio notes location</string>
 
+    <!-- Audio editor -->
+    <string name="audio_editor_button_play">Play</string>
+    <string name="audio_editor_button_pause">Pause</string>
+    <string name="audio_editor_button_stop">Stop</string>
+    <string name="audio_editor_button_rec">Rec</string>
+    <string name="audio_editor_empty_tv_recording">Recording…</string>
+    <string name="audio_editor_empty_tv_press_record">Press Rec to start recording</string>
+
+
+
 </resources>

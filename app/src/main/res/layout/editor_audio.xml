@@ -5,37 +5,60 @@
     android:layout_height="wrap_content"
     android:padding="5dip">
 
-    <Button
-        android:id="@+id/editor_audio_play_b"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Play"/>
+    <!-- Buttons -->
+    <LinearLayout
+        android:id="@+id/editor_audio_buttons_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/editor_audio_stop_b"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/editor_audio_play_b"
-        android:text="Stop"/>
+        <Button
+            android:id="@+id/editor_audio_record_b"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/audio_editor_button_rec"
+            android:textColor="@color/colorAccent"/>
 
-    <Button
-        android:id="@+id/editor_audio_record_b"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/editor_audio_stop_b"
-        android:text="Rec"/>
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
 
-    <Button
-        android:id="@+id/editor_audio_record_stop_b"
+        <Button
+            android:id="@+id/editor_audio_play_pause_b"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/audio_editor_button_play" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/editor_audio_stop_b"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/audio_editor_button_stop" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/editor_audio_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/editor_audio_record_b"
-        android:text="RStop"/>
+        android:layout_below="@id/editor_audio_buttons_ll"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:text="12:12/34:55" />
 
     <SeekBar
         android:id="@+id/editor_audio_seekbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/editor_audio_play_b"/>
+        android:layout_below="@id/editor_audio_time"
+        android:layout_marginTop="8dp" />
 
 </RelativeLayout>
