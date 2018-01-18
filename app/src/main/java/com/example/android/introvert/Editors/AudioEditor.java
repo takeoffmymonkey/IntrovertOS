@@ -1,9 +1,11 @@
 package com.example.android.introvert.Editors;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
-import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,8 +18,10 @@ import android.widget.TextView;
 import com.example.android.introvert.Activities.NoteActivity;
 import com.example.android.introvert.Notes.Note;
 import com.example.android.introvert.R;
+import com.example.android.introvert.Utils.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
 
 
 /**
@@ -36,10 +40,6 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     private boolean exists; // Whether this note has content
     private Note note;
     private NoteActivity noteActivity;
-
-    // Player/recorder
-    private MediaPlayer mediaPlayer;
-    private MediaRecorder mediaRecorder;
 
     // Editor container
     LinearLayout editorContainer;
@@ -65,9 +65,27 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     int nonEmptyModeLayout = R.layout.editor_audio;
     boolean emptyMode = true;
 
+    // Folder and file names
+    String destinationFolder;
+    String fileName;
+    String fileExtension = ".3gpp";
+    File destinationFile;
 
-    final String DIR_SD = "Introvert";
-    String content = Environment.getExternalStorageDirectory() + "/" + DIR_SD + "/record.3gpp";
+    // Player/recorder
+    private MediaPlayer mediaPlayer;
+    private MediaRecorder mediaRecorder;
+
+    // Recording settings
+    int audioSource;
+    int outputFormat;
+    int audioEncoder;
+
+    int audioChannels;
+    int bitRate;
+    int samplingRate;
+    int maxDuration;
+    long maxFileSize;
+
 
 /*
     Handler handler;
@@ -92,6 +110,9 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         this.exists = exists;
         this.note = note;
         this.noteActivity = noteActivity;
+
+        prepareFile();
+
 
         // Initialize appropriate layout and its components
         if (exists) initNonEmptyModeComponents(); // Current note has previous content
@@ -182,16 +203,131 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     }
 
 
+    /* Updates latest location vars and prepares a file based on them */
+    private void prepareFile() {
+        destinationFolder = FileUtils.getPathForInputType(editorType, note.getTypeId());
+        fileName = note.getUpdatedName() + fileExtension;
+        destinationFile = FileUtils.makeFileForPath(fileName);
+    }
+
+
+    /* Gets audio settings from Preferences and updates corresponding var */
+    private void prepareAudioSettings() {
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(noteActivity);
+
+        audioSource = sharedPreferences.getInt("preferences_main_audio_audio_source", 0);
+        Log.i(TAG, "preferences_main_audio_audio_source: " + audioSource);
+        outputFormat = sharedPreferences.getInt("preferences_main_audio_output_format", 0);
+        Log.i(TAG, "preferences_main_audio_output_format: " + outputFormat);
+        audioEncoder = sharedPreferences.getInt("preferences_main_audio_audio_encoder", 0);
+        Log.i(TAG, "preferences_main_audio_audio_encoder: " + audioEncoder);
+    }
+
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~RECORDER API~~~~~~~~~~~~~~~~~~~~~~~~*/
+    /* Creates MediaRecorder and sets its settings*/
+    private void prepareMediaRecorder() {
+        // Release existing recorder
+        releaseRecorder();
+
+        // Get latest settings
+        prepareAudioSettings();
+
+        // Prepare recorder
+        mediaRecorder = new MediaRecorder();
+        mediaRecorder.setAudioSource(audioSource);
+        mediaRecorder.setOutputFormat(outputFormat);
+        mediaRecorder.setOutputFile(fileName);
+        mediaRecorder.setAudioEncoder(audioEncoder);
+        try {
+            mediaRecorder.prepare();
+        } catch (IOException e) {
+            Log.e(TAG, "preparation of media recorder failed");
+        }
+    }
+
+    /*Frees the recorder if it exists*/
+    private void releaseRecorder() {
+        if (mediaRecorder != null) {
+            mediaRecorder.release();
+            mediaRecorder = null;
+        }
+    }
+
+
+    public void recordStart() {
+        prepareMediaRecorder();
+        try {
+            mediaRecorder.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void recordStop() {
+        if (mediaRecorder != null) {
+            mediaRecorder.stop();
+        }
+    }
+
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~PLAYER API~~~~~~~~~~~~~~~~~~~~~~~~*/
+/* Creates MediaRecorder and sets its settings*/
+    private void prepareMediaPlayer() {
+        // Release existing player
+        releasePlayer();
+
+        // Get latest settings
+        prepareAudioSettings();
+
+        // Prepare player
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        prepareFile();
+        try {
+            mediaPlayer.setDataSource(fileName);
+        } catch (IOException e) {
+            Log.e(TAG, "file for media player not found");
+        }
+        try {
+            mediaPlayer.prepare();
+        } catch (IOException e) {
+            Log.e(TAG, "preparation of media player failed");
+        }
+    }
+
+    /*Frees the player if it exists*/
+    private void releasePlayer() {
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+    }
+
+
+    private void playStart() {
+        try {
+            prepareMediaPlayer();
+            mediaPlayer.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void playStop() {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+        }
+    }
 
 
 
-            /*            sdPath = Environment.getExternalStorageDirectory();
-            sdPath = new File(sdPath.getAbsolutePath() + "/" + DIR_SD);
-            // создаем каталог
-            sdPath.mkdirs();
 
-            Log.i (TAG, var);*/
 
+            /*
 
     //handler = new Handler();
 
@@ -230,53 +366,9 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         });*/
 
 
-    public void playStart() {
-        try {
-            deleteEditor(); // Release the player
-            mediaPlayer = new MediaPlayer();
-            mediaPlayer.setDataSource(content);
-            mediaPlayer.prepare();
-            mediaPlayer.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 
-    public void playStop() {
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-        }
-    }
 
-
-    public void recordStart() {
-        try {
-            deleteEditor(); // Release the recorder
-
-            File outFile = new File(content);
-            if (outFile.exists()) {
-                outFile.delete();
-            }
-
-            mediaRecorder = new MediaRecorder();
-            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-            mediaRecorder.setOutputFile(content);
-            mediaRecorder.prepare();
-            mediaRecorder.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public void recordStop() {
-        if (mediaRecorder != null) {
-            mediaRecorder.stop();
-        }
-    }
 
 
 /*    public void playCycle() {
@@ -324,7 +416,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     @Override
     public void setContent(String content) {
 
-        switch (editorRole) {
+     /*   switch (editorRole) {
             case 1: // Content
                 note.setUpdatedContent(content);
                 break;
@@ -336,7 +428,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
                 break;
             default: // Something is wrong
                 Log.e(TAG, "Error: editor role could not be defined when setting content");
-        }
+        }*/
     }
 
     @Override
@@ -361,17 +453,8 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
 
     @Override
     public boolean deleteEditor() {
-        // release player
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
-
-        // release recorder
-        if (mediaRecorder != null) { //
-            mediaRecorder.release();
-            mediaRecorder = null;
-        }
+        releasePlayer();
+        releaseRecorder();
 
         return true;
     }

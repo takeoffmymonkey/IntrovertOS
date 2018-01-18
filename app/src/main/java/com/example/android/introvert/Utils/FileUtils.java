@@ -124,16 +124,15 @@ public class FileUtils {
 
 
     /**
-     * Creates folders structure for input type
+     * Generates correct path for provided input type of specified note type
      *
-     * @return <code>true</code> if and only if the directory was created,
-     * along with all necessary parent directories; <code>false</code>
-     * otherwise
+     * @return String path
      */
-    public static boolean makeDirsForInputType(String inputType, int noteType) {
+    public static String getPathForInputType(int inputType, int noteTypeId) {
 
         // Get root location for the specified type
-        String rootContentLocation = DbUtils.getRootContentLocationCodeForInputType(inputType);
+        String rootContentLocation = DbUtils
+                .getRootContentLocationCodeForInputType(inputType);
         if (rootContentLocation.equals(DBTypeValues.contentLocationCodes[1])) {
             // internal_app_storage
             rootContentLocation = INTERNAL_APP_STORAGE;
@@ -151,22 +150,17 @@ public class FileUtils {
         }
 
         // Get category name for such type data
-        int categoryId = DbUtils.getRowIntegerDataById(NOTE_TYPES_TABLE_NAME, noteType,
+        int categoryId = DbUtils.getRowIntegerDataById(NOTE_TYPES_TABLE_NAME, noteTypeId,
                 new String[]{NOTE_TYPES_CATEGORY_COLUMN}).get(0);
         String category = DbUtils.getRowStringDataById(CATEGORIES_TABLE_NAME, categoryId,
                 new String[]{CATEGORIES_CATEGORY_COLUMN}).get(0);
 
         // Get note default name for such type data
-        String defaultName = DbUtils.getRowStringDataById(NOTE_TYPES_TABLE_NAME, noteType,
+        String defaultName = DbUtils.getRowStringDataById(NOTE_TYPES_TABLE_NAME, noteTypeId,
                 new String[]{NOTE_TYPES_DEFAULT_NAME_COLUMN}).get(0);
 
-        // Construct a file path and make a file
-        String filePath = rootContentLocation + "/Introvert/" + category + "/" + defaultName;
-        Log.i(TAG, "about to create folder: " + filePath);
-        File file = makeFileForPath(filePath);
-
-        // Create folders if don't exist
-        return mkDirs(file);
+        // Construct a file path
+        return rootContentLocation + "/Introvert/" + category + "/" + defaultName;
     }
 
 

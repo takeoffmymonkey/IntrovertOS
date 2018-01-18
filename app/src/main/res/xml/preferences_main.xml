@@ -20,13 +20,32 @@
             android:key="menu_main_audio_editor"
             android:persistent="false"
             android:title="@string/preferences_main_audio_editor">
-            <!-- "Audio Editor" items -->
-            <RingtonePreference
-                android:key="preferences_main_notification_sound"
-                android:ringtoneType="notification"
-                android:showSilent="true"
-                android:title="@string/preferences_main_notification_sound" />
+            <!-- "Audio Source" item -->
+            <ListPreference
+                android:defaultValue="0"
+                android:dialogTitle="@string/preferences_main_audio_editor_audio_source"
+                android:entries="@array/audio_sources"
+                android:entryValues="@array/audio_source_values"
+                android:key="preferences_main_audio_audio_source"
+                android:title="@string/preferences_main_audio_editor_audio_source" />
+            <!-- "Output format" item -->
+            <ListPreference
+                android:defaultValue="0"
+                android:dialogTitle="@string/preferences_main_audio_editor_output_format"
+                android:entries="@array/audio_output_format"
+                android:entryValues="@array/audio_output_format_values"
+                android:key="preferences_main_audio_output_format"
+                android:title="@string/preferences_main_audio_editor_output_format" />
+            <!-- "Audio Encoder" item -->
+            <ListPreference
+                android:defaultValue="0"
+                android:dialogTitle="@string/preferences_main_audio_editor_audio_encoder"
+                android:entries="@array/audio_encoder"
+                android:entryValues="@array/audio_encoder_values"
+                android:key="preferences_main_audio_audio_encoder"
+                android:title="@string/preferences_main_audio_editor_audio_encoder" />
         </PreferenceScreen>
+
     </PreferenceCategory>
 
     <!-- "Export" -->

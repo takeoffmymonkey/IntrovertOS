@@ -29,4 +29,73 @@
         <item>sd_storage</item>
     </string-array>
 
+
+    <string-array name="audio_sources">
+        <item>Camcoder</item>
+        <item>Default</item>
+        <item>Mic</item>
+        <item>Remote submix</item>
+        <item>Unproccessed</item>
+        <item>Voice call</item>
+        <item>Voice communication</item>
+        <item>Voice downlink</item>
+        <item>Voice recognition</item>
+        <item>Voice uplink</item>
+    </string-array>
+
+    <string-array name="audio_source_values">
+        <item>5</item>
+        <item>0</item>
+        <item>1</item>
+        <item>8</item>
+        <item>9</item>
+        <item>4</item>
+        <item>7</item>
+        <item>3</item>
+        <item>6</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="audio_output_format">
+        <item>AAC ADTS</item>
+        <item>AMR (Narrowband)</item>
+        <item>AMR (Wideband)</item>
+        <item>Default</item>
+        <item>MPEG2/TS</item>
+        <item>MPEG4 (H.264/AAC)</item>
+        <item>3GPP</item>
+        <item>WEBM (VP8/VORBIS)</item>
+    </string-array>
+
+    <string-array name="audio_output_format_values">
+        <item>6</item>
+        <item>3</item>
+        <item>4</item>
+        <item>0</item>
+        <item>8</item>
+        <item>2</item>
+        <item>1</item>
+        <item>9</item>
+    </string-array>
+
+    <string-array name="audio_encoder">
+        <item>AAC-LC</item>
+        <item>AAC-ELD</item>
+        <item>AMR (Narrowband)</item>
+        <item>AMR (Wideband)</item>
+        <item>Default</item>
+        <item>HE-AAC</item>
+        <item>Vorbis</item>
+    </string-array>
+
+    <string-array name="audio_encoder_values">
+        <item>3</item>
+        <item>5</item>
+        <item>1</item>
+        <item>2</item>
+        <item>0</item>
+        <item>4</item>
+        <item>6</item>
+    </string-array>
+
 </resources>
