@@ -2,6 +2,7 @@ package com.example.android.introvert.Editors;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -150,6 +151,9 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
                 }
             }
         });
+
+        // Update UI elements to corresponding state
+        updateRecordingUI();
     }
 
 
@@ -170,13 +174,20 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
             @Override
             public void onClick(View v) {
                 initEmptyModeComponents();
+                recordStart();
             }
         });
 
         playPauseButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                playStart();
+                if (!isPlaying) { // Start playback
+                    playStart();
+                    updatePlayingUI();
+                } else { // Pause playback
+                    playPause();
+                    updatePlayingUI();
+                }
             }
         });
 
@@ -184,8 +195,12 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
             @Override
             public void onClick(View v) {
                 playStop();
+                updatePlayingUI();
             }
         });
+
+        // Update UI elements to corresponding state
+        updatePlayingUI();
     }
 
 
@@ -274,7 +289,8 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         }
     }
 
-    /*Frees the recorder if it exists*/
+
+    /*Frees the recorder if exists*/
     private void releaseRecorder() {
         if (mediaRecorder != null) {
             mediaRecorder.release();
@@ -283,6 +299,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     }
 
 
+    /* Starts recording after creating folder path, deleting existing file, updates UI */
     public void recordStart() {
         //make sure folder for file exists
         FileUtils.mkDirs(destinationFile);
@@ -298,23 +315,41 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         try {
             mediaRecorder.start();
             isRecording = true;
+            updateRecordingUI();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
+    /* Stops recording, resets recorder, updates UI */
     public void recordStop() {
         if (mediaRecorder != null) {
             mediaRecorder.stop();
             isRecording = false;
+            updateRecordingUI();
             mediaRecorder.reset();
         }
     }
 
 
+    /* Sets UI elements to correspond the state */
+    private void updateRecordingUI() {
+        if (isRecording) { // Set recording UI to recording state
+            emptyRecHintTextView.setText(R.string.audio_editor_empty_tv_recording);
+            emptyRecHintTextView.setTextColor(Color.RED);
+            emptyRecStopButton.setText(R.string.audio_editor_button_stop);
+            emptyRecStopButton.setTextColor(Color.BLACK);
+        } else { // Set recording UI to NOT recording state
+            emptyRecHintTextView.setText(R.string.audio_editor_empty_tv_press_record);
+            emptyRecHintTextView.setTextColor(Color.BLACK);
+            emptyRecStopButton.setText(R.string.audio_editor_button_rec);
+            emptyRecStopButton.setTextColor(Color.RED);
+        }
+    }
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~PLAYER API~~~~~~~~~~~~~~~~~~~~~~~~*/
-/* Creates MediaRecorder and sets its settings*/
+/* Creates MediaRecorder, sets its settings and onCompletion listener*/
     private void prepareMediaPlayer() {
         // Release existing player
         releasePlayer();
@@ -324,6 +359,13 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
 
         // Prepare player
         mediaPlayer = new MediaPlayer();
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                isPlaying = false;
+                updatePlayingUI();
+            }
+        });
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         prepareFile();
         try {
@@ -351,21 +393,39 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         try {
             prepareMediaPlayer();
             mediaPlayer.start();
+            isPlaying = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
+    private void playPause() {
+        mediaPlayer.pause();
+        isPlaying = false;
+    }
+
+    private void playContinue() {
+        mediaPlayer.start();
+        isPlaying = true;
+    }
+
     private void playStop() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
+            isPlaying = false;
         }
     }
 
 
-
-
+    /* Sets UI elements to correspond the state */
+    private void updatePlayingUI() {
+        if (isPlaying) { // Set playing UI to playing state
+            playPauseButton.setText(R.string.audio_editor_button_pause);
+        } else { // Set playing UI to NOT playing state
+            playPauseButton.setText(R.string.audio_editor_button_play);
+        }
+    }
 
             /*
 
@@ -498,4 +558,5 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
 
         return true;
     }
+
 }
