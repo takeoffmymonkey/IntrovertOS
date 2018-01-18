@@ -66,9 +66,10 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     boolean emptyMode = true;
 
     // Folder and file names
-    String destinationFolder;
     String fileName;
     String fileExtension = ".3gpp";
+    String destinationFolder;
+    String destinationFilePath;
     File destinationFile;
 
     // Player/recorder
@@ -79,12 +80,16 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     int audioSource;
     int outputFormat;
     int audioEncoder;
-
     int audioChannels;
     int bitRate;
     int samplingRate;
     int maxDuration;
     long maxFileSize;
+
+    // Editor states
+    boolean isRecording;
+    boolean isPlaying;
+
 
 
 /*
@@ -113,7 +118,6 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
 
         prepareFile();
 
-
         // Initialize appropriate layout and its components
         if (exists) initNonEmptyModeComponents(); // Current note has previous content
         else initEmptyModeComponents(); // Current note has no previous content
@@ -138,7 +142,12 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         emptyRecStopButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                initNonEmptyModeComponents();
+                if (!isRecording) { // Start recording
+                    recordStart();
+                } else { // Stop recording
+                    recordStop();
+                    initNonEmptyModeComponents();
+                }
             }
         });
     }
@@ -161,6 +170,20 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
             @Override
             public void onClick(View v) {
                 initEmptyModeComponents();
+            }
+        });
+
+        playPauseButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playStart();
+            }
+        });
+
+        stopButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playStop();
             }
         });
     }
@@ -207,7 +230,8 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     private void prepareFile() {
         destinationFolder = FileUtils.getPathForInputType(editorType, note.getTypeId());
         fileName = note.getUpdatedName() + fileExtension;
-        destinationFile = FileUtils.makeFileForPath(fileName);
+        destinationFilePath = destinationFolder + "/" + fileName;
+        destinationFile = FileUtils.makeFileForPath(destinationFilePath);
     }
 
 
@@ -216,11 +240,14 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(noteActivity);
 
-        audioSource = sharedPreferences.getInt("preferences_main_audio_audio_source", 0);
+        audioSource = Integer.parseInt(sharedPreferences.getString
+                ("preferences_main_audio_audio_source", "0"));
         Log.i(TAG, "preferences_main_audio_audio_source: " + audioSource);
-        outputFormat = sharedPreferences.getInt("preferences_main_audio_output_format", 0);
+        outputFormat = Integer.parseInt(sharedPreferences.getString
+                ("preferences_main_audio_output_format", "0"));
         Log.i(TAG, "preferences_main_audio_output_format: " + outputFormat);
-        audioEncoder = sharedPreferences.getInt("preferences_main_audio_audio_encoder", 0);
+        audioEncoder = Integer.parseInt(sharedPreferences
+                .getString("preferences_main_audio_audio_encoder", "0"));
         Log.i(TAG, "preferences_main_audio_audio_encoder: " + audioEncoder);
     }
 
@@ -238,12 +265,12 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(audioSource);
         mediaRecorder.setOutputFormat(outputFormat);
-        mediaRecorder.setOutputFile(fileName);
+        mediaRecorder.setOutputFile(destinationFilePath);
         mediaRecorder.setAudioEncoder(audioEncoder);
         try {
             mediaRecorder.prepare();
         } catch (IOException e) {
-            Log.e(TAG, "preparation of media recorder failed");
+            Log.e(TAG, "preparation of media recorder failed:" + e);
         }
     }
 
@@ -257,9 +284,20 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
 
 
     public void recordStart() {
+        //make sure folder for file exists
+        FileUtils.mkDirs(destinationFile);
+
+        // delete existing file
+        if (destinationFile.exists()) {
+            Log.i(TAG, "Deleting existing file: " + destinationFile + ": " +
+                    destinationFile.delete());
+        }
+
         prepareMediaRecorder();
+
         try {
             mediaRecorder.start();
+            isRecording = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -269,6 +307,8 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     public void recordStop() {
         if (mediaRecorder != null) {
             mediaRecorder.stop();
+            isRecording = false;
+            mediaRecorder.reset();
         }
     }
 
@@ -287,7 +327,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         prepareFile();
         try {
-            mediaPlayer.setDataSource(fileName);
+            mediaPlayer.setDataSource(destinationFilePath);
         } catch (IOException e) {
             Log.e(TAG, "file for media player not found");
         }
@@ -412,7 +452,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     /*}*/
 
 
-    /* Interface methods */
+    /*~~~~~~~~~~~~~~~~~~~~~~~~INTERFACE API~~~~~~~~~~~~~~~~~~~~~~~~*/
     @Override
     public void setContent(String content) {
 
