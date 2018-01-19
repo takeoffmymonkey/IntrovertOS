@@ -96,6 +96,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     // Editor states
     boolean isRecording;
     boolean isPlaying;
+    boolean isPaused;
 
     // Auto-start recording
 
@@ -167,7 +168,6 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         // Update UI elements to corresponding state
         updateRecordingUI();
 
-
     }
 
 
@@ -195,11 +195,14 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         playPauseButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!isPlaying) { // Start playback
+                if (!isPlaying && !isPaused) { // Playback is stopped: Start playback
                     playStart();
                     updatePlayingUI();
-                } else { // Pause playback
+                } else if (isPlaying && !isPaused) { // Playback is on: pause playback
                     playPause();
+                    updatePlayingUI();
+                } else { // Playback is paused: continue playback
+                    playContinue();
                     updatePlayingUI();
                 }
             }
@@ -398,6 +401,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 isPlaying = false;
+                isPaused = false;
                 updatePlayingUI();
             }
         });
@@ -432,6 +436,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
             mediaPlayer.start();
             Log.i(TAG, "Started playing file: " + destinationFile);
             isPlaying = true;
+            isPaused = false;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -442,11 +447,13 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         mediaPlayer.pause();
         Log.i(TAG, "Paused playing file: " + destinationFile);
         isPlaying = false;
+        isPaused = true;
     }
 
     private void playContinue() {
         mediaPlayer.start();
         isPlaying = true;
+        isPaused = false;
     }
 
     private void playStop() {
@@ -454,6 +461,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
             mediaPlayer.stop();
             Log.i(TAG, "Stopped playing file: " + destinationFile);
             isPlaying = false;
+            isPaused = false;
         }
     }
 
