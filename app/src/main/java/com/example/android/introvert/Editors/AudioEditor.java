@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.introvert.Activities.NoteActivity;
 import com.example.android.introvert.Notes.Note;
@@ -98,13 +100,9 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     boolean isPlaying;
     boolean isPaused;
 
-    // Auto-start recording
 
-
-/*
     Handler handler;
     Runnable runnable;
-    */
 
 
     /* Basic required constructor */
@@ -295,6 +293,128 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     }
 
 
+    /*~~~~~~~~~~~~~~~~~~~~~~~~PLAYER API~~~~~~~~~~~~~~~~~~~~~~~~*/
+/* Creates MediaRecorder, sets its settings and onCompletion listener*/
+    private void prepareMediaPlayer() {
+        // Release existing player
+        releasePlayer();
+
+        // Get latest settings
+        prepareAudioSettings();
+
+        // Prepare player
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                fileCurrentPosition = mediaPlayer.getCurrentPosition();
+                fileDuration = mediaPlayer.getDuration();
+                seekBar.setMax(fileDuration);
+                updatePlayingUI();
+            }
+        });
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                isPlaying = false;
+                isPaused = false;
+                handler.removeCallbacks(runnable);
+                Log.i (TAG, "Stop running");
+                updatePlayingUI();
+            }
+        });
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        prepareFile();
+        try {
+            mediaPlayer.setDataSource(destinationFilePath);
+
+
+        } catch (IOException e) {
+            Log.e(TAG, "File for media player not found");
+        }
+        try {
+            mediaPlayer.prepare();
+        } catch (IOException e) {
+            Log.e(TAG, "Preparation of media player failed");
+        }
+    }
+
+    /*Frees the player if it exists*/
+    private void releasePlayer() {
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+    }
+
+
+    private void playStart() {
+        try {
+            prepareMediaPlayer();
+            mediaPlayer.start();
+            Log.i(TAG, "Started playing file: " + destinationFile);
+            isPlaying = true;
+            isPaused = false;
+
+            handler = new Handler();
+            runnable = new Runnable() {
+                @Override
+                public void run() {
+                    Log.i(TAG, "Running..");
+                    Toast.makeText(noteActivity, "R", Toast.LENGTH_SHORT).show();
+                    int mCurrentPosition = mediaPlayer.getCurrentPosition() / 1000;
+                    seekBar.setProgress(mCurrentPosition);
+                    handler.postDelayed(this, 2000);
+                }
+            };
+            //Make sure you update Seekbar on UI thread
+            noteActivity.runOnUiThread(runnable);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void playPause() {
+        mediaPlayer.pause();
+        Log.i(TAG, "Paused playing file: " + destinationFile);
+        isPlaying = false;
+        isPaused = true;
+    }
+
+    private void playContinue() {
+        mediaPlayer.start();
+        isPlaying = true;
+        isPaused = false;
+    }
+
+    private void playStop() {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            Log.i(TAG, "Stopped playing file: " + destinationFile);
+            isPlaying = false;
+            isPaused = false;
+
+        }
+    }
+
+
+    /* Sets UI elements to correspond the state */
+    private void updatePlayingUI() {
+        Log.i(TAG, "Updating playing UI");
+        if (isPlaying) { // Set playing UI to playing state
+            playPauseButton.setText(R.string.audio_editor_button_pause);
+        } else { // Set playing UI to NOT playing state
+            playPauseButton.setText(R.string.audio_editor_button_play);
+        }
+
+        // Update time display
+        String timeDisplay = "" + fileCurrentPosition + "/" + fileDuration;
+        timeTextView.setText(timeDisplay);
+    }
+
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~RECORDER API~~~~~~~~~~~~~~~~~~~~~~~~*/
     /* Creates MediaRecorder and sets its settings*/
     private void prepareMediaRecorder() {
@@ -379,106 +499,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         }
     }
 
-    /*~~~~~~~~~~~~~~~~~~~~~~~~PLAYER API~~~~~~~~~~~~~~~~~~~~~~~~*/
-/* Creates MediaRecorder, sets its settings and onCompletion listener*/
-    private void prepareMediaPlayer() {
-        // Release existing player
-        releasePlayer();
 
-        // Get latest settings
-        prepareAudioSettings();
-
-        // Prepare player
-        mediaPlayer = new MediaPlayer();
-        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                fileCurrentPosition = mediaPlayer.getCurrentPosition();
-                fileDuration = mediaPlayer.getDuration();
-            }
-        });
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                isPlaying = false;
-                isPaused = false;
-                updatePlayingUI();
-            }
-        });
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        prepareFile();
-        try {
-            mediaPlayer.setDataSource(destinationFilePath);
-
-
-        } catch (IOException e) {
-            Log.e(TAG, "File for media player not found");
-        }
-        try {
-            mediaPlayer.prepare();
-        } catch (IOException e) {
-            Log.e(TAG, "Preparation of media player failed");
-        }
-    }
-
-    /*Frees the player if it exists*/
-    private void releasePlayer() {
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
-    }
-
-
-    private void playStart() {
-        try {
-            prepareMediaPlayer();
-            mediaPlayer.start();
-            Log.i(TAG, "Started playing file: " + destinationFile);
-            isPlaying = true;
-            isPaused = false;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    private void playPause() {
-        mediaPlayer.pause();
-        Log.i(TAG, "Paused playing file: " + destinationFile);
-        isPlaying = false;
-        isPaused = true;
-    }
-
-    private void playContinue() {
-        mediaPlayer.start();
-        isPlaying = true;
-        isPaused = false;
-    }
-
-    private void playStop() {
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            Log.i(TAG, "Stopped playing file: " + destinationFile);
-            isPlaying = false;
-            isPaused = false;
-        }
-    }
-
-
-    /* Sets UI elements to correspond the state */
-    private void updatePlayingUI() {
-        Log.i(TAG, "Updating playing UI");
-        if (isPlaying) { // Set playing UI to playing state
-            playPauseButton.setText(R.string.audio_editor_button_pause);
-        } else { // Set playing UI to NOT playing state
-            playPauseButton.setText(R.string.audio_editor_button_play);
-        }
-
-        // Update time display
-        String timeDisplay = "" + fileCurrentPosition + "/" + fileDuration;
-        timeTextView.setText(timeDisplay);
-    }
 
             /*
 
@@ -586,7 +607,8 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
 
     @Override
     public String getContent() {
-        return null;
+        return destinationFilePath;
+        // TODO: 019 19 Jan 18 return full path or just file name? 
     }
 
     @Override
