@@ -214,6 +214,27 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
             }
         });
 
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (mediaPlayer != null && fromUser) {
+                    mediaPlayer.seekTo(progress);
+                }
+            }
+        });
+
         // Update UI elements to corresponding state
         updatePlayingUI();
     }
@@ -319,7 +340,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
                 isPlaying = false;
                 isPaused = false;
                 handler.removeCallbacks(runnable);
-                Log.i (TAG, "Stop running");
+                Log.i(TAG, "Stop running");
                 updatePlayingUI();
             }
         });
@@ -362,9 +383,10 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
                 public void run() {
                     Log.i(TAG, "Running..");
                     Toast.makeText(noteActivity, "R", Toast.LENGTH_SHORT).show();
-                    int mCurrentPosition = mediaPlayer.getCurrentPosition() / 1000;
+                    int mCurrentPosition = mediaPlayer.getCurrentPosition();
+                    Log.i(TAG, "Current position: " + mCurrentPosition);
                     seekBar.setProgress(mCurrentPosition);
-                    handler.postDelayed(this, 2000);
+                    handler.postDelayed(this, 1000);
                 }
             };
             //Make sure you update Seekbar on UI thread
