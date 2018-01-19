@@ -335,6 +335,8 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         }
     }
 
+
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~PLAYER API~~~~~~~~~~~~~~~~~~~~~~~~*/
     /* Creates MediaRecorder, sets its settings and onCompletion listener*/
     private void prepareMediaPlayer() {
@@ -459,6 +461,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     }
 
 
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~RECORDER API~~~~~~~~~~~~~~~~~~~~~~~~*/
     /* Creates MediaRecorder and sets its settings*/
     private void prepareMediaRecorder() {
@@ -543,91 +546,6 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         }
     }
 
-
-
-            /*
-
-    //handler = new Handler();
-
-
-//        mediaPlayer = MediaPlayer.create(context, R.raw.voice37);
-
-
-    // React to seekbar changes by user
-/*        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (mediaPlayer != null && fromUser) {
-                    mediaPlayer.seekTo(progress); // * 1000
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });*/
-
-
- /*       mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                seekBar.setMax(mediaPlayer.getDuration());
-                playCycle();
-                mediaPlayer.start();
-            }
-        });*/
-
-
-
-
-
-
-
-/*    public void playCycle() {
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (mediaPlayer != null) {
-                    int mCurrentPosition = mediaPlayer.getCurrentPosition() / 1000;
-                    seekBar.setProgress(mCurrentPosition);
-                }
-                handler.postDelayed(this, 1000);
-            }
-        });*/
-
-
-        /*seekBar.setProgress(mediaPlayer.getCurrentPosition());
-
-        if (mediaPlayer.isPlaying()) {
-            runnable = new Runnable() {
-                @Override
-                public void run() {
-                    playCycle();
-                }
-            };
-            handler.postDelayed(runnable, 1000);
-        }*/
-
-
-    /*public void start() {
-        mediaPlayer = MediaPlayer.create(context, R.raw.voice37);
-        seekBar.setMax(mediaPlayer.getDuration());
-
-        mediaPlayer.start();*/
-
-
-        /*mediaPlayer = new MediaPlayer();
-        mediaPlayer.setDataSource(DATA_SD);
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mediaPlayer.prepare();
-        mediaPlayer.start();*/
-    /*}*/
 
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~INTERFACE API~~~~~~~~~~~~~~~~~~~~~~~~*/
