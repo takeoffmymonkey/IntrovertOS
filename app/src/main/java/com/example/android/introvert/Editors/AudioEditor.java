@@ -235,6 +235,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
             }
         });
 
+        prepareMediaPlayer();
         // Update UI elements to corresponding state
         updatePlayingUI();
     }
