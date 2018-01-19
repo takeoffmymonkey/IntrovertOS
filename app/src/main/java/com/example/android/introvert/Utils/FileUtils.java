@@ -19,7 +19,7 @@ import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_TABLE_N
  */
 
 public class FileUtils {
-    private static final String TAG = "INTROWERT_UTILS";
+    private static final String TAG = "INTROWERT_FILE_UTILS";
 
     /* Android doesn't separate external SD card from external storage, which in some cases may be
     *  an internal card. In such cases methods like getExternalStorageDirectory()... will return

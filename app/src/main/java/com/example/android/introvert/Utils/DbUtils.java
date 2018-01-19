@@ -47,7 +47,7 @@ import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_TABLE_N
 
 public class DbUtils {
 
-    static private final String TAG = "INTROWERT_DBUTILS";
+    static private final String TAG = "INTROWERT_DB_UTILS";
 
 
     // TODO: 017 17 Jan 18 make db var local

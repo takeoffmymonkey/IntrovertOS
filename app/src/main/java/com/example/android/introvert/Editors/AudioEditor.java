@@ -16,12 +16,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.introvert.Activities.NoteActivity;
 import com.example.android.introvert.Notes.Note;
 import com.example.android.introvert.R;
 import com.example.android.introvert.Utils.FileUtils;
+import com.example.android.introvert.Utils.FormatUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,16 +92,16 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     long maxFileSize;
 
     // File duration
-    int fileDuration = -1;
-    int fileCurrentPosition = -1;
+    int fileDuration = 0;
+    int fileCurrentPosition = 0;
+    String fileDurationFormatted;
 
     // Editor states
     boolean isRecording;
     boolean isPlaying;
     boolean isPaused;
 
-
-    Handler handler;
+    Handler handler = new Handler();
     Runnable runnable;
 
 
@@ -295,6 +295,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
                 ("preferences_main_auto_start_recording", true);
     }
 
+
     /* Gets audio settings from Preferences and updates corresponding var */
     private void prepareAudioSettings() {
         SharedPreferences sharedPreferences = PreferenceManager
@@ -314,14 +315,34 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     }
 
 
+    private Runnable getRunnable() {
+        return runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (isPlaying) {
+                    Log.i(TAG, "Running while playing..");
+                    updatePlayingUI();
+                    handler.postDelayed(this, 200);
+                }
+            }
+        };
+    }
+
+    private void cancelRunnable() {
+        if (handler != null && runnable != null) {
+            handler.removeCallbacks(runnable);
+        }
+    }
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~PLAYER API~~~~~~~~~~~~~~~~~~~~~~~~*/
-/* Creates MediaRecorder, sets its settings and onCompletion listener*/
+    /* Creates MediaRecorder, sets its settings and onCompletion listener*/
     private void prepareMediaPlayer() {
         // Release existing player
         releasePlayer();
 
         // Get latest settings
         prepareAudioSettings();
+
 
         // Prepare player
         mediaPlayer = new MediaPlayer();
@@ -330,6 +351,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
             public void onPrepared(MediaPlayer mp) {
                 fileCurrentPosition = mediaPlayer.getCurrentPosition();
                 fileDuration = mediaPlayer.getDuration();
+                fileDurationFormatted = FormatUtils.msToMinsAndSecs(fileDuration);
                 seekBar.setMax(fileDuration);
                 updatePlayingUI();
             }
@@ -339,8 +361,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
             public void onCompletion(MediaPlayer mp) {
                 isPlaying = false;
                 isPaused = false;
-                handler.removeCallbacks(runnable);
-                Log.i(TAG, "Stop running");
+                cancelRunnable();
                 updatePlayingUI();
             }
         });
@@ -348,8 +369,6 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         prepareFile();
         try {
             mediaPlayer.setDataSource(destinationFilePath);
-
-
         } catch (IOException e) {
             Log.e(TAG, "File for media player not found");
         }
@@ -359,6 +378,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
             Log.e(TAG, "Preparation of media player failed");
         }
     }
+
 
     /*Frees the player if it exists*/
     private void releasePlayer() {
@@ -373,28 +393,10 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         try {
             prepareMediaPlayer();
             mediaPlayer.start();
-            Log.i(TAG, "Started playing file: " + destinationFile);
             isPlaying = true;
             isPaused = false;
-
-            handler = new Handler();
-            runnable = new Runnable() {
-                @Override
-                public void run() {
-                    if (isPlaying) {
-                        Log.i(TAG, "Running..");
-                        Toast.makeText(noteActivity, "R", Toast.LENGTH_SHORT).show();
-                        int mCurrentPosition = mediaPlayer.getCurrentPosition();
-                        Log.i(TAG, "Current position: " + mCurrentPosition);
-                        seekBar.setProgress(mCurrentPosition);
-                        handler.postDelayed(this, 1000);
-                    }
-
-                }
-            };
-            //Make sure you update Seekbar on UI thread
-            noteActivity.runOnUiThread(runnable);
-
+            noteActivity.runOnUiThread(getRunnable());
+            Log.i(TAG, "Started playing file: " + destinationFile);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -406,21 +408,26 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         Log.i(TAG, "Paused playing file: " + destinationFile);
         isPlaying = false;
         isPaused = true;
+        cancelRunnable();
+
     }
+
 
     private void playContinue() {
         mediaPlayer.start();
         isPlaying = true;
         isPaused = false;
+        noteActivity.runOnUiThread(getRunnable());
     }
+
 
     private void playStop() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
+            cancelRunnable();
             Log.i(TAG, "Stopped playing file: " + destinationFile);
             isPlaying = false;
             isPaused = false;
-
         }
     }
 
@@ -428,15 +435,26 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     /* Sets UI elements to correspond the state */
     private void updatePlayingUI() {
         Log.i(TAG, "Updating playing UI");
+
+        // Update scroll position
+        if (!isPlaying && !isPaused) { // We are stopped
+            fileCurrentPosition = 0;
+        } else if (isPlaying) { // We are playing
+            fileCurrentPosition = mediaPlayer.getCurrentPosition();
+        }
+        seekBar.setProgress(fileCurrentPosition);
+
+        // Update time display
+        String timeDisplay = FormatUtils.msToMinsAndSecs(fileCurrentPosition) + "/"
+                + fileDurationFormatted;
+        timeTextView.setText(timeDisplay);
+
+        // Update Play button text
         if (isPlaying) { // Set playing UI to playing state
             playPauseButton.setText(R.string.audio_editor_button_pause);
         } else { // Set playing UI to NOT playing state
             playPauseButton.setText(R.string.audio_editor_button_play);
         }
-
-        // Update time display
-        String timeDisplay = "" + fileCurrentPosition + "/" + fileDuration;
-        timeTextView.setText(timeDisplay);
     }
 
 
