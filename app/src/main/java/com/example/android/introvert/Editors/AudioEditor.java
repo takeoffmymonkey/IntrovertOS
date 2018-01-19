@@ -381,12 +381,15 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
             runnable = new Runnable() {
                 @Override
                 public void run() {
-                    Log.i(TAG, "Running..");
-                    Toast.makeText(noteActivity, "R", Toast.LENGTH_SHORT).show();
-                    int mCurrentPosition = mediaPlayer.getCurrentPosition();
-                    Log.i(TAG, "Current position: " + mCurrentPosition);
-                    seekBar.setProgress(mCurrentPosition);
-                    handler.postDelayed(this, 1000);
+                    if (isPlaying) {
+                        Log.i(TAG, "Running..");
+                        Toast.makeText(noteActivity, "R", Toast.LENGTH_SHORT).show();
+                        int mCurrentPosition = mediaPlayer.getCurrentPosition();
+                        Log.i(TAG, "Current position: " + mCurrentPosition);
+                        seekBar.setProgress(mCurrentPosition);
+                        handler.postDelayed(this, 1000);
+                    }
+
                 }
             };
             //Make sure you update Seekbar on UI thread
