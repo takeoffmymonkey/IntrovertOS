@@ -29,6 +29,8 @@ import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_TABLE_N
  * Created by takeoff on 029 29 Dec 17.
  */
 
+
+
 public class Note {
 
     private final String TAG = "INTROWERT_NOTE";
@@ -60,6 +62,12 @@ public class Note {
     private int updatedCommentInputType = 0;
 
     private boolean isReadyForSave = false;
+
+    OnReadyForSave onReadyForSave;
+
+    public interface OnReadyForSave{
+        void callingBack();
+    }
 
     // id in editMode - id from NOTES; id in addMode - id from NOTE_TYPES
     public Note(SQLiteDatabase db, boolean exists, int id) {
@@ -152,6 +160,12 @@ public class Note {
                         + typeId);
             }
         }
+
+
+    }
+
+    public void registerCallBack(OnReadyForSave onReadyForSave){
+        this.onReadyForSave = onReadyForSave;
     }
 
 
@@ -289,6 +303,9 @@ public class Note {
             // At least 1 field should differ from the init value
             isReadyForSave = !initName.equals(updatedName) || !initContent.equals(updatedContent)
                     || !initTags.equals(updatedTags) || !initComment.equals(updatedContent);
+
+            onReadyForSave.callingBack();
+
         } else { // Name or content is empty
             isReadyForSave = false;
         }

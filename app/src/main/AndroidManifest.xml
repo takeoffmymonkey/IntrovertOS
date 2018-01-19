@@ -24,7 +24,9 @@
 
         <activity
             android:name=".Activities.NoteActivity"
-            android:parentActivityName="com.example.android.introvert.Activities.MainActivity"></activity>
+            android:parentActivityName="com.example.android.introvert.Activities.MainActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+        </activity>
 
 
         <activity

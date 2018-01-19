@@ -1,9 +1,7 @@
 package com.example.android.introvert.Activities;
 
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -31,7 +29,7 @@ import com.example.android.introvert.Utils.DbUtils;
  * Created by takeoff on 029 29 Dec 17.
  */
 
-public class NoteActivity extends AppCompatActivity {
+public class NoteActivity extends AppCompatActivity implements Note.OnReadyForSave {
 
     private final String TAG = "INTROWERT_NOTE_ACTIVITY";
 
@@ -179,7 +177,12 @@ public class NoteActivity extends AppCompatActivity {
         // Hide delete button if note doesn't exist
         if (!exists) deleteButton.setVisibility(View.GONE);
 
+        note.registerCallBack(this);
+
     }
+
+
+    // TODO: 019 19 Jan 18 setfocus to desired view method
 
 
     // Decide if there is need to display save button
@@ -249,5 +252,10 @@ public class NoteActivity extends AppCompatActivity {
         tagsEditor.deleteEditor();
         commentEditor.deleteEditor();
         // TODO: 010 10 Jan 18 handler.removeCallbacks(runnable)
+    }
+
+    @Override
+    public void callingBack() {
+        Log.i(TAG, "Received callback");
     }
 }

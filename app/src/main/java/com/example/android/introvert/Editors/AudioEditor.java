@@ -33,8 +33,6 @@ import java.io.IOException;
 
 public class AudioEditor extends RelativeLayout implements MyEditor {
 
-    // TODO: 017 17 Jan 18 auto-record mode
-
     private final String TAG = "INTROWERT_AUDIO_EDITOR";
 
     // for interface methods
@@ -324,6 +322,11 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
                     Log.i(TAG, "Running while playing..");
                     updatePlayingUI();
                     handler.postDelayed(this, 200);
+                } else if (isRecording) {
+                    Log.i(TAG, "Running while recording..");
+                    updateRecordingUI();
+                    fileDuration += 1000;
+                    handler.postDelayed(this, 1000);
                 }
             }
         };
@@ -334,7 +337,6 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
             handler.removeCallbacks(runnable);
         }
     }
-
 
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~PLAYER API~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -461,7 +463,6 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     }
 
 
-
     /*~~~~~~~~~~~~~~~~~~~~~~~~RECORDER API~~~~~~~~~~~~~~~~~~~~~~~~*/
     /* Creates MediaRecorder and sets its settings*/
     private void prepareMediaRecorder() {
@@ -511,6 +512,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
             mediaRecorder.start();
             Log.i(TAG, "Started recording to file: " + destinationFile);
             isRecording = true;
+            noteActivity.runOnUiThread(getRunnable());
             updateRecordingUI();
         } catch (Exception e) {
             e.printStackTrace();
@@ -524,6 +526,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
             mediaRecorder.stop();
             Log.i(TAG, "Stopped recording to file: " + destinationFile);
             isRecording = false;
+            cancelRunnable();
             updateRecordingUI();
             mediaRecorder.reset();
         }
@@ -533,6 +536,12 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     /* Sets UI elements to correspond the state */
     private void updateRecordingUI() {
         Log.i(TAG, "Updating recording UI");
+
+        // Update time display
+        String timeDisplay = FormatUtils.msToMinsAndSecs(fileDuration);
+        emptyTimeTextView.setText(timeDisplay);
+
+
         if (isRecording) { // Set recording UI to recording state
             emptyRecHintTextView.setText(R.string.audio_editor_empty_tv_recording);
             emptyRecHintTextView.setTextColor(Color.RED);
@@ -545,7 +554,6 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
             emptyRecStopButton.setTextColor(Color.RED);
         }
     }
-
 
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~INTERFACE API~~~~~~~~~~~~~~~~~~~~~~~~*/
