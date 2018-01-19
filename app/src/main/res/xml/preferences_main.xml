@@ -20,6 +20,11 @@
             android:key="menu_main_audio_editor"
             android:persistent="false"
             android:title="@string/preferences_main_audio_editor">
+            <!-- "Auto start recording" check box -->
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="preferences_main_auto_start_recording"
+                android:title="@string/preferences_main_audio_editor_auto_record" />
             <!-- "Audio Source" item -->
             <ListPreference
                 android:defaultValue="0"

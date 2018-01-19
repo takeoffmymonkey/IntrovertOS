@@ -28,6 +28,8 @@
     <string name="preferences_main_text_notes_location">Text notes location</string>
     <string name="preferences_main_audio_notes_location">Audio notes location</string>
     <!-- Audio editor (preferences)-->
+    <string name="preferences_main_audio_editor_auto_record">Start recording automatically on
+        open</string>
     <string name="preferences_main_audio_editor_audio_source">Audio source</string>
     <string name="preferences_main_audio_editor_output_format">Output format</string>
     <string name="preferences_main_audio_editor_audio_encoder">Audio encoder</string>
