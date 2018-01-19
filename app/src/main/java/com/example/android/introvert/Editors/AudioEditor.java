@@ -87,6 +87,10 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     int maxDuration;
     long maxFileSize;
 
+    // File duration
+    int fileDuration = -1;
+    int fileCurrentPosition = -1;
+
     // Editor states
     boolean isRecording;
     boolean isPlaying;
@@ -285,7 +289,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         try {
             mediaRecorder.prepare();
         } catch (IOException e) {
-            Log.e(TAG, "preparation of media recorder failed:" + e);
+            Log.e(TAG, "Preparation of media recorder failed:" + e);
         }
     }
 
@@ -314,6 +318,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
 
         try {
             mediaRecorder.start();
+            Log.i(TAG, "Started recording to file: " + destinationFile);
             isRecording = true;
             updateRecordingUI();
         } catch (Exception e) {
@@ -326,6 +331,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     public void recordStop() {
         if (mediaRecorder != null) {
             mediaRecorder.stop();
+            Log.i(TAG, "Stopped recording to file: " + destinationFile);
             isRecording = false;
             updateRecordingUI();
             mediaRecorder.reset();
@@ -335,6 +341,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
 
     /* Sets UI elements to correspond the state */
     private void updateRecordingUI() {
+        Log.i(TAG, "Updating recording UI");
         if (isRecording) { // Set recording UI to recording state
             emptyRecHintTextView.setText(R.string.audio_editor_empty_tv_recording);
             emptyRecHintTextView.setTextColor(Color.RED);
@@ -359,6 +366,13 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
 
         // Prepare player
         mediaPlayer = new MediaPlayer();
+        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                fileCurrentPosition = mediaPlayer.getCurrentPosition();
+                fileDuration = mediaPlayer.getDuration();
+            }
+        });
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
@@ -370,13 +384,15 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         prepareFile();
         try {
             mediaPlayer.setDataSource(destinationFilePath);
+
+
         } catch (IOException e) {
-            Log.e(TAG, "file for media player not found");
+            Log.e(TAG, "File for media player not found");
         }
         try {
             mediaPlayer.prepare();
         } catch (IOException e) {
-            Log.e(TAG, "preparation of media player failed");
+            Log.e(TAG, "Preparation of media player failed");
         }
     }
 
@@ -393,6 +409,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         try {
             prepareMediaPlayer();
             mediaPlayer.start();
+            Log.i(TAG, "Started playing file: " + destinationFile);
             isPlaying = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -402,6 +419,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
 
     private void playPause() {
         mediaPlayer.pause();
+        Log.i(TAG, "Paused playing file: " + destinationFile);
         isPlaying = false;
     }
 
@@ -413,6 +431,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     private void playStop() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
+            Log.i(TAG, "Stopped playing file: " + destinationFile);
             isPlaying = false;
         }
     }
@@ -420,11 +439,16 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
 
     /* Sets UI elements to correspond the state */
     private void updatePlayingUI() {
+        Log.i(TAG, "Updating playing UI");
         if (isPlaying) { // Set playing UI to playing state
             playPauseButton.setText(R.string.audio_editor_button_pause);
         } else { // Set playing UI to NOT playing state
             playPauseButton.setText(R.string.audio_editor_button_play);
         }
+
+        // Update time display
+        String timeDisplay = "" + fileCurrentPosition + "/" + fileDuration;
+        timeTextView.setText(timeDisplay);
     }
 
             /*
