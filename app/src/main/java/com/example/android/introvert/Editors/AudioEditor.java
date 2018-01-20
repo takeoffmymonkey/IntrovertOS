@@ -76,18 +76,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     // Player/recorder
     private MediaPlayer mediaPlayer;
     private MediaRecorder mediaRecorder;
-
-    // Settings
-    boolean autoStartRecording;
-    // Audio settings
-    int audioSource;
-    int outputFormat;
-    int audioEncoder;
-    int audioChannels;
-    int bitRate;
-    int samplingRate;
-    int maxDuration;
-    long maxFileSize;
+    AudioEditorSettings settings;
 
     // File duration
     int fileDuration = 0;
@@ -101,6 +90,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
 
     Handler handler = new Handler();
     Runnable runnable;
+
 
 
     /* Basic required constructor */
@@ -120,6 +110,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         this.exists = exists;
         this.note = note;
         this.noteActivity = noteActivity;
+        settings = new AudioEditorSettings();
 
         prepareFile();
 
@@ -156,9 +147,9 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
             }
         });
 
-        getAutoRecordSetting();
+        settings.getAutoRecordSetting();
 
-        if (autoStartRecording) {
+        if (settings.autoStartRecording) {
             recordStart();
         }
         // Update UI elements to corresponding state
@@ -184,6 +175,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
             @Override
             public void onClick(View v) {
                 initEmptyModeComponents();
+                playStop();
                 recordStart();
             }
         });
@@ -285,34 +277,6 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     }
 
 
-    /* Gets current auto-record setting */
-    private void getAutoRecordSetting() {
-        SharedPreferences sharedPreferences = PreferenceManager
-                .getDefaultSharedPreferences(noteActivity);
-
-        autoStartRecording = sharedPreferences.getBoolean
-                ("preferences_main_auto_start_recording", true);
-    }
-
-
-    /* Gets audio settings from Preferences and updates corresponding var */
-    private void prepareAudioSettings() {
-        SharedPreferences sharedPreferences = PreferenceManager
-                .getDefaultSharedPreferences(noteActivity);
-
-        autoStartRecording = sharedPreferences.getBoolean
-                ("preferences_main_auto_start_recording", true);
-        audioSource = Integer.parseInt(sharedPreferences.getString
-                ("preferences_main_audio_audio_source", "0"));
-        Log.i(TAG, "preferences_main_audio_audio_source: " + audioSource);
-        outputFormat = Integer.parseInt(sharedPreferences.getString
-                ("preferences_main_audio_output_format", "0"));
-        Log.i(TAG, "preferences_main_audio_output_format: " + outputFormat);
-        audioEncoder = Integer.parseInt(sharedPreferences
-                .getString("preferences_main_audio_audio_encoder", "0"));
-        Log.i(TAG, "preferences_main_audio_audio_encoder: " + audioEncoder);
-    }
-
 
     private Runnable getRunnable() {
         return runnable = new Runnable() {
@@ -323,7 +287,8 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
                     updatePlayingUI();
                     handler.postDelayed(this, 200);
                 } else if (isRecording) {
-                    Log.i(TAG, "Running while recording..");
+                    Log.i(TAG, "Running while recording. Current file duration: " +
+                            fileDuration + ". System: " + System.currentTimeMillis());
                     updateRecordingUI();
                     fileDuration += 1000;
                     handler.postDelayed(this, 1000);
@@ -346,7 +311,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         releasePlayer();
 
         // Get latest settings
-        prepareAudioSettings();
+        settings.prepareAudioSettings();
 
 
         // Prepare player
@@ -429,10 +394,10 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     private void playStop() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
-            cancelRunnable();
             Log.i(TAG, "Stopped playing file: " + destinationFile);
             isPlaying = false;
             isPaused = false;
+            cancelRunnable();
         }
     }
 
@@ -470,14 +435,14 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         releaseRecorder();
 
         // Get latest settings
-        prepareAudioSettings();
+        settings.prepareAudioSettings();
 
         // Prepare recorder
         mediaRecorder = new MediaRecorder();
-        mediaRecorder.setAudioSource(audioSource);
-        mediaRecorder.setOutputFormat(outputFormat);
+        mediaRecorder.setAudioSource(settings.audioSource);
+        mediaRecorder.setOutputFormat(settings.outputFormat);
         mediaRecorder.setOutputFile(destinationFilePath);
-        mediaRecorder.setAudioEncoder(audioEncoder);
+        mediaRecorder.setAudioEncoder(settings.audioEncoder);
         try {
             mediaRecorder.prepare();
         } catch (IOException e) {
@@ -510,6 +475,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
 
         try {
             mediaRecorder.start();
+            fileDuration = 0;
             Log.i(TAG, "Started recording to file: " + destinationFile);
             isRecording = true;
             noteActivity.runOnUiThread(getRunnable());
@@ -555,6 +521,52 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         }
     }
 
+    /*~~~~~~~~~~~~~~~~~~~~~~~~AUDIO EDITOR SETTINGS~~~~~~~~~~~~~~~~~~~~~~~~*/
+    private class AudioEditorSettings {
+        private final String TAG = "INTROWERT_AE_SETTINGS";
+
+        boolean autoStartRecording;
+        int audioSource;
+        int outputFormat;
+        int audioEncoder;
+        int audioChannels;
+        int bitRate;
+        int samplingRate;
+        int maxDuration;
+        long maxFileSize;
+
+        AudioEditorSettings() {
+            prepareAudioSettings();
+            getAutoRecordSetting();
+        }
+
+        /* Gets audio settings from Preferences and updates corresponding var */
+        private void prepareAudioSettings() {
+            SharedPreferences sharedPreferences = PreferenceManager
+                    .getDefaultSharedPreferences(noteActivity);
+
+            autoStartRecording = sharedPreferences.getBoolean
+                    ("preferences_main_auto_start_recording", true);
+            audioSource = Integer.parseInt(sharedPreferences.getString
+                    ("preferences_main_audio_audio_source", "0"));
+            Log.i(TAG, "preferences_main_audio_audio_source: " + audioSource);
+            outputFormat = Integer.parseInt(sharedPreferences.getString
+                    ("preferences_main_audio_output_format", "0"));
+            Log.i(TAG, "preferences_main_audio_output_format: " + outputFormat);
+            audioEncoder = Integer.parseInt(sharedPreferences
+                    .getString("preferences_main_audio_audio_encoder", "0"));
+            Log.i(TAG, "preferences_main_audio_audio_encoder: " + audioEncoder);
+        }
+
+        /* Gets current auto-record setting */
+        private void getAutoRecordSetting() {
+            SharedPreferences sharedPreferences = PreferenceManager
+                    .getDefaultSharedPreferences(noteActivity);
+
+            autoStartRecording = sharedPreferences.getBoolean
+                    ("preferences_main_auto_start_recording", true);
+        }
+    }
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~INTERFACE API~~~~~~~~~~~~~~~~~~~~~~~~*/
     @Override
