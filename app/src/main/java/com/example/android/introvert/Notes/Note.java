@@ -30,7 +30,6 @@ import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_TABLE_N
  */
 
 
-
 public class Note {
 
     private final String TAG = "INTROWERT_NOTE";
@@ -63,10 +62,12 @@ public class Note {
 
     private boolean isReadyForSave = false;
 
-    OnReadyForSave onReadyForSave;
+    OnReadyForSaveListenter onReadyForSaveListener;
 
-    public interface OnReadyForSave{
-        void callingBack();
+    public interface OnReadyForSaveListenter {
+        void onReadyForSave();
+
+        void onNotReadyForSave();
     }
 
     // id in editMode - id from NOTES; id in addMode - id from NOTE_TYPES
@@ -164,8 +165,8 @@ public class Note {
 
     }
 
-    public void registerCallBack(OnReadyForSave onReadyForSave){
-        this.onReadyForSave = onReadyForSave;
+    public void addReadyForSaveListener(OnReadyForSaveListenter onReadyForSaveListenter) {
+        this.onReadyForSaveListener = onReadyForSaveListenter;
     }
 
 
@@ -304,10 +305,11 @@ public class Note {
             isReadyForSave = !initName.equals(updatedName) || !initContent.equals(updatedContent)
                     || !initTags.equals(updatedTags) || !initComment.equals(updatedContent);
 
-            onReadyForSave.callingBack();
+            onReadyForSaveListener.onReadyForSave();
 
         } else { // Name or content is empty
             isReadyForSave = false;
+            onReadyForSaveListener.onNotReadyForSave();
         }
         Log.i(TAG, "isReadyForSave: " + isReadyForSave);
     }

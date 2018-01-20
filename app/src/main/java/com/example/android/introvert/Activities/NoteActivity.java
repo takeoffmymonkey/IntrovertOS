@@ -29,7 +29,7 @@ import com.example.android.introvert.Utils.DbUtils;
  * Created by takeoff on 029 29 Dec 17.
  */
 
-public class NoteActivity extends AppCompatActivity implements Note.OnReadyForSave {
+public class NoteActivity extends AppCompatActivity implements Note.OnReadyForSaveListenter {
 
     private final String TAG = "INTROWERT_NOTE_ACTIVITY";
 
@@ -93,7 +93,7 @@ public class NoteActivity extends AppCompatActivity implements Note.OnReadyForSa
             public void afterTextChanged(Editable s) {
                 note.setUpdatedName(noteNameEditText.getText().toString());
                 note.updateReadiness();
-                showSaveButtonIfReady();
+                //showSaveButtonIfReady();
             }
         });
 
@@ -177,7 +177,7 @@ public class NoteActivity extends AppCompatActivity implements Note.OnReadyForSa
         // Hide delete button if note doesn't exist
         if (!exists) deleteButton.setVisibility(View.GONE);
 
-        note.registerCallBack(this);
+        note.addReadyForSaveListener(this);
 
     }
 
@@ -255,7 +255,14 @@ public class NoteActivity extends AppCompatActivity implements Note.OnReadyForSa
     }
 
     @Override
-    public void callingBack() {
-        Log.i(TAG, "Received callback");
+    public void onReadyForSave() {
+        Log.i(TAG, "Received callback onReadyForSave()");
+        saveButton.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onNotReadyForSave() {
+        Log.i(TAG, "Received callback onNotReadyForSave()");
+        saveButton.setVisibility(View.GONE);
     }
 }

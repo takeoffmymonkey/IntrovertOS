@@ -32,6 +32,7 @@ import java.io.IOException;
  */
 
 public class AudioEditor extends RelativeLayout implements MyEditor {
+// TODO: 020 20 Jan 18 pause recording
 
     private final String TAG = "INTROWERT_AUDIO_EDITOR";
 
@@ -64,35 +65,98 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     // Empty and non empty mode layouts
     int emptyModeLayout = R.layout.editor_audio_empty;
     int nonEmptyModeLayout = R.layout.editor_audio;
-    boolean emptyMode = true;
-
-    // Folder and file names
-    String fileName;
-    String fileExtension = ".3gpp";
-    String destinationFolder;
-    String destinationFilePath;
-    File destinationFile;
 
     // Player/recorder
     private MediaPlayer mediaPlayer;
     private MediaRecorder mediaRecorder;
-    AudioEditorSettings settings;
-
-    // File duration
-    int fileDuration = 0;
-    int fileCurrentPosition = 0;
-    String fileDurationFormatted;
+    private AudioSettings settings;
+    private AudioFile file;
 
     // Editor states
+    boolean emptyMode = true;
     boolean isRecording;
     boolean isPlaying;
     boolean isPaused;
 
+    // For UI threading: seekbar and timer
     Handler handler = new Handler();
     Runnable runnable;
 
 
+    /*~~~~~~~~~~~~~~~~~~~~~~~~ SUBCLASS: AUDIO SETTINGS ~~~~~~~~~~~~~~~~~~~~~~~~*/
+    private class AudioSettings {
+        private final String TAG = "INTROWERT_AE_SETTINGS";
 
+        boolean autoStartRecording;
+        int audioSource;
+        int outputFormat;
+        int audioEncoder;
+        int audioChannels;
+        int bitRate;
+        int samplingRate;
+        int maxDuration;
+        long maxFileSize;
+
+        AudioSettings() {
+            prepareAudioSettings();
+            getAutoRecordSetting();
+        }
+
+        /* Gets audio settings from Preferences and updates corresponding var */
+        private void prepareAudioSettings() {
+            SharedPreferences sharedPreferences = PreferenceManager
+                    .getDefaultSharedPreferences(noteActivity);
+
+            autoStartRecording = sharedPreferences.getBoolean
+                    ("preferences_main_auto_start_recording", true);
+            audioSource = Integer.parseInt(sharedPreferences.getString
+                    ("preferences_main_audio_audio_source", "0"));
+            Log.i(TAG, "preferences_main_audio_audio_source: " + audioSource);
+            outputFormat = Integer.parseInt(sharedPreferences.getString
+                    ("preferences_main_audio_output_format", "0"));
+            Log.i(TAG, "preferences_main_audio_output_format: " + outputFormat);
+            audioEncoder = Integer.parseInt(sharedPreferences
+                    .getString("preferences_main_audio_audio_encoder", "0"));
+            Log.i(TAG, "preferences_main_audio_audio_encoder: " + audioEncoder);
+        }
+
+        /* Gets current auto-record setting */
+        private void getAutoRecordSetting() {
+            SharedPreferences sharedPreferences = PreferenceManager
+                    .getDefaultSharedPreferences(noteActivity);
+
+            autoStartRecording = sharedPreferences.getBoolean
+                    ("preferences_main_auto_start_recording", true);
+        }
+    }
+
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~ SUBCLASS: AUDIO FILE ~~~~~~~~~~~~~~~~~~~~~~~~*/
+    private class AudioFile {
+        String name;
+        String extension = ".3gpp";
+        String destinationFolder;
+        String destinationFilePath;
+        File destinationFile;
+
+        int duration = 0;
+        int currentPosition = 0;
+        String durationFormatted;
+
+        AudioFile() {
+            prepareFile();
+        }
+
+        /* Updates latest location vars and prepares a file based on them */
+        private void prepareFile() {
+            destinationFolder = FileUtils.getPathForInputType(editorType, note.getTypeId());
+            name = note.getUpdatedName() + extension;
+            destinationFilePath = destinationFolder + "/" + name;
+            destinationFile = FileUtils.makeFileForPath(destinationFilePath);
+        }
+    }
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~ CLASS: AUDIO EDITOR ~~~~~~~~~~~~~~~~~~~~~~~~*/
     /* Basic required constructor */
     public AudioEditor(Context context) {
         super(context);
@@ -110,9 +174,10 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         this.exists = exists;
         this.note = note;
         this.noteActivity = noteActivity;
-        settings = new AudioEditorSettings();
+        settings = new AudioSettings();
+        file = new AudioFile();
 
-        prepareFile();
+        file.prepareFile();
 
         // Initialize appropriate layout and its components
         if (exists) initNonEmptyModeComponents(); // Current note has previous content
@@ -268,16 +333,6 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     }
 
 
-    /* Updates latest location vars and prepares a file based on them */
-    private void prepareFile() {
-        destinationFolder = FileUtils.getPathForInputType(editorType, note.getTypeId());
-        fileName = note.getUpdatedName() + fileExtension;
-        destinationFilePath = destinationFolder + "/" + fileName;
-        destinationFile = FileUtils.makeFileForPath(destinationFilePath);
-    }
-
-
-
     private Runnable getRunnable() {
         return runnable = new Runnable() {
             @Override
@@ -288,9 +343,9 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
                     handler.postDelayed(this, 200);
                 } else if (isRecording) {
                     Log.i(TAG, "Running while recording. Current file duration: " +
-                            fileDuration + ". System: " + System.currentTimeMillis());
+                            file.duration + ". System: " + System.currentTimeMillis());
                     updateRecordingUI();
-                    fileDuration += 1000;
+                    file.duration += 1000;
                     handler.postDelayed(this, 1000);
                 }
             }
@@ -304,7 +359,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     }
 
 
-    /*~~~~~~~~~~~~~~~~~~~~~~~~PLAYER API~~~~~~~~~~~~~~~~~~~~~~~~*/
+    /*~~~~~~~~~~~~~~~~~~~~~~~~ API: PLAYER ~~~~~~~~~~~~~~~~~~~~~~~~*/
     /* Creates MediaRecorder, sets its settings and onCompletion listener*/
     private void prepareMediaPlayer() {
         // Release existing player
@@ -319,10 +374,10 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-                fileCurrentPosition = mediaPlayer.getCurrentPosition();
-                fileDuration = mediaPlayer.getDuration();
-                fileDurationFormatted = FormatUtils.msToMinsAndSecs(fileDuration);
-                seekBar.setMax(fileDuration);
+                file.currentPosition = mediaPlayer.getCurrentPosition();
+                file.duration = mediaPlayer.getDuration();
+                file.durationFormatted = FormatUtils.msToMinsAndSecs(file.duration);
+                seekBar.setMax(file.duration);
                 updatePlayingUI();
             }
         });
@@ -336,9 +391,9 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
             }
         });
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        prepareFile();
+        file.prepareFile();
         try {
-            mediaPlayer.setDataSource(destinationFilePath);
+            mediaPlayer.setDataSource(file.destinationFilePath);
         } catch (IOException e) {
             Log.e(TAG, "File for media player not found");
         }
@@ -366,7 +421,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
             isPlaying = true;
             isPaused = false;
             noteActivity.runOnUiThread(getRunnable());
-            Log.i(TAG, "Started playing file: " + destinationFile);
+            Log.i(TAG, "Started playing file: " + file.destinationFile);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -375,7 +430,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
 
     private void playPause() {
         mediaPlayer.pause();
-        Log.i(TAG, "Paused playing file: " + destinationFile);
+        Log.i(TAG, "Paused playing file: " + file.destinationFile);
         isPlaying = false;
         isPaused = true;
         cancelRunnable();
@@ -394,7 +449,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     private void playStop() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
-            Log.i(TAG, "Stopped playing file: " + destinationFile);
+            Log.i(TAG, "Stopped playing file: " + file.destinationFile);
             isPlaying = false;
             isPaused = false;
             cancelRunnable();
@@ -408,15 +463,15 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
 
         // Update scroll position
         if (!isPlaying && !isPaused) { // We are stopped
-            fileCurrentPosition = 0;
+            file.currentPosition = 0;
         } else if (isPlaying) { // We are playing
-            fileCurrentPosition = mediaPlayer.getCurrentPosition();
+            file.currentPosition = mediaPlayer.getCurrentPosition();
         }
-        seekBar.setProgress(fileCurrentPosition);
+        seekBar.setProgress(file.currentPosition);
 
         // Update time display
-        String timeDisplay = FormatUtils.msToMinsAndSecs(fileCurrentPosition) + "/"
-                + fileDurationFormatted;
+        String timeDisplay = FormatUtils.msToMinsAndSecs(file.currentPosition) + "/"
+                + file.durationFormatted;
         timeTextView.setText(timeDisplay);
 
         // Update Play button text
@@ -428,7 +483,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     }
 
 
-    /*~~~~~~~~~~~~~~~~~~~~~~~~RECORDER API~~~~~~~~~~~~~~~~~~~~~~~~*/
+    /*~~~~~~~~~~~~~~~~~~~~~~~~ API: RECORDER ~~~~~~~~~~~~~~~~~~~~~~~~*/
     /* Creates MediaRecorder and sets its settings*/
     private void prepareMediaRecorder() {
         // Release existing recorder
@@ -441,7 +496,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(settings.audioSource);
         mediaRecorder.setOutputFormat(settings.outputFormat);
-        mediaRecorder.setOutputFile(destinationFilePath);
+        mediaRecorder.setOutputFile(file.destinationFilePath);
         mediaRecorder.setAudioEncoder(settings.audioEncoder);
         try {
             mediaRecorder.prepare();
@@ -463,20 +518,20 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     /* Starts recording after creating folder path, deleting existing file, updates UI */
     public void recordStart() {
         //make sure folder for file exists
-        FileUtils.mkDirs(destinationFile);
+        FileUtils.mkDirs(file.destinationFile);
 
         // delete existing file
-        if (destinationFile.exists()) {
-            Log.i(TAG, "Deleting existing file: " + destinationFile + ": " +
-                    destinationFile.delete());
+        if (file.destinationFile.exists()) {
+            Log.i(TAG, "Deleting existing file: " + file.destinationFile + ": " +
+                    file.destinationFile.delete());
         }
 
         prepareMediaRecorder();
 
         try {
             mediaRecorder.start();
-            fileDuration = 0;
-            Log.i(TAG, "Started recording to file: " + destinationFile);
+            file.duration = 0;
+            Log.i(TAG, "Started recording to file: " + file.destinationFile);
             isRecording = true;
             noteActivity.runOnUiThread(getRunnable());
             updateRecordingUI();
@@ -490,7 +545,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     public void recordStop() {
         if (mediaRecorder != null) {
             mediaRecorder.stop();
-            Log.i(TAG, "Stopped recording to file: " + destinationFile);
+            Log.i(TAG, "Stopped recording to file: " + file.destinationFile);
             isRecording = false;
             cancelRunnable();
             updateRecordingUI();
@@ -504,7 +559,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         Log.i(TAG, "Updating recording UI");
 
         // Update time display
-        String timeDisplay = FormatUtils.msToMinsAndSecs(fileDuration);
+        String timeDisplay = FormatUtils.msToMinsAndSecs(file.duration);
         emptyTimeTextView.setText(timeDisplay);
 
 
@@ -521,54 +576,8 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
         }
     }
 
-    /*~~~~~~~~~~~~~~~~~~~~~~~~AUDIO EDITOR SETTINGS~~~~~~~~~~~~~~~~~~~~~~~~*/
-    private class AudioEditorSettings {
-        private final String TAG = "INTROWERT_AE_SETTINGS";
 
-        boolean autoStartRecording;
-        int audioSource;
-        int outputFormat;
-        int audioEncoder;
-        int audioChannels;
-        int bitRate;
-        int samplingRate;
-        int maxDuration;
-        long maxFileSize;
-
-        AudioEditorSettings() {
-            prepareAudioSettings();
-            getAutoRecordSetting();
-        }
-
-        /* Gets audio settings from Preferences and updates corresponding var */
-        private void prepareAudioSettings() {
-            SharedPreferences sharedPreferences = PreferenceManager
-                    .getDefaultSharedPreferences(noteActivity);
-
-            autoStartRecording = sharedPreferences.getBoolean
-                    ("preferences_main_auto_start_recording", true);
-            audioSource = Integer.parseInt(sharedPreferences.getString
-                    ("preferences_main_audio_audio_source", "0"));
-            Log.i(TAG, "preferences_main_audio_audio_source: " + audioSource);
-            outputFormat = Integer.parseInt(sharedPreferences.getString
-                    ("preferences_main_audio_output_format", "0"));
-            Log.i(TAG, "preferences_main_audio_output_format: " + outputFormat);
-            audioEncoder = Integer.parseInt(sharedPreferences
-                    .getString("preferences_main_audio_audio_encoder", "0"));
-            Log.i(TAG, "preferences_main_audio_audio_encoder: " + audioEncoder);
-        }
-
-        /* Gets current auto-record setting */
-        private void getAutoRecordSetting() {
-            SharedPreferences sharedPreferences = PreferenceManager
-                    .getDefaultSharedPreferences(noteActivity);
-
-            autoStartRecording = sharedPreferences.getBoolean
-                    ("preferences_main_auto_start_recording", true);
-        }
-    }
-
-    /*~~~~~~~~~~~~~~~~~~~~~~~~INTERFACE API~~~~~~~~~~~~~~~~~~~~~~~~*/
+    /*~~~~~~~~~~~~~~~~~~~~~~~~ API: INTERFACE ~~~~~~~~~~~~~~~~~~~~~~~~*/
     @Override
     public void setContent(String content) {
 
@@ -589,7 +598,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
 
     @Override
     public String getContent() {
-        return destinationFilePath;
+        return file.destinationFilePath;
         // TODO: 019 19 Jan 18 return full path or just file name? 
     }
 
