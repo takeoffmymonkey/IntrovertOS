@@ -185,16 +185,6 @@ public class NoteActivity extends AppCompatActivity implements Note.OnReadyForSa
     // TODO: 019 19 Jan 18 setfocus to desired view method
 
 
-    // Decide if there is need to display save button
-    public void showSaveButtonIfReady() {
-        if (note.isReadyForSave()) { // Show save button
-            saveButton.setVisibility(View.VISIBLE);
-        } else { // Hide save button
-            saveButton.setVisibility(View.GONE);
-        }
-    }
-
-
     /**
      * Creates and returns a specified type editor for a specified View group container
      *
@@ -256,13 +246,11 @@ public class NoteActivity extends AppCompatActivity implements Note.OnReadyForSa
 
     @Override
     public void onReadyForSave() {
-        Log.i(TAG, "Received callback onReadyForSave()");
         saveButton.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onNotReadyForSave() {
-        Log.i(TAG, "Received callback onNotReadyForSave()");
         saveButton.setVisibility(View.GONE);
     }
 }

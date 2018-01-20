@@ -90,7 +90,7 @@ public class TextEditor extends RelativeLayout implements MyEditor {
     }
 
 
-    /* Create text watcher for edit text field or Text MyEditor */
+    /* Create text watcher for edit text field of Text MyEditor */
     private TextWatcher makeTextWatcher() {
         return new TextWatcher() {
             @Override
@@ -107,22 +107,18 @@ public class TextEditor extends RelativeLayout implements MyEditor {
                     case 1: // Content
                         note.setUpdatedContent(editText.getText().toString());
                         note.updateReadiness();
-                        noteActivity.showSaveButtonIfReady();
                         break;
                     case 2: // Tags
                         note.setUpdatedTags(editText.getText().toString());
                         note.updateReadiness();
-                        noteActivity.showSaveButtonIfReady();
                         break;
                     case 3: // Comment
                         note.setUpdatedComment(editText.getText().toString());
                         note.updateReadiness();
-                        noteActivity.showSaveButtonIfReady();
                         break;
                     default: // Something is wrong
                         Log.e(TAG, "Error: editor role could not be defined when changing text");
                         note.updateReadiness();
-                        noteActivity.showSaveButtonIfReady();
                         break;
                 }
             }

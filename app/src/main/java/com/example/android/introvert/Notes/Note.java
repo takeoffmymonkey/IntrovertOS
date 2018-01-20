@@ -305,11 +305,15 @@ public class Note {
             isReadyForSave = !initName.equals(updatedName) || !initContent.equals(updatedContent)
                     || !initTags.equals(updatedTags) || !initComment.equals(updatedContent);
 
-            onReadyForSaveListener.onReadyForSave();
+            if (onReadyForSaveListener != null) { // Someone is listening
+                onReadyForSaveListener.onReadyForSave();
+            }
 
         } else { // Name or content is empty
             isReadyForSave = false;
-            onReadyForSaveListener.onNotReadyForSave();
+            if (onReadyForSaveListener != null) { // Someone is listening
+                onReadyForSaveListener.onNotReadyForSave();
+            }
         }
         Log.i(TAG, "isReadyForSave: " + isReadyForSave);
     }
