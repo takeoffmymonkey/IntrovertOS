@@ -164,6 +164,9 @@ public class NoteActivity extends AppCompatActivity implements Note.OnReadyForSa
             @Override
             public void onClick(View v) {
                 // TODO: 002 02 Jan 18 remove current activity from stack
+                contentEditor.deleteEditor(); // needed to stop playback
+                tagsEditor.deleteEditor();
+                commentEditor.deleteEditor();
                 Log.i(TAG, "cancel pressed");
                 startActivity(getSupportParentActivityIntent());
             }

@@ -354,7 +354,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
 
     private void cancelRunnable() {
         if (handler != null && runnable != null) {
-            handler.removeCallbacks(runnable);
+            handler.removeCallbacksAndMessages(null);
         }
     }
 
@@ -408,6 +408,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     /*Frees the player if it exists*/
     private void releasePlayer() {
         if (mediaPlayer != null) {
+            playStop();
             mediaPlayer.release();
             mediaPlayer = null;
         }
@@ -509,6 +510,7 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
     /*Frees the recorder if exists*/
     private void releaseRecorder() {
         if (mediaRecorder != null) {
+            recordStop();
             mediaRecorder.release();
             mediaRecorder = null;
         }
@@ -550,6 +552,8 @@ public class AudioEditor extends RelativeLayout implements MyEditor {
             cancelRunnable();
             updateRecordingUI();
             mediaRecorder.reset();
+            note.setUpdatedContent(file.name);
+            note.updateReadiness();
         }
     }
 
