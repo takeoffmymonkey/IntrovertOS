@@ -1,5 +1,6 @@
 package com.example.android.introvert.Activities;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -12,7 +13,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.android.introvert.Database.DbHelper;
 import com.example.android.introvert.R;
+
+import static com.example.android.introvert.Activities.MainActivity.db;
 
 /**
  * Created by takeoff on 022 22 Jan 18.
@@ -26,28 +30,34 @@ public class CategoriesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_categories);
 
+        // TODO: 022 22 Jan 18 i'm doing this fast, needs check 
         ListView listView = (ListView) findViewById(R.id.a_categories_lv);
 
-        String[] values = new String[]{"Android List View",
-                "Adapter implementation",
-                "Simple List View In Android",
-                "Create List View Android",
-                "Android Example",
-                "List View Source Code",
-                "List View Array Adapter",
-                "Android Example List View"
-        };
+        Cursor cursorCategories = db.query(DbHelper.CATEGORIES_TABLE_NAME, null, null, null,
+                null, null, null);
 
+
+        int[] categoryIds = new int[cursorCategories.getCount()];
+        String[] categories = new String[cursorCategories.getCount()];
+
+        int count = 0;
+        while (cursorCategories.moveToNext()) {
+            categoryIds[count] = cursorCategories.getInt(cursorCategories
+                    .getColumnIndex(DbHelper.ID_COLUMN));
+            categories[count] = cursorCategories.getString(cursorCategories
+                    .getColumnIndex(DbHelper.CATEGORIES_CATEGORY_COLUMN));
+            count++;
+        }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, values);
+                android.R.layout.simple_list_item_1, android.R.id.text1, categories);
 
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(CategoriesActivity.this, "click", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CategoriesActivity.this, "" + position, Toast.LENGTH_SHORT).show();
             }
         });
 
