@@ -90,6 +90,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
+            case R.id.menu_main_add:
+                Intent intentAdd = new Intent(this, CategoriesActivity.class);
+                startActivity(intentAdd);
+                return true;
+
             case R.id.menu_main_add_text_note:
                 Intent intentAddTextNote = new Intent(this, NoteActivity.class);
                 intentAddTextNote.putExtra(EXISTS, false);

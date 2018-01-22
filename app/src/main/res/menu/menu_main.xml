@@ -10,6 +10,9 @@
         <!-- submenu -->
         <menu>
             <item
+                android:id="@+id/menu_main_add"
+                android:title="Add" />
+            <item
                 android:id="@+id/menu_main_add_text_note"
                 android:title="@string/menu_main_add_note_text" />
             <item
