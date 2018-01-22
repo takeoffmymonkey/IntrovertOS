@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.menu_main_add:
                 Intent intentAdd = new Intent(this, CategoriesActivity.class);
+                intentAdd.putExtra(CategoriesActivity.MODE, 0);
                 startActivity(intentAdd);
                 return true;
 

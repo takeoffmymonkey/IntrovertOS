@@ -53,7 +53,7 @@ public class NoteActivity extends AppCompatActivity implements Note.OnReadyForSa
         setContentView(R.layout.activity_note);
 
 
-        // Get passed noteId and mode from extras
+        // Get passed noteId and currentMode from extras
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             noteId = extras.getInt(TimelineFragment.ID, 0);
