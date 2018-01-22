@@ -68,8 +68,11 @@ public class CategoriesActivity extends AppCompatActivity {
             cursor = db.query(table, columns, selection, selectionArgs,
                     null, null, null);
         } else if (currentMode == 2) { // Notes
-            //int subCategoryId = extras.getInt(SUBCATEGORY_ID, -1);
-            cursor = db.query(DbHelper.NOTES_TABLE_NAME, null, null, null,
+            table = DbHelper.NOTES_TABLE_NAME;
+            columns[1] = DbHelper.NOTES_NAME_COLUMN;
+            /*String selection = NOTE_TYPES_CATEGORY_COLUMN + "=?";
+            String[] selectionArgs = {Integer.toString(currentChoice)};*/
+            cursor = db.query(table, columns, null, null,
                     null, null, null);
         }
 
