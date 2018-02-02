@@ -19,7 +19,9 @@ import static com.example.android.introvert.Database.DbHelper.NOTE_TYPES_TABLE_N
  */
 
 public class FileUtils {
-    private static final String TAG = "INTROWERT_FILE_UTILS";
+    public static final String SD_STORAGE = "/storage/sdcard1";
+
+
 
     /* Android doesn't separate external SD card from external storage, which in some cases may be
     *  an internal card. In such cases methods like getExternalStorageDirectory()... will return
@@ -61,15 +63,13 @@ public class FileUtils {
     * */
 
     // TODO: 012 12 Jan 18 Make defining storage dynamic.
-
+    private static final String TAG = "INTROWERT_FILE_UTILS";
     // /data/data/com.example.android.introvert/files
     public static String INTERNAL_APP_STORAGE = null;
     // /storage/sdcard0/Android/data/com.example.android.introvert/files
     public static String EXTERNAL_APP_STORAGE = null;
     // /storage/sdcard0
     public static final String EXTERNAL_STORAGE = getAbsolutePathOfFile(getExternalStorageRootDir());
-    public static final String SD_STORAGE = "/storage/sdcard1";
-
 
     /* Checks if storage is mounted */
     public static boolean storageIsReady(@Nullable String storage) {
@@ -98,7 +98,7 @@ public class FileUtils {
 
 
     /* Returns absolute path of file as String */
-    public static String getAbsolutePathOfFile(File file) {
+    private static String getAbsolutePathOfFile(File file) {
         if (file.exists()) return file.getAbsolutePath();
         else return "File doesn't exist";
     }
@@ -163,5 +163,9 @@ public class FileUtils {
         return rootContentLocation + "/Introvert/" + category + "/" + defaultName;
     }
 
+
+    public static void test() {
+
+    }
 
 }
