@@ -23,13 +23,11 @@ import static com.example.android.introvert.Utils.FileUtils.EXTERNAL_APP_STORAGE
 public class MainActivity extends AppCompatActivity {
 
 
-    private final String TAG = "INTROWERT_MAIN";
-
     public static final String ID = "id";
     public static final String EXISTS = "exists";
-
     public static DbHelper dbHelper;
     public static SQLiteDatabase db;
+    private final String TAG = "INTROWERT_MAIN";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         // Temp: reading preferences example
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean m = sharedPreferences.getBoolean("preferences_main_debug_mode", false);
+
 
     }
 

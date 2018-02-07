@@ -1,8 +1,10 @@
 package com.example.android.introvert;
 
+import com.example.android.introvert.Utils.FileUtils;
+
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -12,6 +14,11 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() throws Exception {
+        FileUtils.test();
         assertEquals(4, 2 + 2);
     }
+
+
 }
+
+

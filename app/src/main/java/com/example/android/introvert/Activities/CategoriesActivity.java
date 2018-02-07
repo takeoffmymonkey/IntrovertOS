@@ -27,13 +27,11 @@ import static com.example.android.introvert.Tabs.TimelineFragment.ID;
  */
 
 public class CategoriesActivity extends AppCompatActivity {
-    private final String TAG = "INTROWERT_CATEGORIES_ACTIVITY";
     public static final String MODE = "mode";
-    public static final String CHOICE = "choice";
-
-
-    int currentMode = -1; // 0 - categories, 1 - subcategories, 2 - notes
-    int currentChoice = -1; // !TABLE ID COLUMN VALUE of the chosen item
+    private static final String CHOICE = "choice";
+    private final String TAG = "INTROWERT_CATEGORIES_ACTIVITY";
+    private int currentMode = -1; // 0 - categories, 1 - subcategories, 2 - notes
+    private int currentChoice = -1; // !TABLE ID COLUMN VALUE of the chosen item
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,8 +74,8 @@ public class CategoriesActivity extends AppCompatActivity {
                     null, null, null);
         }
 
-        final int[] ids = new int[cursor.getCount()];
-        String[] names = new String[cursor.getCount()];
+        final int[] ids = new int[cursor != null ? cursor.getCount() : 0];
+        String[] names = new String[cursor != null ? cursor.getCount() : 0];
 
         int count = 0;
         while (cursor.moveToNext()) {
@@ -88,7 +86,7 @@ public class CategoriesActivity extends AppCompatActivity {
             count++;
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, android.R.id.text1, names);
 
         listView.setAdapter(adapter);
